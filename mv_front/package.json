@@ -9,12 +9,21 @@
     "@mui/material": "^6.1.10",
     "axios": "^1.7.9",
     "cra-template": "1.2.0",
+    "customize-cra": "^1.0.0",
     "react": "^19.0.0",
+    "react-app-rewired": "^2.2.1",
     "react-dom": "^19.0.0",
-    "react-scripts": "5.0.1"
+    "react-router-dom": "^7.1.0",
+    "react-scripts": "5.0.1",
+    "stream-browserify": "^3.0.0",
+    "video.js": "^8.21.0",
+    "videojs-hotkeys": "^0.2.30",
+    "vlc.js": "^5.0.0-alpha"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "concurrently -n backend,frontend -c blue,green \"npm run backend\" \"npm run frontend\"",
+    "backend": "cd ../mv_back && .\\env\\Scripts\\activate && python app.py",
+    "frontend": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -36,5 +45,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
   }
 }

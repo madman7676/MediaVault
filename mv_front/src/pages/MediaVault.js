@@ -1,20 +1,21 @@
 // MediaVault component using CatalogCard
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import CatalogCard from './components/CatalogCard';
-import config from './config.json';
+import CatalogCard from '../components/CatalogCard';
+import config from '../config.json';
+import palette from '../theme/palette';
 import { Grid2 as Grid, CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 
 const darkTheme = createTheme({
     palette: {
         mode: 'dark',
         background: {
-            default: '#121212',
-            paper: '#1e1e1e',
+            default: palette.background.page,
+            paper: palette.background.paper,
         },
         text: {
-            primary: '#ffffff',
-            secondary: '#bbbbbb',
+            primary: palette.text.lightPrimary,
+            secondary: palette.text.lightSecondary,
         },
     },
 });
@@ -25,11 +26,21 @@ const MediaVault = () => {
     const [error, setError] = useState(null);
 
     const fetchThumbnail = async (videoPath) => {
+        const cacheKey = `thumbnail_${videoPath}`;
+        const cachedThumbnail = sessionStorage.getItem(cacheKey);
+
+        if (cachedThumbnail) {
+            return cachedThumbnail;
+        }
+
         try {
             const response = await axios.get(`${config.API_BASE_URL}/api/thumbnail`, {
                 params: { video_path: videoPath },
             });
-            return response.config.url+"?video_path="+videoPath;
+
+            const thumbnailUrl = `${response.config.url}?video_path=${videoPath}`;
+            sessionStorage.setItem(cacheKey, thumbnailUrl);
+            return thumbnailUrl;
         } catch (err) {
             console.error(`Failed to fetch thumbnail for ${videoPath}:`, err);
             return null;
@@ -95,6 +106,7 @@ const MediaVault = () => {
                                 type={collection.type} 
                                 partsCount={collection.partsCount} 
                                 thumbnailUrl={collection.thumbnailUrl} 
+                                link={'/player/'+collection.id}
                             />
                         </Grid>
                     ))}
