@@ -1,13 +1,13 @@
 // Player.js component for displaying video and collection/season files
 import 'videojs-hotkeys';
 import axios from 'axios';
-import videojs from 'video.js';
-import 'video.js/dist/video-js.css';
 import config from '../config.json';
 import palette from '../theme/palette';
-import { ExpandLess, ExpandMore } from '@mui/icons-material';
-import React, { useState, useEffect, useRef, Fragment } from 'react';
-import { Box, Typography, List, ListItem, ListItemText, Collapse } from '@mui/material';
+import FileList from '../components/FileList';
+import PlayerControls from '../components/Player/PlayerControls';
+import { Settings, CheckBox, CheckBoxOutlineBlank } from '@mui/icons-material';
+import React, { useState, useEffect, useRef } from 'react';
+import { Box, Typography, Menu, MenuItem, Checkbox, IconButton } from '@mui/material';
 import { useParams } from 'react-router-dom';
 
 const Player = () => {
@@ -18,9 +18,25 @@ const Player = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [openSeasons, setOpenSeasons] = useState({});
-    const playerRef = useRef(null);
-    const playerInstance = useRef(null);
-    const {itemId} = useParams();
+    const [settingsAnchorEl, setSettingsAnchorEl] = useState(null);
+    const [skipTimeEnabled, setSkipTimeEnabled] = useState(true);
+    const { itemId } = useParams();
+
+    const handleOpenSettingsMenu = (event) => {
+        setSettingsAnchorEl(event.currentTarget);
+    };
+
+    const handleCloseSettingsMenu = () => {
+        setSettingsAnchorEl(null);
+    };
+
+    const handleToggleSkipTime = () => {
+        setSkipTimeEnabled((prev) => !prev);
+    };
+
+    const handleEditSkipTime = () => {
+        console.log("Edit skip time settings (to be implemented)");
+    };
 
     const processFiles = (item) => {
         if (item.type === 'series') {
@@ -43,87 +59,15 @@ const Player = () => {
         }];
     };
 
-    const initializePlayer = () => {
-        if (!playerRef.current) return;
-
-        playerInstance.current = videojs(playerRef.current, {
-            controls: true,
-            autoplay: false,
-            preload: 'auto',
-            playbackRates: [0.5, 1, 1.5, 2, 2.5],
-        });
-
-        playerInstance.current.ready(() => {
-            playerInstance.current.hotkeys({
-                volumeStep: 0.1,
-                seekStep: 5,
-                enableModifiersForNumbers: false,
-            });
-
-            const timeControl = videojs.dom.createEl('div', {
-                className: 'vjs-remaining-time vjs-time-control vjs-control',
-                innerHTML: `
-                    <span class="vjs-control-text" role="presentation">Current Time&nbsp;</span>
-                    <span aria-hidden="true"></span>
-                    <span class="vjs-remaining-time-display" role="presentation">0:00</span>`
-            });
-
-            const controlBar = playerInstance.current.controlBar;
-            const volumePanel = controlBar.getChild('volumePanel');
-            controlBar.el().insertBefore(timeControl, volumePanel.el().nextSibling);
-
-            const timeDisplay = timeControl.querySelector('.vjs-remaining-time-display');
-
-            playerInstance.current.on('timeupdate', () => {
-                const currentTime = playerInstance.current.currentTime();
-                const totalMinutes = Math.floor(currentTime / 60);
-                const seconds = Math.floor(currentTime % 60).toString().padStart(2, '0');
-                timeDisplay.innerHTML = `${totalMinutes}:${seconds}`;
-            });
-        });
-
-        playerInstance.current.on('timeupdate', handleTimeUpdate);
-        playerInstance.current.on('ended', handleVideoEnd);
-
-        playerInstance.current.src({ src: currentFile, type: 'video/mp4' });
-        playerInstance.current.play().catch(console.error);
-    };
-
-    const updatePlayerSource = (metadata) => {
-        if (playerInstance.current && currentFile) {
-            playerInstance.current.src({ src: currentFile, type: 'video/mp4' });
-            playerInstance.current.load();
-            playerInstance.current.play().catch(console.error);
-        }
-        currentTimeToSkipRef.current = metadata?.timeToSkip || [];
-    };
-
-    const handleTimeUpdate = () => {
-        const currentTime = playerInstance.current?.currentTime();
-        console.log(currentTime);
-        
-        if (!currentTimeToSkipRef.current || currentTimeToSkipRef.current.length === 0) return;
-
-        const skipInterval = currentTimeToSkipRef.current.find(
-            interval => currentTime >= interval.start && currentTime < interval.end
-        );
-
-        if (skipInterval) {
-            playerInstance.current.currentTime(skipInterval.end);
-        }
-    };
-
     const handleVideoEnd = () => {
         const flatFileList = fileList.flatMap(season => season.files);
-        const playerSrc = playerInstance.current?.currentSrc();
-
-        const currentIndex = flatFileList.findIndex(file => decodeURIComponent(file.url) === decodeURIComponent(playerSrc || currentFile));
+        const currentIndex = flatFileList.findIndex(file => file.url === currentFile);
 
         if (currentIndex !== -1 && currentIndex < flatFileList.length - 1) {
-            const nextFile = flatFileList[currentIndex + 1]?.url;
+            const nextFile = flatFileList[currentIndex + 1];
             if (nextFile) {
-                setCurrentFile(nextFile);
-                updatePlayerSource(flatFileList[currentIndex + 1]);
+                setCurrentFile(nextFile.url);
+                localStorage.setItem('lastWatched', JSON.stringify({ itemId, fileUrl: nextFile.url }));
             }
         }
     };
@@ -146,127 +90,112 @@ const Player = () => {
         }
     };
 
+    const handleSelectFile = (url) => {
+        const selectedFileMetadata = fileList
+            .flatMap(season => season.files)
+            .find(file => file.url === url);
+
+        currentTimeToSkipRef.current = selectedFileMetadata?.timeToSkip || [];
+        setCurrentFile(url);
+        localStorage.setItem('lastWatched', JSON.stringify({ itemId, fileUrl: url }));
+    };
+
     useEffect(() => {
         document.body.style.margin = '0';
         fetchMetadata();
     }, [itemId]);
 
     useEffect(() => {
-        initializePlayer();
+        const lastWatched = JSON.parse(localStorage.getItem('lastWatched'));
+        if (lastWatched?.itemId === itemId && fileList.length > 0) {
+            const flatFileList = fileList.flatMap(season => season.files);
+            const lastFile = flatFileList.find(file => file.url === lastWatched.fileUrl);
+            if (lastFile) {
+                const seasonIndex = fileList.findIndex(season =>
+                    season.files.some(file => file.url === lastWatched.fileUrl)
+                );
 
-        return () => {
-            if (playerInstance.current) {
-                playerInstance.current.dispose();
-                playerInstance.current = null;
+                if (seasonIndex >= 0) {
+                    setOpenSeasons(prev => ({ ...prev, [seasonIndex]: true }));
+                }
             }
-        };
+        }
     }, [fileList]);
 
-    useEffect(() => {
-        const selectedFileMetadata = fileList
-            .flatMap(season => season.files)
-            .find(file => file.url === currentFile);
-
-        updatePlayerSource(selectedFileMetadata);
-
-        if (!playerInstance.current && playerRef.current) {
-            console.log("Initializing player on select file...");
-            initializePlayer();
-        }
-
-    }, [currentFile]);
-
-    const handleToggleSeason = seasonIndex => {
+    const handleToggleSeason = (seasonIndex) => {
         setOpenSeasons(prev => ({
             ...prev,
             [seasonIndex]: !prev[seasonIndex],
         }));
     };
 
-    const handleSelectFile = url => {
-        setCurrentFile(url);
-        const selectedFileMetadata = fileList
-            .flatMap(season => season.files)
-            .find(file => file.url === currentFile);
-
-        // updatePlayerSource(selectedFileMetadata);
-    };
-
     if (loading) return <Typography>Loading...</Typography>;
     if (error) return <Typography color="error">{error}</Typography>;
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'row', height: '100vh', width: '100vw', backgroundColor: palette.background.page, overflow: 'hidden' }}>
-            <Box
-                sx={{
-                    flex: 3,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    backgroundColor: palette.background.dark,
-                    padding: 2,
-                }}
+        <>
+            {/* <Menu
+                anchorEl={settingsAnchorEl}
+                open={Boolean(settingsAnchorEl)}
+                onClose={handleCloseSettingsMenu}
             >
-                {currentFile ? (
-                    <div data-vjs-player style={{ width: '100%', height: '100%' }}>
-                        <video ref={playerRef} className="video-js" />
-                    </div>
-                ) : (
-                    <Typography variant="h6" sx={{ color: palette.text.lightPrimary }}>
-                        No video selected
-                    </Typography>
-                )}
-            </Box>
+                <MenuItem>
+                    <Checkbox
+                        checked={skipTimeEnabled}
+                        onChange={handleToggleSkipTime}
+                        icon={<CheckBoxOutlineBlank />}
+                        checkedIcon={<CheckBox />}
+                    />
+                    <Typography sx={{ flex: 1 }}>Час для пропуску</Typography>
+                    <IconButton onClick={handleEditSkipTime}>
+                        <Settings />
+                    </IconButton>
+                </MenuItem>
+            </Menu> */}
+            <Box sx={{ display: 'flex', flexDirection: 'row', height: '100vh', width: '100vw', backgroundColor: palette.background.page, overflow: 'hidden' }}>
+                <Box
+                    sx={{
+                        flex: 3,
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        backgroundColor: palette.background.dark,
+                        padding: 2,
+                    }}
+                >
+                    <PlayerControls
+                        currentFile={currentFile}
+                        currentTimeToSkip={currentTimeToSkipRef.current}
+                        skipTimeEnabled={skipTimeEnabled}
+                        handleVideoEnd={handleVideoEnd}
+                    />
 
-            <Box
-                sx={{
-                    flex: 1,
-                    overflow: 'hidden',
-                    borderLeft: 'none',
-                    padding: 2,
-                    backgroundColor: palette.background.card,
-                }}
-            >
-                <Typography variant="h6" sx={{ marginBottom: 2, color: palette.text.lightPrimary }}>
-                    {fileList.length > 0 && title ? title : 'Files'}
-                </Typography>
-                {fileList.length > 0 ? (
-                    <List>
-                        {fileList.map((season, seasonIndex) => (
-                            <Fragment key={seasonIndex}>
-                                <ListItem disablePadding sx={{ cursor: 'pointer' }} onClick={() => handleToggleSeason(seasonIndex)}>
-                                    <ListItemText primary={season.seasonTitle} sx={{ color: palette.text.lightPrimary }} />
-                                    {openSeasons[seasonIndex] ? <ExpandLess /> : <ExpandMore />}
-                                </ListItem>
-                                <Collapse in={openSeasons[seasonIndex]} timeout="auto" unmountOnExit>
-                                    {season.files.map((file, fileIndex) => (
-                                        <ListItem
-                                            key={fileIndex}
-                                            button
-                                            onClick={() => handleSelectFile(file.url)}
-                                            selected={currentFile === file.url}
-                                            sx={{
-                                                cursor: 'pointer',
-                                                color: currentFile === file.url ? palette.primary : palette.text.lightPrimary,
-                                                backgroundColor: currentFile === file.url ? palette.background.paper : 'transparent',
-                                                '&:hover': { backgroundColor: palette.secondary, color: palette.text.lightSecondary },
-                                                '&:active': { backgroundColor: palette.primary, opacity: 0.8 },
-                                            }}
-                                        >
-                                            <ListItemText primary={file.name} />
-                                        </ListItem>
-                                    ))}
-                                </Collapse>
-                            </Fragment>
-                        ))}
-                    </List>
-                ) : (
-                    <Typography variant="body1" sx={{ color: palette.text.lightSecondary }}>
-                        No files available
-                    </Typography>
-                )}
+                </Box>
+
+                <Box
+                    sx={{
+                        flex: 1,
+                        overflowY: 'auto',
+                        borderLeft: 'none',
+                        padding: 2,
+                        backgroundColor: palette.background.card,
+                        '::-webkit-scrollbar': { display: 'none' },
+                        '-ms-overflow-style': 'none',
+                        'scrollbar-width': 'none',
+                    }}
+                >
+                    <FileList
+                        fileList={fileList}
+                        currentFile={currentFile}
+                        openSeasons={openSeasons}
+                        handleToggleSeason={handleToggleSeason}
+                        handleSelectFile={handleSelectFile}
+                        palette={palette}
+                        lastWatched={JSON.parse(localStorage.getItem('lastWatched'))?.fileUrl}
+                    />
+                </Box>
             </Box>
-        </Box>
+        </>
     );
 };
 

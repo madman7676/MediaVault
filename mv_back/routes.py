@@ -1,11 +1,13 @@
 from flask import jsonify, request, send_file, Response
 import os
 from metadata import load_metadata, save_metadata, auto_add_metadata, find_metadata_item
+from analyze_video import analyze_video, clear_analysis_cache
 from thumbnails import get_or_create_thumbnail
 from config import THUMBNAILS_DIR, MOVIES_PATHS, SERIES_PATHS
 from datetime import datetime
 import mimetypes
 import subprocess
+from concurrent.futures import ThreadPoolExecutor
 
 def convert_to_mp4(input_path, output_path):
     command = [
@@ -24,7 +26,6 @@ def convert_to_mp4(input_path, output_path):
         return False
     return True
 
-
 if not os.path.exists(THUMBNAILS_DIR):
     os.makedirs(THUMBNAILS_DIR)
 
@@ -32,7 +33,164 @@ def error_response(message, status=400):
     return jsonify({"status": "error", "message": message}), status
 
 def register_routes(app):
+    
+    @app.route('/api/metadata/time_to_skip', methods=['POST'])
+    def update_time_to_skip():
+        """
+        Оновлює параметр `timeToSkip` у метаданих для вказаного файлу серіалу.
 
+        Body Parameters:
+            path (str): Шлях до сезону.
+            name (str): Назва файлу у сезоні.
+            timeToSkip (list): Масив таймкодів для пропуску у форматі [{"start": <start>, "end": <end>}].
+
+        Returns:
+            Response: Статус оновлення метаданих.
+        """
+        data = request.json
+        season_path = data.get('path')  # Шлях до сезону
+        file_name = data.get('name')    # Назва файлу
+        time_to_skip = data.get('timeToSkip')  # Таймкоди для пропуску
+
+        if not season_path or not file_name or not time_to_skip:
+            return error_response("Fields `path`, `name`, and `timeToSkip` are required", 400)
+
+        # Завантаження метаданих
+        try:
+            metadata = load_metadata()
+        except Exception as e:
+            return error_response(f"Failed to load metadata: {str(e)}", 500)
+
+        # Оновлення метаданих
+        updated = False
+        for series in metadata.get("series", []):
+            for season in series.get("seasons", []):
+                if os.path.normpath(season.get("path")) == os.path.normpath(season_path):
+                    for file in season.get("files", []):
+                        if file.get("name") == file_name:
+                            file["timeToSkip"] = time_to_skip
+                            series["auto_added"] = False  # Позначення серіалу як вручну зміненого
+                            updated = True
+                            break
+
+        if not updated:
+            return error_response("File not found in metadata", 404)
+
+        # Збереження метаданих
+        try:
+            save_metadata(metadata)
+        except Exception as e:
+            return error_response(f"Failed to update metadata: {str(e)}", 500)
+
+        return jsonify({"status": "success", "message": "Metadata updated successfully"}), 200
+
+
+
+    
+    @app.route('/api/analyze/clear_cache', methods=['POST'])
+    def clear_cache_route():
+        """
+        Видаляє кешований результат аналізу для вказаного відеофайлу.
+
+        Body Parameters:
+            path (str): Шлях до відеофайлу.
+
+        Returns:
+            Response: Результат видалення кешу.
+        """
+        video_path = request.json.get('path')
+        if not video_path:
+            return error_response("Path parameter is required",400)
+
+        try:
+            clear_analysis_cache(video_path=video_path)
+            return jsonify({"status": "success", "message": f"Cache cleared for file: {video_path}"}), 200
+        except Exception as e:
+            return error_response(f"Failed to clear cache for file {video_path}", 404)
+            # error_response(f"Failed to clear cache for file {video_path}: {e}")
+            # return jsonify({"status": "error", "message": str(e)}), 500
+
+    @app.route('/api/analyze/video', methods=['GET'])
+    def get_video_analysis():
+        """
+        Повертає результати аналізу для конкретного відео.
+
+        Query Parameters:
+            path (str): Шлях до відеофайлу.
+
+        Returns:
+            Response: Результати аналізу або помилка.
+        """
+        video_path = request.args.get('path')
+        if not video_path or not os.path.exists(video_path):
+            return error_response("File not found", 404)
+
+        metadata = load_metadata()
+        for series in metadata.get("series", []):
+            for season in series.get("seasons", []):
+                for file in season.get("files", []):
+                    if os.path.normpath(os.path.join(season["path"], file["name"])) == os.path.normpath(video_path):
+                        return jsonify({"status": "success", "recommendToSkip": file.get("recommendToSkip", [])})
+
+        return error_response("Analysis not found", 404)
+
+    @app.route('/api/analyze/series/<string:series_id>', methods=['POST'])
+    def analyze_series(series_id):
+        """
+        Запускає аналіз для серіалу за його ідентифікатором з використанням паралельної обробки.
+
+        Parameters:
+            series_id (str): Унікальний ідентифікатор серіалу.
+
+        Returns:
+            Response: Статус запуску аналізу.
+        """
+        metadata = load_metadata()
+        series, _ = find_metadata_item(metadata, item_id=series_id)
+
+        if not series or series.get("type") != "series":
+            return error_response("Series not found", 404)
+
+        def process_video(file_info):
+            video_path = os.path.join(file_info["season_path"], file_info["name"])
+            analysis_result = analyze_video(video_path)
+            file_info["file"]["recommendToSkip"] = analysis_result
+            return {"file": file_info["name"], "recommendToSkip": analysis_result}
+
+        files_to_analyze = []
+        for season in series.get("seasons", []):
+            for file in season.get("files", []):
+                files_to_analyze.append({"season_path": season["path"], "name": file["name"], "file": file})
+
+        with ThreadPoolExecutor(max_workers=4) as executor:
+            results = list(executor.map(process_video, files_to_analyze))
+
+        save_metadata(metadata)
+        return jsonify({"status": "success", "results": results})
+    
+    @app.route('/api/analyze/file', methods=['POST'])
+    def analyze_file():
+        """
+        Аналізує один відеофайл та повертає результати.
+
+        Query Parameters:
+            path (str): Шлях до відеофайлу.
+
+        Returns:
+            Response: Результати аналізу або повідомлення про помилку.
+        """
+        video_path = request.json.get('path')
+
+        if not video_path or not os.path.exists(video_path):
+            return jsonify({"status": "error", "message": "File not found or invalid path"}), 404
+
+        try:
+            results = analyze_video(video_path)
+            return jsonify({"status": "success", "results": results})
+        except Exception as e:
+            return jsonify({"status": "error", "message": str(e)}), 500
+
+    
     @app.route('/api/video', methods=['GET'])
     def serve_video_with_range():
         """
