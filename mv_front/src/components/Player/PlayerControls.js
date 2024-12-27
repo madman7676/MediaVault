@@ -33,6 +33,44 @@ const PlayerControls = ({
             }
         });
 
+        // Власні обробники хоткеїв
+        playerInstance.current.on('keydown', function (event) {
+            switch (event.key) {
+                case ' ':
+                    // Пробіл — відтворити / поставити на паузу
+                    playerInstance.current.paused() ? playerInstance.current.play() : playerInstance.current.pause();
+                    break;
+                case 'ArrowRight':
+                    // Стрілка вправо — перемотати на 10 секунд
+                    playerInstance.current.currentTime(playerInstance.current.currentTime() + 5);
+                    break;
+                case 'ArrowLeft':
+                    // Стрілка вліво — перемотати на 10 секунд назад
+                    playerInstance.current.currentTime(playerInstance.current.currentTime() - 5);
+                    break;
+                case 'ArrowUp':
+                    // Стрілка вгору — збільшити гучність
+                    let volume = playerInstance.current.volume();
+                    if (volume < 1) playerInstance.current.volume(volume + 0.1);
+                    break;
+                case 'ArrowDown':
+                    // Стрілка вниз — зменшити гучність
+                    volume = playerInstance.current.volume();
+                    if (volume > 0) playerInstance.current.volume(volume - 0.1);
+                    break;
+                case 'f':
+                    // 'f' — на повний екран
+                    if (playerInstance.current.isFullscreen()) {
+                        playerInstance.current.exitFullscreen();
+                    } else {
+                        playerInstance.current.requestFullscreen();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        });
+
         const controlBar = playerInstance.current.controlBar;
         ['currentTimeDisplay', 'durationDisplay', 'timeDivider'].forEach((child) => {
             const component = controlBar.getChild(child);
