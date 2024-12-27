@@ -2,6 +2,7 @@
 import React, { useEffect, useRef } from 'react';
 import videojs from 'video.js';
 import 'video.js/dist/video-js.css';
+import 'videojs-hotkeys';
 
 const PlayerControls = ({
     currentFile,
@@ -14,6 +15,8 @@ const PlayerControls = ({
     const playerInstance = useRef(null);
 
     const initializePlayer = () => {
+        if (playerInstance.current) return; // Prevent re-initialization
+
         playerInstance.current = videojs(playerRef.current, {
             controls: true,
             autoplay: false,
@@ -31,6 +34,12 @@ const PlayerControls = ({
                     'fullscreenToggle'
                 ]
             }
+        });
+
+        playerInstance.current.hotkeys({
+            volumeStep: 0.1,
+            seekStep: 5,
+            enableModifiersForNumbers: false
         });
 
         const controlBar = playerInstance.current.controlBar;
@@ -52,16 +61,15 @@ const PlayerControls = ({
                 title: 'Settings',
                 ariaLabel: 'Settings',
             });
-            settingsButton.style.fontSize = '16px'; // Розмір іконки
-            settingsButton.style.width = '40px'; // Розмір кнопки
-            settingsButton.style.height = '30px'; // Розмір кнопки
+            settingsButton.style.fontSize = '16px';
+            settingsButton.style.width = '40px';
+            settingsButton.style.height = '30px';
             settingsButton.style.display = 'inline-flex';
             settingsButton.style.justifyContent = 'center';
             settingsButton.style.alignItems = 'center';
         
             controlBar.el().appendChild(settingsButton);
 
-            // Переміщаємо кнопку перед `fullscreenControl`
             const fullscreenControl = controlBar.el().querySelector('.vjs-fullscreen-control');
             if (fullscreenControl) {
                 controlBar.el().insertBefore(settingsButton, fullscreenControl);
@@ -78,7 +86,6 @@ const PlayerControls = ({
                 `
             });
 
-            // Стилі для прихованого меню
             menu.style.display = 'none';
             menu.style.position = 'absolute';
             menu.style.backgroundColor = '#000';
@@ -87,14 +94,28 @@ const PlayerControls = ({
             menu.style.borderRadius = '4px';
 
             settingsButton.addEventListener('click', (event) => {
-                event.stopPropagation(); // Запобігає закриттю при кліку на кнопку
+                event.stopPropagation();
                 const isMenuOpen = menu.style.display === 'block';
                 menu.style.display = isMenuOpen ? 'none' : 'block';
-            
-                // Розташування меню під кнопкою
+
                 const rect = settingsButton.getBoundingClientRect();
-                menu.style.top = `${rect.bottom + window.scrollY}px`;
-                menu.style.left = `${rect.left + window.scrollX}px`;
+                const menuWidth = 200; // Assume menu width for calculations
+                const menuHeight = 120; // Assume menu height for calculations
+
+                let top = rect.bottom + window.scrollY;
+                let left = rect.left + window.scrollX;
+
+                // Ensure menu stays within viewport
+                if (top + menuHeight > window.innerHeight + window.scrollY) {
+                    top = rect.top + window.scrollY - menuHeight;
+                }
+
+                if (left + menuWidth > window.innerWidth + window.scrollX) {
+                    left = window.innerWidth + window.scrollX - menuWidth;
+                }
+
+                menu.style.top = `${top}px`;
+                menu.style.left = `${left}px`;
             });
 
             document.addEventListener('click', () => {
@@ -104,13 +125,12 @@ const PlayerControls = ({
             menu.addEventListener('click', (event) => {
                 if (event.target.classList.contains('vjs-menu-item')) {
                     console.log(`Selected: ${event.target.textContent}`);
-                    menu.style.display = 'none'; // Закрити меню після вибору
+                    menu.style.display = 'none';
                 }
             });            
 
             controlBar.el().appendChild(menu);
         }
-        
 
         playerInstance.current.on('ended', handleVideoEnd);
     };
@@ -132,9 +152,24 @@ const PlayerControls = ({
         if (playerInstance.current && currentFile) {
             playerInstance.current.src({ src: currentFile, type: 'video/mp4' });
             playerInstance.current.load();
+    
             playerInstance.current.play().catch(console.error);
         }
     }, [currentFile]);
+
+    useEffect(() => {
+        if (playerInstance.current) {
+            playerInstance.current.on('ended', () => {
+                handleVideoEnd();
+            });
+        }
+    
+        return () => {
+            if (playerInstance.current) {
+                playerInstance.current.off('ended');
+            }
+        };
+    }, [handleVideoEnd]);
 
     useEffect(() => {
         if (playerInstance.current) {

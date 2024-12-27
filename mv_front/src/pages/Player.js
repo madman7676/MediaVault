@@ -66,6 +66,8 @@ const Player = () => {
         if (currentIndex !== -1 && currentIndex < flatFileList.length - 1) {
             const nextFile = flatFileList[currentIndex + 1];
             if (nextFile) {
+                currentTimeToSkipRef.current = nextFile.timeToSkip || [];
+
                 setCurrentFile(nextFile.url);
                 localStorage.setItem('lastWatched', JSON.stringify({ itemId, fileUrl: nextFile.url }));
             }
