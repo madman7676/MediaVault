@@ -37,6 +37,31 @@ const PlayerControls = ({
         setShowTimeToSkipMenu(false);
     };
 
+    const renderTimeSkips = (intervals) => {
+        const progressBar = document.querySelector('.vjs-progress-holder');
+        if (!progressBar || !playerInstance.current || !playerInstance.current.duration()) return;
+
+        // Очистити попередні елементи
+        const existingSkips = progressBar.querySelectorAll('.time-skip-highlight');
+        existingSkips.forEach((element) => element.remove());
+
+        const videoDuration = playerInstance.current.duration();
+
+        // Додати нові
+        intervals.forEach(({ start, end }) => {
+            if (start >= 0 && end <= videoDuration) {
+                const skipElement = document.createElement('div');
+                skipElement.className = 'time-skip-highlight';
+                skipElement.style.position = 'absolute';
+                skipElement.style.height = '100%';
+                skipElement.style.backgroundColor = 'rgba(0, 0, 255, 0.5)';
+                skipElement.style.left = `${(start / videoDuration) * 100}%`;
+                skipElement.style.width = `${((end - start) / videoDuration) * 100}%`;
+                progressBar.appendChild(skipElement);
+            }
+        });
+    };
+
     const initializePlayer = () => {
         if (playerInstance.current) return; // Prevent re-initialization
 
@@ -175,8 +200,9 @@ const PlayerControls = ({
                 const timeToSkip = await fetchTimeToSkip(currentPath, currentName);
                 console.log('Fetched timeToSkip:', timeToSkip);
                 currentTimeToSkip.current = timeToSkip;
-                currentPathRef.current=currentPath;
-                currentNameRef.current=currentName;
+                currentPathRef.current = currentPath;
+                currentNameRef.current = currentName;
+                renderTimeSkips(timeToSkip); // Рендерити пропуски
             } catch (error) {
                 console.error(`Error fetching timeToSkip: ${error.message}`);
             }
@@ -186,20 +212,6 @@ const PlayerControls = ({
             loadTimeToSkip();
         }
     }, [currentPath, currentName]);
-
-    useEffect(() => {
-        if (playerInstance.current) {
-            playerInstance.current.on('ended', () => {
-                handleVideoEnd();
-            });
-        }
-
-        return () => {
-            if (playerInstance.current) {
-                playerInstance.current.off('ended');
-            }
-        };
-    }, [handleVideoEnd]);
 
     useEffect(() => {
         if (playerInstance.current) {
@@ -217,11 +229,17 @@ const PlayerControls = ({
                 }
             };
 
+            const handleLoadedMetadata = () => {
+                renderTimeSkips(currentTimeToSkip.current);
+            };
+
             playerInstance.current.on('timeupdate', handleTimeUpdate);
+            playerInstance.current.on('loadedmetadata', handleLoadedMetadata);
 
             return () => {
                 if (playerInstance.current) {
                     playerInstance.current.off('timeupdate', handleTimeUpdate);
+                    playerInstance.current.off('loadedmetadata', handleLoadedMetadata);
                 }
             };
         }
@@ -236,6 +254,7 @@ const PlayerControls = ({
                     onIntervalsChange={(updatedIntervals) => {
                         console.log('Updated intervals:', updatedIntervals);
                         currentTimeToSkip.current = updatedIntervals;
+                        renderTimeSkips(updatedIntervals); // Рендерити пропуски
                     }}
                     onClose={handleCloseTimeToSkipMenu}
                     currentPath={currentPathRef.current}
