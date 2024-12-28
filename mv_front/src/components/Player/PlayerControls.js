@@ -245,6 +245,24 @@ const PlayerControls = ({
         }
     }, [currentTimeToSkip, skipTimeEnabled]);
 
+    useEffect(() => {
+        if (!playerInstance.current) return;
+    
+        const onEnded = () => {
+            console.log('Video ended');
+            handleVideoEnd();
+        };
+    
+        playerInstance.current.on('ended', onEnded);
+    
+        return () => {
+            if (playerInstance.current) {
+                console.log('Removing ended listener');
+                playerInstance.current.off('ended', onEnded);
+            }
+        };
+    }, [handleVideoEnd]);    
+
     return (
         <div data-vjs-player style={{ width: '100%', height: '100%' }}>
             <video ref={playerRef} className="video-js" />

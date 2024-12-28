@@ -20,10 +20,35 @@ const Player = () => {
     const [openSeasons, setOpenSeasons] = useState({});
     const [skipTimeEnabled, setSkipTimeEnabled] = useState(true);
     const { itemId } = useParams();
-    const [currentPath, setCurrentPath] = useState(null);
+    const allPaths = useRef([]);
+    const currentPath = useRef(null);
 
     const handleToggleSkipTime = () => {
         setSkipTimeEnabled((prev) => !prev);
+    };
+
+    function getLastIntFromString(input) {
+        const parts = input.trim().split(/\s+/); // Розбиваємо рядок на частини
+        const lastPart = parts[parts.length - 1]; // Беремо останню частину
+    
+        const parsedValue = parseInt(lastPart, 10); // Пробуємо перетворити в int
+        return isNaN(parsedValue) ? 1 : parsedValue; // Перевіряємо, чи вдалося
+    }
+
+    const getCurrentPath = (itemList, itemName) => {
+        if (!itemList || !itemList.item || !itemList.item.path || !itemList.item.seasons) {
+            return null; // Перевірка на валідність структури
+        }
+    
+        for (const season of itemList.item.seasons) {
+            for (const file of season.files) {
+                if (file.name === itemName) {
+                    return itemList.item.path; // Повертаємо path, якщо знайдено
+                }
+            }
+        }
+    
+        return null; // Якщо файл не знайдено
     };
 
     const findFileName = (url) => {
@@ -66,7 +91,7 @@ const Player = () => {
         if (currentIndex !== -1 && currentIndex < flatFileList.length - 1) {
             const nextFile = flatFileList[currentIndex + 1];
             if (nextFile) {
-                handleFetchTimeToSkip(currentPath, nextFile.name);
+                handleFetchTimeToSkip(currentPath.current, nextFile.name);
                 currentTimeToSkipRef.current = nextFile.timeToSkip || [];
 
                 setCurrentFile(nextFile.url);
@@ -80,7 +105,7 @@ const Player = () => {
             const item = await fetchMetadataById(itemId);
             setTitle(item.title || 'Files');
             setFileList(processFiles(item));
-            setCurrentPath(item.path);
+            allPaths.current=item.seasons.map(season => season.path);
         } catch (err) {
             setError(`Error fetching metadata: ${err.message}`);
         } finally {
@@ -111,11 +136,14 @@ const Player = () => {
 
     const handleSelectFile = (url) => {
         const selectedFileMetadata = fileList
-            .flatMap(season => season.files)
+            .flatMap(season => {
+                if (season.files.some(file=>file.url === url)) currentPath.current=allPaths.current[(getLastIntFromString(season.seasonTitle)-1)];
+                return season.files;
+            })
             .find(file => file.url === url);
 
         if (selectedFileMetadata) {
-            handleFetchTimeToSkip(currentPath, selectedFileMetadata.name);
+            handleFetchTimeToSkip(currentPath.current, selectedFileMetadata.name);
         }
         setCurrentFile(url);
         localStorage.setItem('lastWatched', JSON.stringify({ itemId, fileUrl: url }));
@@ -168,7 +196,7 @@ const Player = () => {
                 <PlayerControls
                     currentFile={currentFile}
                     currentName={findFileName(currentFile)}
-                    currentPath={currentPath}
+                    currentPath={currentPath.current}
                     // currentTimeToSkip={currentTimeToSkipRef.current}
                     skipTimeEnabled={skipTimeEnabled}
                     handleVideoEnd={handleVideoEnd}
