@@ -1,10 +1,10 @@
 // MediaVault component using CatalogCard
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import CatalogCard from '../components/CatalogCard';
-import config from '../config.json';
-import palette from '../theme/palette';
+import { fetchMetadata } from '../api/metadataAPI';
+import { fetchThumbnail } from '../api/thumbnailAPI';
 import { Grid2 as Grid, CssBaseline, ThemeProvider, createTheme } from '@mui/material';
+import palette from '../theme/palette';
 
 const darkTheme = createTheme({
     palette: {
@@ -25,33 +25,11 @@ const MediaVault = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const fetchThumbnail = async (videoPath) => {
-        const cacheKey = `thumbnail_${videoPath}`;
-        const cachedThumbnail = sessionStorage.getItem(cacheKey);
-
-        if (cachedThumbnail) {
-            return cachedThumbnail;
-        }
-
-        try {
-            const response = await axios.get(`${config.API_BASE_URL}/api/thumbnail`, {
-                params: { video_path: videoPath },
-            });
-
-            const thumbnailUrl = `${response.config.url}?video_path=${videoPath}`;
-            sessionStorage.setItem(cacheKey, thumbnailUrl);
-            return thumbnailUrl;
-        } catch (err) {
-            console.error(`Failed to fetch thumbnail for ${videoPath}:`, err);
-            return null;
-        }
-    };
-
     useEffect(() => {
-        const fetchMetadata = async () => {
+        const fetchCollections = async () => {
             try {
-                const response = await axios.get(`${config.API_BASE_URL}/api/metadata`);
-                const { movies, series } = response.data;
+                const data = await fetchMetadata();
+                const { movies, series } = data;
 
                 const movieCollections = await Promise.all(
                     movies.map(async (movie) => {
@@ -87,7 +65,7 @@ const MediaVault = () => {
             }
         };
 
-        fetchMetadata();
+        fetchCollections();
     }, []);
 
     if (loading) return <div>Loading...</div>;
@@ -106,7 +84,7 @@ const MediaVault = () => {
                                 type={collection.type} 
                                 partsCount={collection.partsCount} 
                                 thumbnailUrl={collection.thumbnailUrl} 
-                                link={'/player/'+collection.id}
+                                link={'/player/' + collection.id}
                             />
                         </Grid>
                     ))}

@@ -1,18 +1,41 @@
 // PlayerControls.js: Component for managing the video.js player
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import ReactDOM from 'react-dom/client';
 import videojs from 'video.js';
 import 'video.js/dist/video-js.css';
 import 'videojs-hotkeys';
+import SettingsMenu from './SettingsMenu';
+import TimeToSkipSettingsMenu from './TimeToSkipSettingsMenu';
+import { fetchTimeToSkip } from '../../api/metadataAPI';
 
 const PlayerControls = ({
     currentFile,
+    currentPath,
+    currentName,
     onPlayerReady,
     handleVideoEnd,
-    currentTimeToSkip,
     skipTimeEnabled
 }) => {
     const playerRef = useRef(null);
     const playerInstance = useRef(null);
+    const settingsButtonRef = useRef(null);
+    const settingsMenuRef = useRef(null);
+    const timeToSkipMenuRef = useRef(null);
+    const currentTimeToSkip = useRef([]);
+    const currentPathRef = useRef(null);
+    const currentNameRef = useRef(null);
+    const [showTimeToSkipMenu, setShowTimeToSkipMenu] = useState(false);
+
+    const handleOptionSelect = (option, menu) => {
+        if (option === 'openTimeToSkipMenu') {
+            setShowTimeToSkipMenu(true);
+        }
+        menu.style.display = 'none';
+    };
+
+    const handleCloseTimeToSkipMenu = () => {
+        setShowTimeToSkipMenu(false);
+    };
 
     const initializePlayer = () => {
         if (playerInstance.current) return; // Prevent re-initialization
@@ -34,6 +57,16 @@ const PlayerControls = ({
                     'fullscreenToggle'
                 ]
             }
+        }, function() {
+            this.on('ready', () => {
+                const progressElement = this.el().querySelector('.vjs-play-progress.vjs-slider-bar');
+                if (progressElement) {
+                    const timeTooltip = progressElement.querySelector('.vjs-time-tooltip');
+                    if (timeTooltip) {
+                        timeTooltip.style.display = 'none';
+                    }
+                }
+            });
         });
 
         playerInstance.current.hotkeys({
@@ -56,6 +89,11 @@ const PlayerControls = ({
         });
 
         if (!controlBar.el().querySelector('.vjs-settings-button')) {
+            const settingsContainer = videojs.dom.createEl('div', {
+                className: 'vjs-settings-container',
+                style: 'position: relative; display: inline-block;'
+            });
+
             const settingsButton = videojs.dom.createEl('button', {
                 className: 'vjs-settings-button vjs-control vjs-button vjs-icon-cog',
                 title: 'Settings',
@@ -67,69 +105,43 @@ const PlayerControls = ({
             settingsButton.style.display = 'inline-flex';
             settingsButton.style.justifyContent = 'center';
             settingsButton.style.alignItems = 'center';
-        
-            controlBar.el().appendChild(settingsButton);
 
-            const fullscreenControl = controlBar.el().querySelector('.vjs-fullscreen-control');
-            if (fullscreenControl) {
-                controlBar.el().insertBefore(settingsButton, fullscreenControl);
-            }
+            settingsButtonRef.current = settingsButton;
 
-            const menu = videojs.dom.createEl('div', {
-                className: 'vjs-settings-menu',
-                innerHTML: `
-                    <ul class="vjs-menu-content">
-                        <li class="vjs-menu-item">Option 1</li>
-                        <li class="vjs-menu-item">Option 2</li>
-                        <li class="vjs-menu-item">Option 3</li>
-                    </ul>
-                `
-            });
+            const menu = document.createElement('div');
+            menu.id = 'settingsMenu';
+            const root = ReactDOM.createRoot(menu);
+            root.render(
+                <SettingsMenu
+                    ref={settingsMenuRef}
+                    buttonRef={settingsButtonRef}
+                    onOptionSelect={(option) => handleOptionSelect(option, menu)}
+                />
+            );
 
             menu.style.display = 'none';
             menu.style.position = 'absolute';
-            menu.style.backgroundColor = '#000';
-            menu.style.color = '#fff';
-            menu.style.padding = '10px';
-            menu.style.borderRadius = '4px';
 
             settingsButton.addEventListener('click', (event) => {
                 event.stopPropagation();
                 const isMenuOpen = menu.style.display === 'block';
                 menu.style.display = isMenuOpen ? 'none' : 'block';
-
-                const rect = settingsButton.getBoundingClientRect();
-                const menuWidth = 200; // Assume menu width for calculations
-                const menuHeight = 120; // Assume menu height for calculations
-
-                let top = rect.bottom + window.scrollY;
-                let left = rect.left + window.scrollX;
-
-                // Ensure menu stays within viewport
-                if (top + menuHeight > window.innerHeight + window.scrollY) {
-                    top = rect.top + window.scrollY - menuHeight;
+                if (settingsMenuRef.current) {
+                    settingsMenuRef.current.calculateMenuPosition(); // Виклик методу
                 }
-
-                if (left + menuWidth > window.innerWidth + window.scrollX) {
-                    left = window.innerWidth + window.scrollX - menuWidth;
-                }
-
-                menu.style.top = `${top}px`;
-                menu.style.left = `${left}px`;
             });
 
             document.addEventListener('click', () => {
                 menu.style.display = 'none';
             });
 
-            menu.addEventListener('click', (event) => {
-                if (event.target.classList.contains('vjs-menu-item')) {
-                    console.log(`Selected: ${event.target.textContent}`);
-                    menu.style.display = 'none';
-                }
-            });            
+            settingsContainer.appendChild(settingsButton);
+            settingsContainer.appendChild(menu);
 
-            controlBar.el().appendChild(menu);
+            const fullscreenControl = controlBar.el().querySelector('.vjs-fullscreen-control');
+            if (fullscreenControl) {
+                controlBar.el().insertBefore(settingsContainer, fullscreenControl);
+            }
         }
 
         playerInstance.current.on('ended', handleVideoEnd);
@@ -152,10 +164,28 @@ const PlayerControls = ({
         if (playerInstance.current && currentFile) {
             playerInstance.current.src({ src: currentFile, type: 'video/mp4' });
             playerInstance.current.load();
-    
+
             playerInstance.current.play().catch(console.error);
         }
     }, [currentFile]);
+
+    useEffect(() => {
+        const loadTimeToSkip = async () => {
+            try {
+                const timeToSkip = await fetchTimeToSkip(currentPath, currentName);
+                console.log('Fetched timeToSkip:', timeToSkip);
+                currentTimeToSkip.current = timeToSkip;
+                currentPathRef.current=currentPath;
+                currentNameRef.current=currentName;
+            } catch (error) {
+                console.error(`Error fetching timeToSkip: ${error.message}`);
+            }
+        };
+
+        if (currentPath && currentName) {
+            loadTimeToSkip();
+        }
+    }, [currentPath, currentName]);
 
     useEffect(() => {
         if (playerInstance.current) {
@@ -163,7 +193,7 @@ const PlayerControls = ({
                 handleVideoEnd();
             });
         }
-    
+
         return () => {
             if (playerInstance.current) {
                 playerInstance.current.off('ended');
@@ -175,9 +205,9 @@ const PlayerControls = ({
         if (playerInstance.current) {
             const handleTimeUpdate = () => {
                 const currentTime = playerInstance.current.currentTime();
-                if (!currentTimeToSkip || currentTimeToSkip.length === 0 || !skipTimeEnabled) return;
+                if (!currentTimeToSkip.current || currentTimeToSkip.current.length === 0 || !skipTimeEnabled) return;
 
-                const skipInterval = currentTimeToSkip.find(
+                const skipInterval = currentTimeToSkip.current.find(
                     interval => currentTime >= interval.start && currentTime < interval.end
                 );
 
@@ -200,6 +230,18 @@ const PlayerControls = ({
     return (
         <div data-vjs-player style={{ width: '100%', height: '100%' }}>
             <video ref={playerRef} className="video-js" />
+            {showTimeToSkipMenu && (
+                <TimeToSkipSettingsMenu
+                    intervals={currentTimeToSkip.current}
+                    onIntervalsChange={(updatedIntervals) => {
+                        console.log('Updated intervals:', updatedIntervals);
+                        currentTimeToSkip.current = updatedIntervals;
+                    }}
+                    onClose={handleCloseTimeToSkipMenu}
+                    currentPath={currentPathRef.current}
+                    currentName={currentNameRef.current}
+                />
+            )}
         </div>
     );
 };

@@ -1,8 +1,8 @@
 // router.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import MediaVault from './pages/MediaVault';
-import Player from './pages/Player';
+import MediaVault from '../pages/MediaVault';
+import Player from '../pages/Player';
 
 const AppRouter = () => {
     return (

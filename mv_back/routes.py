@@ -34,6 +34,43 @@ def error_response(message, status=400):
 
 def register_routes(app):
     
+    @app.route('/api/metadata/time_to_skip', methods=['GET'])
+    def get_time_to_skip():
+        """
+        Повертає параметр `timeToSkip` для вказаного файлу сезону.
+
+        Query Parameters:
+            path (str): Шлях до сезону.
+            name (str): Назва файлу у сезоні.
+
+        Returns:
+            Response: Параметр `timeToSkip` або помилка.
+        """
+        data = request.args
+        season_path = data.get('path')  # Шлях до сезону
+        file_name = data.get('name')     # Назва файлу
+
+        if not season_path or not file_name:
+            return error_response("Fields `path` and `name` are required", 400)
+
+        # Завантаження метаданих
+        try:
+            metadata = load_metadata()
+        except Exception as e:
+            return error_response(f"Failed to load metadata: {str(e)}", 500)
+
+        # Пошук сезону і файлу
+        for series in metadata.get("series", []):
+            for season in series.get("seasons", []):
+                if os.path.normpath(season.get("path")) == os.path.normpath(season_path):
+                    for file in season.get("files", []):
+                        if file.get("name") == file_name:
+                            time_to_skip = file.get("timeToSkip", [])
+                            return jsonify({"status": "success", "timeToSkip": time_to_skip}), 200
+
+        return error_response("File not found in metadata", 404)
+
+    
     @app.route('/api/metadata/time_to_skip', methods=['POST'])
     def update_time_to_skip():
         """
