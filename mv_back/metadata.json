@@ -6,7 +6,7 @@
             "path": "F:\\Serials\\Futurama",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.227390",
+            "last_modified": "2025-01-19T13:03:27.162175",
             "type": "series",
             "seasons": [
                 {
@@ -422,7 +422,7 @@
             "path": "F:\\Serials\\Moon Knight - Season 1 (2022) WEBRip-AVC [Ukr.Eng] [Цікава Ідея]",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.230895",
+            "last_modified": "2025-01-19T13:03:27.165176",
             "type": "series",
             "seasons": [
                 {
@@ -457,7 +457,7 @@
             "path": "F:\\Serials\\Академія героїв",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.231896",
+            "last_modified": "2025-01-19T13:03:27.165176",
             "type": "series",
             "seasons": [
                 {
@@ -837,7 +837,7 @@
             "path": "F:\\Serials\\Аріфуєта",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.234398",
+            "last_modified": "2025-01-19T13:03:27.168180",
             "type": "series",
             "seasons": [
                 {
@@ -941,7 +941,7 @@
             "path": "F:\\Serials\\Безнадійний ледацюга Танака",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.234398",
+            "last_modified": "2025-01-19T13:03:27.169180",
             "type": "series",
             "seasons": [
                 {
@@ -1015,7 +1015,7 @@
             "path": "F:\\Serials\\Безробітний",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.235402",
+            "last_modified": "2025-01-19T13:03:27.170181",
             "type": "series",
             "seasons": [
                 {
@@ -1110,7 +1110,7 @@
             "path": "F:\\Serials\\Ванпанч",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.236402",
+            "last_modified": "2025-01-19T13:03:27.171180",
             "type": "series",
             "seasons": [
                 {
@@ -1238,7 +1238,7 @@
             "path": "F:\\Serials\\Восьмий син - Та ви знущаєтеся",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.237402",
+            "last_modified": "2025-01-19T13:03:27.172181",
             "type": "series",
             "seasons": [
                 {
@@ -1291,7 +1291,7 @@
             "path": "F:\\Serials\\Гарем",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.237402",
+            "last_modified": "2025-01-19T13:03:27.173180",
             "type": "series",
             "seasons": [
                 {
@@ -1344,7 +1344,7 @@
             "path": "F:\\Serials\\Готування просто неба з абсурдними здібностями [1080p] [Amanogawa]",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.238904",
+            "last_modified": "2025-01-19T13:03:27.173180",
             "type": "series",
             "seasons": [
                 {
@@ -1392,12 +1392,194 @@
             ]
         },
         {
+            "id": "9d65d6fa-9441-4007-89a6-4df4fe86affa",
+            "title": "Дайте цій скорботній душі спокій",
+            "path": "F:\\Serials\\Дайте цій скорботній душі спокій",
+            "tags": [],
+            "auto_added": false,
+            "last_modified": "2024-12-29T12:16:43.249130",
+            "type": "series",
+            "seasons": [
+                {
+                    "title": "Season 1",
+                    "path": "F:\\Serials\\Дайте цій скорботній душі спокій",
+                    "files": [
+                        {
+                            "name": "Nageki no Bourei wa Intai shitai - 01.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 513,
+                                    "end": 576
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Nageki no Bourei wa Intai shitai - 02.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 165,
+                                    "end": 253
+                                },
+                                {
+                                    "start": 1323,
+                                    "end": 1431
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Nageki no Bourei wa Intai shitai - 03.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 75,
+                                    "end": 197
+                                },
+                                {
+                                    "start": 1336,
+                                    "end": 1433
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Nageki no Bourei wa Intai shitai - 04.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 143,
+                                    "end": 207
+                                },
+                                {
+                                    "start": 1344,
+                                    "end": 1431
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Nageki no Bourei wa Intai shitai - 05.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 81,
+                                    "end": 170
+                                },
+                                {
+                                    "start": 1322,
+                                    "end": 1384
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Nageki no Bourei wa Intai shitai - 06.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 44,
+                                    "end": 156
+                                },
+                                {
+                                    "start": 1367,
+                                    "end": 1431
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Nageki no Bourei wa Intai shitai - 07.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 150,
+                                    "end": 258
+                                },
+                                {
+                                    "start": 1290,
+                                    "end": 1397
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Nageki no Bourei wa Intai shitai - 08.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 191,
+                                    "end": 258
+                                },
+                                {
+                                    "start": 1342,
+                                    "end": 1433
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Nageki no Bourei wa Intai shitai - 09.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 109,
+                                    "end": 242
+                                },
+                                {
+                                    "start": 1311,
+                                    "end": 1420
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Nageki no Bourei wa Intai shitai - 10.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 51,
+                                    "end": 174
+                                },
+                                {
+                                    "start": 1369,
+                                    "end": 1432
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Nageki no Bourei wa Intai shitai - 11.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 135,
+                                    "end": 199
+                                },
+                                {
+                                    "start": 1354,
+                                    "end": 1433
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Nageki no Bourei wa Intai shitai - 12.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 88,
+                                    "end": 157
+                                },
+                                {
+                                    "start": 1366,
+                                    "end": 1433
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Nageki no Bourei wa Intai shitai - 13.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 1296,
+                                    "end": 1332
+                                },
+                                {
+                                    "start": 1356,
+                                    "end": 1389
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "id": "bcc32282-60bf-4391-b390-b257d0caa726",
             "title": "Золота Вермейл",
             "path": "F:\\Serials\\Золота Вермейл",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.238904",
+            "last_modified": "2025-01-19T13:03:27.174180",
             "type": "series",
             "seasons": [
                 {
@@ -1450,7 +1632,7 @@
             "path": "F:\\Serials\\Коли я переродився слизом",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.239907",
+            "last_modified": "2025-01-19T13:03:27.175180",
             "type": "series",
             "seasons": [
                 {
@@ -1725,7 +1907,7 @@
             "path": "F:\\Serials\\Лицар-скелет починає пригоди в іншому світі",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.241907",
+            "last_modified": "2025-01-19T13:03:27.177179",
             "type": "series",
             "seasons": [
                 {
@@ -1778,7 +1960,7 @@
             "path": "F:\\Serials\\Марш смерті",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.241907",
+            "last_modified": "2025-01-19T13:03:27.177179",
             "type": "series",
             "seasons": [
                 {
@@ -1831,7 +2013,7 @@
             "path": "F:\\Serials\\Найкращий у світі вбивця перероджується в іншому світі як аристократ",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.242907",
+            "last_modified": "2025-01-19T13:03:27.178178",
             "type": "series",
             "seasons": [
                 {
@@ -1879,12 +2061,193 @@
             ]
         },
         {
+            "id": "ea740761-2188-453b-8d55-d37b6d6fd406",
+            "title": "Небажано немертвий шукач пригод",
+            "path": "F:\\Serials\\Небажано немертвий шукач пригод",
+            "tags": [],
+            "auto_added": false,
+            "last_modified": "2024-12-30T13:09:02.894566",
+            "type": "series",
+            "seasons": [
+                {
+                    "title": "Season 1",
+                    "path": "F:\\Serials\\Небажано немертвий шукач пригод",
+                    "files": [
+                        {
+                            "name": "Небажано немертвий шукач пригод - 01.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 131,
+                                    "end": 220
+                                },
+                                {
+                                    "start": 1325,
+                                    "end": 1421
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Небажано немертвий шукач пригод - 02.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 66,
+                                    "end": 156
+                                },
+                                {
+                                    "start": 1325,
+                                    "end": 1421
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Небажано немертвий шукач пригод - 03.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 0,
+                                    "end": 161
+                                },
+                                {
+                                    "start": 1326,
+                                    "end": 1421
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Небажано немертвий шукач пригод - 04.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 90,
+                                    "end": 180
+                                },
+                                {
+                                    "start": 1325,
+                                    "end": 1420
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Небажано немертвий шукач пригод - 05.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 35,
+                                    "end": 123
+                                },
+                                {
+                                    "start": 1326,
+                                    "end": 1421
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Небажано немертвий шукач пригод - 06.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 0,
+                                    "end": 157
+                                },
+                                {
+                                    "start": 1327,
+                                    "end": 1420
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Небажано немертвий шукач пригод - 07.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 0,
+                                    "end": 136
+                                },
+                                {
+                                    "start": 1326,
+                                    "end": 1421
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Небажано немертвий шукач пригод - 08.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 44,
+                                    "end": 132
+                                },
+                                {
+                                    "start": 1325,
+                                    "end": 1421
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Небажано немертвий шукач пригод - 09.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 109,
+                                    "end": 197
+                                },
+                                {
+                                    "start": 1325,
+                                    "end": 1419
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Небажано немертвий шукач пригод - 10.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 56,
+                                    "end": 144
+                                },
+                                {
+                                    "start": 1325,
+                                    "end": 1421
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Небажано немертвий шукач пригод - 11.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 0,
+                                    "end": 55
+                                },
+                                {
+                                    "start": 136,
+                                    "end": 224
+                                },
+                                {
+                                    "start": 1326,
+                                    "end": 1421
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Небажано немертвий шукач пригод - 12.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 0,
+                                    "end": 37
+                                },
+                                {
+                                    "start": 95,
+                                    "end": 183
+                                },
+                                {
+                                    "start": 1274,
+                                    "end": 1354
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "id": "a6e47ac4-504f-413c-8c29-bb9fd68b967d",
             "title": "Невколупний",
             "path": "F:\\Serials\\Невколупний",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.243911",
+            "last_modified": "2025-01-19T13:03:27.179179",
             "type": "series",
             "seasons": [
                 {
@@ -1920,12 +2283,173 @@
             ]
         },
         {
+            "id": "36ed123a-7692-45cb-a43a-9a9c6dd69c8d",
+            "title": "Первый порядок",
+            "path": "F:\\Serials\\Первый порядок",
+            "tags": [],
+            "auto_added": false,
+            "last_modified": "2025-01-19T12:58:56.443046",
+            "type": "series",
+            "seasons": [
+                {
+                    "title": "Season 1",
+                    "path": "F:\\Serials\\Первый порядок",
+                    "files": [
+                        {
+                            "name": "Первый порядок 01.mp4",
+                            "timeToSkip": [
+                                {
+                                    "start": 0,
+                                    "end": 114
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Первый порядок 02.mp4",
+                            "timeToSkip": [
+                                {
+                                    "start": 0,
+                                    "end": 114
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Первый порядок 03.mp4",
+                            "timeToSkip": [
+                                {
+                                    "start": 0,
+                                    "end": 114
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Первый порядок 04.mp4",
+                            "timeToSkip": [
+                                {
+                                    "start": 0,
+                                    "end": 114
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Первый порядок 05.mp4",
+                            "timeToSkip": [
+                                {
+                                    "start": 0,
+                                    "end": 114
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Первый порядок 06.mp4",
+                            "timeToSkip": [
+                                {
+                                    "start": 0,
+                                    "end": 114
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Первый порядок 07.mp4",
+                            "timeToSkip": [
+                                {
+                                    "start": 0,
+                                    "end": 114
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Первый порядок 08.mp4",
+                            "timeToSkip": [
+                                {
+                                    "start": 0,
+                                    "end": 114
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Первый порядок 09.mp4",
+                            "timeToSkip": [
+                                {
+                                    "start": 0,
+                                    "end": 114
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Первый порядок 10.mp4",
+                            "timeToSkip": [
+                                {
+                                    "start": 0,
+                                    "end": 114
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Первый порядок 11.mp4",
+                            "timeToSkip": [
+                                {
+                                    "start": 0,
+                                    "end": 114
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Первый порядок 12.mp4",
+                            "timeToSkip": [
+                                {
+                                    "start": 0,
+                                    "end": 114
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Первый порядок 13.mp4",
+                            "timeToSkip": [
+                                {
+                                    "start": 0,
+                                    "end": 114
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Первый порядок 14.mp4",
+                            "timeToSkip": [
+                                {
+                                    "start": 0,
+                                    "end": 114
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Первый порядок 15.mp4",
+                            "timeToSkip": [
+                                {
+                                    "start": 0,
+                                    "end": 114
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Первый порядок 16.mp4",
+                            "timeToSkip": [
+                                {
+                                    "start": 0,
+                                    "end": 114
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "id": "332eddcb-ff20-47d3-9c69-430b242a0ca9",
             "title": "Переродження мечем",
             "path": "F:\\Serials\\Переродження мечем",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.244419",
+            "last_modified": "2025-01-19T13:03:27.179179",
             "type": "series",
             "seasons": [
                 {
@@ -1978,7 +2502,7 @@
             "path": "F:\\Serials\\Повелитель",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.244419",
+            "last_modified": "2025-01-19T13:03:27.180179",
             "type": "series",
             "seasons": [
                 {
@@ -2169,7 +2693,7 @@
             "path": "F:\\Serials\\Повтор цілителя",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.246425",
+            "last_modified": "2025-01-19T13:03:27.181180",
             "type": "series",
             "seasons": [
                 {
@@ -2425,7 +2949,7 @@
             "path": "F:\\Serials\\Світ отоме-гри занадто жорстокий до мобів",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.246425",
+            "last_modified": "2025-01-19T13:03:27.182232",
             "type": "series",
             "seasons": [
                 {
@@ -3052,12 +3576,65 @@
             ]
         },
         {
+            "id": "a458c49c-232a-4309-b34b-7b103b523eae",
+            "title": "Тільки я візьму новий рівень",
+            "path": "F:\\Serials\\Тільки я візьму новий рівень",
+            "tags": [],
+            "auto_added": true,
+            "last_modified": "2025-01-19T13:03:27.182232",
+            "type": "series",
+            "seasons": [
+                {
+                    "title": "Season 1",
+                    "path": "F:\\Serials\\Тільки я візьму новий рівень",
+                    "files": [
+                        {
+                            "name": "Solo Leveling - 01.mkv"
+                        },
+                        {
+                            "name": "Solo Leveling - 02.mkv"
+                        },
+                        {
+                            "name": "Solo Leveling - 03.mkv"
+                        },
+                        {
+                            "name": "Solo Leveling - 04.mkv"
+                        },
+                        {
+                            "name": "Solo Leveling - 05.mkv"
+                        },
+                        {
+                            "name": "Solo Leveling - 06.mkv"
+                        },
+                        {
+                            "name": "Solo Leveling - 07.mkv"
+                        },
+                        {
+                            "name": "Solo Leveling - 08.mkv"
+                        },
+                        {
+                            "name": "Solo Leveling - 09.mkv"
+                        },
+                        {
+                            "name": "Solo Leveling - 10.mkv"
+                        },
+                        {
+                            "name": "Solo Leveling - 11.mkv"
+                        },
+                        {
+                            "name": "Solo Leveling - 12.mkv"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "id": "2b746a49-b718-4f33-9d03-39c7cb3cf271",
             "title": "Фантазія місячного світла",
             "path": "F:\\Serials\\Фантазія місячного світла",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.247425",
+            "last_modified": "2025-01-19T13:03:27.183232",
             "type": "series",
             "seasons": [
                 {
@@ -3279,7 +3856,7 @@
             "path": "F:\\Serials\\Чи справді я найсильніший",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.247425",
+            "last_modified": "2025-01-19T13:03:27.184233",
             "type": "series",
             "seasons": [
                 {
@@ -3332,7 +3909,7 @@
             "path": "F:\\Serials\\Я не играю по правилам",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.247425",
+            "last_modified": "2025-01-19T13:03:27.184233",
             "type": "series",
             "seasons": [
                 {
@@ -3399,7 +3976,7 @@
             "path": "F:\\Movies\\Cloudy with a Chance of Meatballs. Dilogy",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.249939",
+            "last_modified": "2025-01-19T13:03:27.185231",
             "type": "collection",
             "parts": [
                 {
@@ -3418,7 +3995,7 @@
             "path": "F:\\Movies\\Riddick",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.249939",
+            "last_modified": "2025-01-19T13:03:27.186231",
             "type": "collection",
             "parts": [
                 {
@@ -3437,7 +4014,7 @@
             "path": "F:\\Movies\\Ukrainianize Marvel Cinematic Universe",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.249939",
+            "last_modified": "2025-01-19T13:03:27.186231",
             "type": "collection",
             "parts": [
                 {
@@ -3556,7 +4133,7 @@
             "path": "F:\\Movies\\X-Men. Collection",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.250944",
+            "last_modified": "2025-01-19T13:03:27.186231",
             "type": "collection",
             "parts": [
                 {
@@ -3635,7 +4212,7 @@
             "path": "F:\\Movies\\Собаче життя",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.251943",
+            "last_modified": "2025-01-19T13:03:27.187231",
             "type": "collection",
             "parts": [
                 {
@@ -3654,7 +4231,7 @@
             "path": "F:\\Movies\\Футурама",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.251943",
+            "last_modified": "2025-01-19T13:03:27.187231",
             "type": "collection",
             "parts": [
                 {
@@ -3681,7 +4258,7 @@
             "path": "F:\\Movies\\Як приборкати дракона",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.251943",
+            "last_modified": "2025-01-19T13:03:27.187231",
             "type": "collection",
             "parts": [
                 {
@@ -3693,364 +4270,48 @@
                     "path": "F:\\Movies\\Як приборкати дракона\\How to Train Your Dragon 2.mkv"
                 }
             ]
-        },
+        }
+    ],
+    "online_series": [
         {
-            "id": "0a8ccdee-9f9f-49ad-bac6-e1f257a1712d",
-            "title": "2012.mp4",
-            "path": "F:\\Movies\\2012.mp4",
-            "tags": [],
+            "id": "11c0ace4-8bdc-49cd-b637-9d8abbf10133",
+            "title": "Example Online Series",
+            "image_url": "https://example.com/images/series_cover.jpg",
             "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.251943",
-            "type": "collection",
-            "parts": [
+            "last_modified": "2025-01-06T09:20:23.181598",
+            "type": "online_series",
+            "seasons": [
                 {
-                    "title": "2012.mp4",
-                    "path": "F:\\Movies\\2012.mp4"
-                }
-            ]
-        },
-        {
-            "id": "8b45d61b-6701-4388-bf98-5ac5beb41358",
-            "title": "Absolutely Anything.avi",
-            "path": "F:\\Movies\\Absolutely Anything.avi",
-            "tags": [],
-            "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.251943",
-            "type": "collection",
-            "parts": [
+                    "title": "Season 1",
+                    "episodes": [
+                        {
+                            "title": "Episode 1",
+                            "url": "https://example.com/series/season1/episode1",
+                            "timeToSkip": [
+                                {
+                                    "start": 0,
+                                    "end": 60
+                                },
+                                {
+                                    "start": 1020,
+                                    "end": 1080
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Episode 2",
+                            "url": "https://example.com/series/season1/episode2"
+                        }
+                    ]
+                },
                 {
-                    "title": "Absolutely Anything.avi",
-                    "path": "F:\\Movies\\Absolutely Anything.avi"
-                }
-            ]
-        },
-        {
-            "id": "b7dcfe55-a7cc-43aa-834d-996b756a9559",
-            "title": "Big Hero 6 .mkv",
-            "path": "F:\\Movies\\Big Hero 6 .mkv",
-            "tags": [],
-            "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.251943",
-            "type": "collection",
-            "parts": [
-                {
-                    "title": "Big Hero 6 .mkv",
-                    "path": "F:\\Movies\\Big Hero 6 .mkv"
-                }
-            ]
-        },
-        {
-            "id": "c787995c-f64b-438d-aa1b-b8cccc8323ea",
-            "title": "Bolt .avi",
-            "path": "F:\\Movies\\Bolt .avi",
-            "tags": [],
-            "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.251943",
-            "type": "collection",
-            "parts": [
-                {
-                    "title": "Bolt .avi",
-                    "path": "F:\\Movies\\Bolt .avi"
-                }
-            ]
-        },
-        {
-            "id": "08449bd5-3bd7-4fa8-9da9-388ad59612dd",
-            "title": "Boss Level .mkv",
-            "path": "F:\\Movies\\Boss Level .mkv",
-            "tags": [],
-            "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.251943",
-            "type": "collection",
-            "parts": [
-                {
-                    "title": "Boss Level .mkv",
-                    "path": "F:\\Movies\\Boss Level .mkv"
-                }
-            ]
-        },
-        {
-            "id": "e3414f33-f7dd-44cc-99fd-f237f3ddeb2c",
-            "title": "Bruce Almighty .avi",
-            "path": "F:\\Movies\\Bruce Almighty .avi",
-            "tags": [],
-            "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.251943",
-            "type": "collection",
-            "parts": [
-                {
-                    "title": "Bruce Almighty .avi",
-                    "path": "F:\\Movies\\Bruce Almighty .avi"
-                }
-            ]
-        },
-        {
-            "id": "a07b39fc-e5aa-4317-96d3-ceb83e9c5760",
-            "title": "Edge of Tomorrow .mkv",
-            "path": "F:\\Movies\\Edge of Tomorrow .mkv",
-            "tags": [],
-            "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.251943",
-            "type": "collection",
-            "parts": [
-                {
-                    "title": "Edge of Tomorrow .mkv",
-                    "path": "F:\\Movies\\Edge of Tomorrow .mkv"
-                }
-            ]
-        },
-        {
-            "id": "7e7c3458-bcd0-4857-80b5-34932199ff8f",
-            "title": "Knowing .avi",
-            "path": "F:\\Movies\\Knowing .avi",
-            "tags": [],
-            "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.251943",
-            "type": "collection",
-            "parts": [
-                {
-                    "title": "Knowing .avi",
-                    "path": "F:\\Movies\\Knowing .avi"
-                }
-            ]
-        },
-        {
-            "id": "781bc580-81f2-4b2e-89d8-3ef5457220c3",
-            "title": "Liar Liar .mkv",
-            "path": "F:\\Movies\\Liar Liar .mkv",
-            "tags": [],
-            "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.252940",
-            "type": "collection",
-            "parts": [
-                {
-                    "title": "Liar Liar .mkv",
-                    "path": "F:\\Movies\\Liar Liar .mkv"
-                }
-            ]
-        },
-        {
-            "id": "9218eafc-2d04-40ff-8cb5-5583f16529a8",
-            "title": "Megamind .mkv",
-            "path": "F:\\Movies\\Megamind .mkv",
-            "tags": [],
-            "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.252940",
-            "type": "collection",
-            "parts": [
-                {
-                    "title": "Megamind .mkv",
-                    "path": "F:\\Movies\\Megamind .mkv"
-                }
-            ]
-        },
-        {
-            "id": "f498250f-c776-4907-bc70-aa760e1cc008",
-            "title": "Moonfall.avi",
-            "path": "F:\\Movies\\Moonfall.avi",
-            "tags": [],
-            "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.252940",
-            "type": "collection",
-            "parts": [
-                {
-                    "title": "Moonfall.avi",
-                    "path": "F:\\Movies\\Moonfall.avi"
-                }
-            ]
-        },
-        {
-            "id": "06b0dfff-459c-4828-8c52-6b8eb596ab92",
-            "title": "Mune, le gardien de la lune.mkv",
-            "path": "F:\\Movies\\Mune, le gardien de la lune.mkv",
-            "tags": [],
-            "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.252940",
-            "type": "collection",
-            "parts": [
-                {
-                    "title": "Mune, le gardien de la lune.mkv",
-                    "path": "F:\\Movies\\Mune, le gardien de la lune.mkv"
-                }
-            ]
-        },
-        {
-            "id": "2c100a55-7dc2-4aef-bb37-750a3b9c8c31",
-            "title": "Pitch Black .mkv",
-            "path": "F:\\Movies\\Pitch Black .mkv",
-            "tags": [],
-            "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.252940",
-            "type": "collection",
-            "parts": [
-                {
-                    "title": "Pitch Black .mkv",
-                    "path": "F:\\Movies\\Pitch Black .mkv"
-                }
-            ]
-        },
-        {
-            "id": "41e17057-df1b-45a8-bb1e-e8fb2ba29c14",
-            "title": "Pixels.avi",
-            "path": "F:\\Movies\\Pixels.avi",
-            "tags": [],
-            "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.252940",
-            "type": "collection",
-            "parts": [
-                {
-                    "title": "Pixels.avi",
-                    "path": "F:\\Movies\\Pixels.avi"
-                }
-            ]
-        },
-        {
-            "id": "a968feea-5440-4bf3-aeb6-183512c81af6",
-            "title": "Ratatouille.mkv",
-            "path": "F:\\Movies\\Ratatouille.mkv",
-            "tags": [],
-            "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.252940",
-            "type": "collection",
-            "parts": [
-                {
-                    "title": "Ratatouille.mkv",
-                    "path": "F:\\Movies\\Ratatouille.mkv"
-                }
-            ]
-        },
-        {
-            "id": "c12e868a-a653-489f-855e-6e740c3524d2",
-            "title": "Raya and the Last Dragon.avi",
-            "path": "F:\\Movies\\Raya and the Last Dragon.avi",
-            "tags": [],
-            "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.252940",
-            "type": "collection",
-            "parts": [
-                {
-                    "title": "Raya and the Last Dragon.avi",
-                    "path": "F:\\Movies\\Raya and the Last Dragon.avi"
-                }
-            ]
-        },
-        {
-            "id": "1389ef1c-cec9-47cc-866e-256de2989c88",
-            "title": "Tangled.mkv",
-            "path": "F:\\Movies\\Tangled.mkv",
-            "tags": [],
-            "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.252940",
-            "type": "collection",
-            "parts": [
-                {
-                    "title": "Tangled.mkv",
-                    "path": "F:\\Movies\\Tangled.mkv"
-                }
-            ]
-        },
-        {
-            "id": "c4e76d2d-94f2-4e9f-a98b-7c183526773f",
-            "title": "The Core.avi",
-            "path": "F:\\Movies\\The Core.avi",
-            "tags": [],
-            "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.252940",
-            "type": "collection",
-            "parts": [
-                {
-                    "title": "The Core.avi",
-                    "path": "F:\\Movies\\The Core.avi"
-                }
-            ]
-        },
-        {
-            "id": "77324c7d-0711-4778-a1b8-41f8df91d262",
-            "title": "The Day After Tomorrow.mkv",
-            "path": "F:\\Movies\\The Day After Tomorrow.mkv",
-            "tags": [],
-            "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.252940",
-            "type": "collection",
-            "parts": [
-                {
-                    "title": "The Day After Tomorrow.mkv",
-                    "path": "F:\\Movies\\The Day After Tomorrow.mkv"
-                }
-            ]
-        },
-        {
-            "id": "34f65958-60a7-4708-8c5b-15a58ef79cf1",
-            "title": "The Mask .mkv",
-            "path": "F:\\Movies\\The Mask .mkv",
-            "tags": [],
-            "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.252940",
-            "type": "collection",
-            "parts": [
-                {
-                    "title": "The Mask .mkv",
-                    "path": "F:\\Movies\\The Mask .mkv"
-                }
-            ]
-        },
-        {
-            "id": "098d34b8-b0f3-4c92-b634-361e413655f7",
-            "title": "Turbo.avi",
-            "path": "F:\\Movies\\Turbo.avi",
-            "tags": [],
-            "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.252940",
-            "type": "collection",
-            "parts": [
-                {
-                    "title": "Turbo.avi",
-                    "path": "F:\\Movies\\Turbo.avi"
-                }
-            ]
-        },
-        {
-            "id": "14df1e65-092b-44ed-a311-228fc100b79d",
-            "title": "WALL·E .mkv",
-            "path": "F:\\Movies\\WALL·E .mkv",
-            "tags": [],
-            "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.252940",
-            "type": "collection",
-            "parts": [
-                {
-                    "title": "WALL·E .mkv",
-                    "path": "F:\\Movies\\WALL·E .mkv"
-                }
-            ]
-        },
-        {
-            "id": "9d3298c8-be61-4860-a476-11690407899d",
-            "title": "World War Z.mkv",
-            "path": "F:\\Movies\\World War Z.mkv",
-            "tags": [],
-            "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.252940",
-            "type": "collection",
-            "parts": [
-                {
-                    "title": "World War Z.mkv",
-                    "path": "F:\\Movies\\World War Z.mkv"
-                }
-            ]
-        },
-        {
-            "id": "37542c59-f07b-4099-8332-95183daaf56d",
-            "title": "Смокінг.avi",
-            "path": "F:\\Movies\\Смокінг.avi",
-            "tags": [],
-            "auto_added": true,
-            "last_modified": "2024-12-28T11:02:44.252940",
-            "type": "collection",
-            "parts": [
-                {
-                    "title": "Смокінг.avi",
-                    "path": "F:\\Movies\\Смокінг.avi"
+                    "title": "Season 2",
+                    "episodes": [
+                        {
+                            "title": "Episode 1",
+                            "url": "https://example.com/series/season2/episode1"
+                        }
+                    ]
                 }
             ]
         }

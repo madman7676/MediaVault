@@ -1,6 +1,6 @@
 import axios from 'axios';
 import config from '../config.json';
-const API_BASE_URL = config.API_BASE_URL + '/api/thumbnails';
+const API_BASE_URL = config.API_BASE_URL + '/api/thumbnail';
 
 export const fetchThumbnail = async (videoPath) => {
     const cacheKey = `thumbnail_${videoPath}`;
@@ -11,7 +11,7 @@ export const fetchThumbnail = async (videoPath) => {
     }
 
     try {
-        const response = await axios.get(`${API_BASE_URL}/api/thumbnail`, {
+        const response = await axios.get(`${API_BASE_URL}`, {
             params: { video_path: videoPath },
         });
 

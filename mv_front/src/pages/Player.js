@@ -218,6 +218,7 @@ const Player = () => {
                 <FileList
                     fileList={fileList}
                     currentFile={currentFile}
+                    currentTitle={title}
                     openSeasons={openSeasons}
                     handleToggleSeason={handleToggleSeason}
                     handleSelectFile={handleSelectFile}

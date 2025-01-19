@@ -1,8 +1,8 @@
 // TimeToSkipSettingsMenu.js: Component for managing timeToSkip intervals
 import React, { useState, useEffect, useRef } from 'react';
 import { Box, TextField, Typography, List, ListItem, IconButton, Tooltip } from '@mui/material';
-import { Check, Delete, Edit, Add, Close, Save, KeyboardTab, Pause, Cancel } from '@mui/icons-material';
-import { updateTimeToSkip } from '../../api/metadataAPI';
+import { Check, Delete, Edit, Add, Close, Save, KeyboardTab, Pause, Cancel, SaveAlt } from '@mui/icons-material';
+import { updateTimeToSkip, bulkUpdateTimeToSkip } from '../../api/metadataAPI';
 
 const containerStyles = {
     position: 'absolute',
@@ -130,6 +130,15 @@ const TimeToSkipSettingsMenu = ({ intervals: initialIntervals, onIntervalsChange
             console.log('Intervals saved to server successfully.');
         } catch (error) {
             console.error('Failed to save intervals to server:', error);
+        }
+    };
+
+    const handleBulkUpdate = async () => {
+        try {
+            await bulkUpdateTimeToSkip(currentPath, currentName, intervals);
+            console.log('Intervals updated successfully.');
+        } catch (error) {
+            console.error('Failed to update intervals:', error);
         }
     };
 
@@ -274,6 +283,10 @@ const TimeToSkipSettingsMenu = ({ intervals: initialIntervals, onIntervalsChange
                     <ListItem>
                         <IconButton onClick={() => setIsAdding(true)}>
                             <Add />
+                        </IconButton>
+
+                        <IconButton onClick={handleBulkUpdate} sx={{ marginLeft: 'auto' }}>
+                            <SaveAlt />
                         </IconButton>
                         <IconButton onClick={() => handleSaveToServer()} sx={{ marginLeft: 'auto' }}>
                             <Save />

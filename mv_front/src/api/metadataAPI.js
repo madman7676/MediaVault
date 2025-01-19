@@ -26,6 +26,16 @@ export const updateTimeToSkip = async (path, name, timeToSkip) => {
     }
 };
 
+export const bulkUpdateTimeToSkip = async (path, name, timeToSkip) => {
+    try {
+        await axios.post(`${API_BASE_URL}/time_to_skip/bulk`, { path, name, timeToSkip });
+        return true;
+    } catch (error) {
+        console.error(`Failed to update timeToSkip: ${error.message}`);
+        throw error;
+    }
+};
+
 export const fetchMetadataById = async (itemId) => {
     try {
         const response = await axios.get(`${API_BASE_URL}/item/${itemId}`);

@@ -5,6 +5,7 @@ import { ExpandLess, ExpandMore } from '@mui/icons-material';
 
 const FileList = ({
     fileList,
+    currentTitle,
     currentFile,
     openSeasons,
     handleToggleSeason,
@@ -16,7 +17,7 @@ const FileList = ({
     return (
         <>
             <Typography variant="h6" sx={{ marginBottom: 2, color: palette.text.lightPrimary }}>
-                {fileList.length > 0 ? 'Files' : 'No files available'}
+                {fileList.length > 0 ? currentTitle : 'No files available'}
             </Typography>
             {fileList.length > 0 && (
                 <List>
