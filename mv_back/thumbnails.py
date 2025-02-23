@@ -61,12 +61,17 @@ def get_or_create_thumbnail(video_path):
     Отримання або створення мініатюри для відео.
     """
     if os.path.isdir(video_path):
+        folder_name = os.path.basename(video_path.rstrip('/\\'))
         video_path = find_first_video_in_directory(video_path)
         if not video_path:
             print(f"No video files found in directory: {video_path}")
             return None
+        thumbnail_name = folder_name
+    else:
+        file_name = os.path.basename(video_path)
+        thumbnail_name = os.path.splitext(file_name)[0]
 
-    thumbnail_path = os.path.join(THUMBNAILS_DIR, f"{os.path.basename(video_path)}.jpg")
+    thumbnail_path = os.path.join(THUMBNAILS_DIR, f"{thumbnail_name}.jpg")
 
     # Перевірка існування та актуальності мініатюри
     if os.path.exists(thumbnail_path):

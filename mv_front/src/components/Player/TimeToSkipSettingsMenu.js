@@ -1,7 +1,7 @@
 // TimeToSkipSettingsMenu.js: Component for managing timeToSkip intervals
 import React, { useState, useEffect, useRef } from 'react';
 import { Box, TextField, Typography, List, ListItem, IconButton, Tooltip } from '@mui/material';
-import { Check, Delete, Edit, Add, Close, Save, KeyboardTab, Pause, Cancel, SaveAlt } from '@mui/icons-material';
+import { Check, Delete, Edit, Add, Close, Save, KeyboardTab, Pause, Cancel, SaveAlt, ArrowUpward, ArrowDownward } from '@mui/icons-material';
 import { updateTimeToSkip, bulkUpdateTimeToSkip } from '../../api/metadataAPI';
 
 const containerStyles = {
@@ -37,12 +37,15 @@ const saveButtonStyles = {
 };
 
 const buttonSizeStyles = {
-    minWidth: '24px',
-    minHeight: '24px',
+    minWidth: '18px',
+    minHeight: '18px',
     padding: '0', // Видаляє додаткові внутрішні відступи
+    margin: '0', // Видаляє зовнішні відступи
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    maxHeight: '18px',
+    maxWidth: '18px'
 };
 
 const formatTime = (seconds) => {
@@ -88,7 +91,6 @@ const TimeToSkipSettingsMenu = ({ intervals: initialIntervals, onIntervalsChange
         if (editInterval.start && editInterval.end) {
             const updatedIntervals = sortIntervals([...intervals, { start: parseTimeInput(editInterval.start), end: parseTimeInput(editInterval.end) }]);
             setIntervals(updatedIntervals);
-            onIntervalsChange(updatedIntervals);
             setEditInterval({ start: '', end: '' });
             setIsAdding(false);
         }
@@ -106,7 +108,6 @@ const TimeToSkipSettingsMenu = ({ intervals: initialIntervals, onIntervalsChange
                 index === editingIndex ? { start: parseTimeInput(editInterval.start), end: parseTimeInput(editInterval.end) } : interval
             ));
             setIntervals(updatedIntervals);
-            onIntervalsChange(updatedIntervals);
             setEditingIndex(null);
             setEditInterval({ start: '', end: '' });
         }
@@ -128,6 +129,7 @@ const TimeToSkipSettingsMenu = ({ intervals: initialIntervals, onIntervalsChange
         try {
             await updateTimeToSkip(currentPath, currentName, intervals);
             console.log('Intervals saved to server successfully.');
+            onIntervalsChange(intervals); // Збереження локально після успішного збереження на сервері
         } catch (error) {
             console.error('Failed to save intervals to server:', error);
         }
@@ -137,6 +139,7 @@ const TimeToSkipSettingsMenu = ({ intervals: initialIntervals, onIntervalsChange
         try {
             await bulkUpdateTimeToSkip(currentPath, currentName, intervals);
             console.log('Intervals updated successfully.');
+            onIntervalsChange(intervals); // Збереження локально після успішного збереження на сервері
         } catch (error) {
             console.error('Failed to update intervals:', error);
         }
@@ -162,8 +165,21 @@ const TimeToSkipSettingsMenu = ({ intervals: initialIntervals, onIntervalsChange
         }
     };
 
+    const handleIncrementTime = (field, increment) => {
+        const videoElement = document.querySelector('.video-js video');
+        const duration = videoElement ? Math.floor(videoElement.duration) : 0;
+        setEditInterval((prev) => {
+            let currentTime = parseTimeInput(prev[field]);
+            if (isNaN(currentTime)) currentTime = 0; // Обробка порожнього поля
+            let newTime = currentTime + increment;
+            if (newTime < 0) newTime = 0;
+            if (newTime > duration) newTime = duration;
+            return { ...prev, [field]: formatTime(newTime) };
+        });
+    };
+
     const renderQuickButtons = (field) => (
-        <Box display="inline-flex" gap={1} justifyContent="center" alignItems="center" sx={{transform:'scale(0.5)'}}>
+        <Box display="inline-flex" gap={1} justifyContent="center" alignItems="center">
             <Tooltip title="To Start">
                 <IconButton onClick={() => handleSetToStart(field)} sx={buttonSizeStyles}>
                     <KeyboardTab sx={{ transform: 'rotate(180deg)' }} />
@@ -196,23 +212,51 @@ const TimeToSkipSettingsMenu = ({ intervals: initialIntervals, onIntervalsChange
                         {editingIndex === index ? (
                             <Box display="flex" gap={1} alignItems="center" width="100%">
                                 <Box display="flex" flexDirection="column" gap={1}>
-                                    <TextField
-                                        label="Start"
-                                        variant="outlined"
-                                        size="small"
-                                        value={editInterval.start}
-                                        onChange={(e) => setEditInterval({ ...editInterval, start: e.target.value })}
-                                    />
+                                    <Box display="flex" alignItems="center">
+                                        <TextField
+                                            label="Start"
+                                            variant="outlined"
+                                            size="small"
+                                            value={editInterval.start}
+                                            onChange={(e) => setEditInterval({ ...editInterval, start: e.target.value })}
+                                        />
+                                        <Box display="flex" flexDirection="column">
+                                            <Tooltip title="Increment Time">
+                                                <IconButton onClick={() => handleIncrementTime("start", 1)} sx={buttonSizeStyles}>
+                                                    <ArrowUpward />
+                                                </IconButton>
+                                            </Tooltip>
+                                            <Tooltip title="Decrement Time">
+                                                <IconButton onClick={() => handleIncrementTime("start", -1)} sx={buttonSizeStyles}>
+                                                    <ArrowDownward />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </Box>
+                                    </Box>
                                     {renderQuickButtons('start')}
                                 </Box>
                                 <Box display="flex" flexDirection="column" gap={1}>
-                                    <TextField
-                                        label="End"
-                                        variant="outlined"
-                                        size="small"
-                                        value={editInterval.end}
-                                        onChange={(e) => setEditInterval({ ...editInterval, end: e.target.value })}
-                                    />
+                                    <Box display="flex" alignItems="center">
+                                        <TextField
+                                            label="End"
+                                            variant="outlined"
+                                            size="small"
+                                            value={editInterval.end}
+                                            onChange={(e) => setEditInterval({ ...editInterval, end: e.target.value })}
+                                        />
+                                        <Box display="flex" flexDirection="column">
+                                            <Tooltip title="Increment Time">
+                                                <IconButton onClick={() => handleIncrementTime("end", 1)} sx={buttonSizeStyles}>
+                                                    <ArrowUpward />
+                                                </IconButton>
+                                            </Tooltip>
+                                            <Tooltip title="Decrement Time">
+                                                <IconButton onClick={() => handleIncrementTime("end", -1)} sx={buttonSizeStyles}>
+                                                    <ArrowDownward />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </Box>
+                                    </Box>
                                     {renderQuickButtons('end')}
                                 </Box>
                                 <Box display="flex" flexDirection="column" gap={1}>
@@ -249,23 +293,51 @@ const TimeToSkipSettingsMenu = ({ intervals: initialIntervals, onIntervalsChange
                     <ListItem>
                         <Box display="flex" gap={1} alignItems="center" width="100%">
                             <Box display="flex" flexDirection="column" gap={1}>
-                                <TextField
-                                    label="Start"
-                                    variant="outlined"
-                                    size="small"
-                                    value={editInterval.start}
-                                    onChange={(e) => setEditInterval({ ...editInterval, start: e.target.value })}
-                                />
+                                <Box display="flex" alignItems="center">
+                                    <TextField
+                                        label="Start"
+                                        variant="outlined"
+                                        size="small"
+                                        value={editInterval.start}
+                                        onChange={(e) => setEditInterval({ ...editInterval, start: e.target.value })}
+                                    />
+                                    <Box display="flex" flexDirection="column">
+                                        <Tooltip title="Increment Time">
+                                            <IconButton onClick={() => handleIncrementTime("start", 1)} sx={buttonSizeStyles}>
+                                                <ArrowUpward />
+                                            </IconButton>
+                                        </Tooltip>
+                                        <Tooltip title="Decrement Time">
+                                            <IconButton onClick={() => handleIncrementTime("start", -1)} sx={buttonSizeStyles}>
+                                                <ArrowDownward />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </Box>
+                                </Box>
                                 {renderQuickButtons('start')}
                             </Box>
                             <Box display="flex" flexDirection="column" gap={1}>
-                                <TextField
-                                    label="End"
-                                    variant="outlined"
-                                    size="small"
-                                    value={editInterval.end}
-                                    onChange={(e) => setEditInterval({ ...editInterval, end: e.target.value })}
-                                />
+                                <Box display="flex" alignItems="center">
+                                    <TextField
+                                        label="End"
+                                        variant="outlined"
+                                        size="small"
+                                        value={editInterval.end}
+                                        onChange={(e) => setEditInterval({ ...editInterval, end: e.target.value })}
+                                    />
+                                    <Box display="flex" flexDirection="column">
+                                        <Tooltip title="Increment Time">
+                                            <IconButton onClick={() => handleIncrementTime("end", 1)} sx={buttonSizeStyles}>
+                                                <ArrowUpward />
+                                            </IconButton>
+                                        </Tooltip>
+                                        <Tooltip title="Decrement Time">
+                                            <IconButton onClick={() => handleIncrementTime("end", -1)} sx={buttonSizeStyles}>
+                                                <ArrowDownward />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </Box>
+                                </Box>
                                 {renderQuickButtons('end')}
                             </Box>
                             <Box display="flex" flexDirection="column" gap={1}>

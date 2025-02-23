@@ -3,7 +3,7 @@ from flask import jsonify, request, send_file, Response
 import os
 from metadata import load_metadata, save_metadata, auto_add_metadata, find_metadata_item
 from analyze_video import analyze_video, clear_analysis_cache
-from thumbnails import get_or_create_thumbnail
+from thumbnails import find_first_video_in_directory, get_or_create_thumbnail
 from config import THUMBNAILS_DIR, MOVIES_PATHS, SERIES_PATHS
 from datetime import datetime
 import mimetypes
@@ -34,6 +34,53 @@ def error_response(message, status=400):
     return jsonify({"status": "error", "message": message}), status
 
 def register_routes(app):
+    
+    @app.route('/api/metadata/add_tag', methods=['POST'])
+    def add_tag():
+        """
+        Додає новий тег до масиву тегів для вибраного масиву фільмів/серіалів за їх ідентифікаторами.
+
+        Body Parameters:
+            ids (list): Список ідентифікаторів фільмів/серіалів.
+            tag (str): Новий тег, який потрібно додати.
+
+        Returns:
+            Response: Статус додавання тегу.
+        """
+        data = request.json
+        ids = data.get('ids')
+        new_tag = data.get('tag')
+
+        if not ids or not new_tag:
+            return error_response("Fields `ids` and `tag` are required", 400)
+
+        # Завантаження метаданих
+        try:
+            metadata = load_metadata()
+        except Exception as e:
+            return error_response(f"Failed to load metadata: {str(e)}", 500)
+
+        updated = False
+        for category in ["series", "movies"]:
+            for item in metadata.get(category, []):
+                if item.get("id") in ids:
+                    if "tags" not in item:
+                        item["tags"] = []
+                    if new_tag not in item["tags"]:
+                        item["tags"].append(new_tag)
+                        item["last_modified"] = datetime.now().isoformat()
+                        updated = True
+
+        if not updated:
+            return error_response("No items were updated", 404)
+
+        # Збереження метаданих
+        try:
+            save_metadata(metadata)
+        except Exception as e:
+            return error_response(f"Failed to save metadata: {str(e)}", 500)
+
+        return jsonify({"status": "success", "message": "Tag added successfully"}), 200
     
     @app.route('/api/metadata/online_series', methods=['POST'])
     def add_online_series():
@@ -555,11 +602,23 @@ def register_routes(app):
 
     @app.route('/api/thumbnail', methods=['GET'])
     def get_thumbnail():
-        video_path = request.args.get('video_path')
-        if not video_path or not os.path.exists(video_path):
-            return error_response("Invalid video path")
+        folder_or_file_path = request.args.get('folder_name')
+        if not folder_or_file_path:
+            return error_response("Invalid folder or file path")
 
-        thumbnail_path = get_or_create_thumbnail(video_path)
+        if os.path.isfile(folder_or_file_path):
+            # Якщо це файл, безпосередньо викликаємо get_or_create_thumbnail
+            video_path = folder_or_file_path
+            thumbnail_path = get_or_create_thumbnail(video_path)
+        else:
+            # Якщо це папка, знаходимо перший відеофайл у папці
+            video_path = find_first_video_in_directory(folder_or_file_path)
+            if not video_path:
+                return error_response("No video files found in directory")
+            thumbnail_path = get_or_create_thumbnail(folder_or_file_path)
+
+        # Виклик функції get_or_create_thumbnail для створення мініатюри, якщо вона не існує
+        
         if thumbnail_path:
             return send_file(thumbnail_path, mimetype='image/jpeg')
         else:

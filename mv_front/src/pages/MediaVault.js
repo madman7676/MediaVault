@@ -1,9 +1,9 @@
-// MediaVault component using CatalogCard
 import React, { useState, useEffect } from 'react';
 import CatalogCard from '../components/CatalogCard';
 import { fetchMetadata } from '../api/metadataAPI';
 import { fetchThumbnail } from '../api/thumbnailAPI';
-import { Grid2 as Grid, CssBaseline, ThemeProvider, createTheme, ButtonGroup, Button, Menu, MenuItem, Fab, Zoom, Dialog, DialogTitle, DialogContent, TextField, IconButton } from '@mui/material';
+import TagFilter from '../components/TagFilter';
+import { Grid2 as Grid, CssBaseline, ThemeProvider, createTheme, ButtonGroup, Button, Menu, MenuItem, Fab, Zoom, Dialog, DialogTitle, DialogContent, TextField, IconButton, Checkbox, FormControlLabel, FormGroup, Box } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
 import VideocamIcon from '@mui/icons-material/Videocam';
@@ -11,6 +11,8 @@ import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 import palette from '../theme/palette';
+import MVLogo from '../images/MV_Logo2.png';
+import background from '../images/background.png';
 
 const darkTheme = createTheme({
     palette: {
@@ -42,6 +44,9 @@ const MediaVault = () => {
     const [onlineSeriesEpisodes, setOnlineSeriesEpisodes] = useState('');
     const [seasons, setSeasons] = useState([{ name: 'Сезон 1', episodes: '' }]);
 
+    const [selectedTags, setSelectedTags] = useState([]); // Стан для вибраних тегів
+    const [filterMode, setFilterMode] = useState('include'); // Стан для режиму фільтрації
+
     useEffect(() => {
         const fetchCollections = async () => {
             console.log('Starting fetchCollections...'); // Debugging
@@ -59,19 +64,21 @@ const MediaVault = () => {
                             console.log(`Thumbnail fetched for movie ${movie.title}:`, thumbnailUrl); // Debugging
                             return {
                                 id: movie.id,
-                                title: movie.title,
+                                title: movie.title.replace(/\.[^/.]+$/, ""),
                                 type: 'movie',
                                 partsCount: movie.parts.length,
                                 thumbnailUrl,
+                                tags: movie.tags || [], // Додаємо теги
                             };
                         } catch (err) {
                             console.error(`Failed to fetch thumbnail for movie ${movie.title}:`, err); // Debugging
                             return {
                                 id: movie.id,
-                                title: movie.title,
+                                title: movie.title.replace(/\.[^/.]+$/, ""),
                                 type: 'movie',
                                 partsCount: movie.parts.length,
                                 thumbnailUrl: '',
+                                tags: movie.tags || [], // Додаємо теги
                             };
                         }
                     })
@@ -89,6 +96,7 @@ const MediaVault = () => {
                                 type: 'series',
                                 partsCount: serie.seasons.length,
                                 thumbnailUrl,
+                                tags: serie.tags || [], // Додаємо теги
                             };
                         } catch (err) {
                             console.error(`Failed to fetch thumbnail for series ${serie.title}:`, err); // Debugging
@@ -98,6 +106,7 @@ const MediaVault = () => {
                                 type: 'series',
                                 partsCount: serie.seasons.length,
                                 thumbnailUrl: '',
+                                tags: serie.tags || [], // Додаємо теги
                             };
                         }
                     })
@@ -115,6 +124,7 @@ const MediaVault = () => {
                                 type: 'online_series',
                                 partsCount: onlineSerie.seasons.length,
                                 thumbnailUrl,
+                                tags: onlineSerie.tags || [], // Додаємо теги
                             };
                         } catch (err) {
                             console.error(`Failed to fetch thumbnail for online series ${onlineSerie.title}:`, err); // Debugging
@@ -124,6 +134,7 @@ const MediaVault = () => {
                                 type: 'online_series',
                                 partsCount: onlineSerie.seasons.length,
                                 thumbnailUrl: '',
+                                tags: onlineSerie.tags || [], // Додаємо теги
                             };
                         }
                     })
@@ -144,19 +155,43 @@ const MediaVault = () => {
     }, []);
 
     useEffect(() => {
-        if (filter === 'all') {
-            setFilteredCollections(collections);
-        } else if (filter === 'series_combined') {
-            setFilteredCollections(collections.filter(collection => collection.type === 'series' || collection.type === 'online_series'));
-        } else {
-            setFilteredCollections(collections.filter(collection => collection.type === filter));
+        let filtered = collections;
+
+        if (filter !== 'all') {
+            if (filter === 'series_combined') {
+                filtered = filtered.filter(collection => collection.type === 'series' || collection.type === 'online_series');
+            } else {
+                filtered = filtered.filter(collection => collection.type === filter);
+            }
         }
-    }, [filter, collections]);
+
+        if (selectedTags.length > 0) {
+            if (filterMode === 'include') {
+                filtered = filtered.filter(collection => selectedTags.some(tag => collection.tags.includes(tag)));
+            } else {
+                filtered = filtered.filter(collection => !selectedTags.some(tag => collection.tags.includes(tag)));
+            }
+        }
+
+        setFilteredCollections(filtered);
+    }, [filter, collections, selectedTags, filterMode]);
+
+    const handleTagChange = (tag) => {
+        setSelectedTags(prevSelectedTags =>
+            prevSelectedTags.includes(tag)
+                ? prevSelectedTags.filter(t => t !== tag)
+                : [...prevSelectedTags, tag]
+        );
+    };
+
+    const toggleFilterMode = () => {
+        setFilterMode(prevMode => (prevMode === 'include' ? 'exclude' : 'include'));
+    };
 
     const handleSeriesMenuEnter = () => {
         setMenuVisible(true);
     };
-    
+
     const handleSeriesMenuLeave = () => {
         setMenuVisible(false);
     };
@@ -190,23 +225,22 @@ const MediaVault = () => {
         updatedSeasons[index].name = value;
         setSeasons(updatedSeasons);
     };
-      
+
     const updateSeasonEpisodes = (index, value) => {
         const updatedSeasons = [...seasons];
         updatedSeasons[index].episodes = value;
         setSeasons(updatedSeasons);
     };
-      
+
     const addSeason = () => {
         const newSeason = { name: `Сезон ${seasons.length + 1}`, episodes: '' };
         setSeasons([...seasons, newSeason]);
     };
-      
+
     const removeSeason = (index) => {
         const updatedSeasons = seasons.filter((_, i) => i !== index);
         setSeasons(updatedSeasons);
     };
-      
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
@@ -304,9 +338,10 @@ const MediaVault = () => {
     return (
         <ThemeProvider theme={darkTheme}>
             <CssBaseline />
-            <div style={{ padding: '2rem', position: 'relative' }}>
-                <h1 style={{ display: 'inline-block', marginRight: '1rem' }}>MediaVault</h1>
-                <ButtonGroup variant="contained" style={{ marginBottom: '1rem', float: 'right' }}>
+            <div style={{ padding: '1rem 2rem', position: 'relative', backgroundImage: `url(${background})`, backgroundRepeat: 'repeat' }}>
+                <img src={MVLogo} alt="MediaVault Logo" style={{ display: 'inline-block', marginRight: '1rem', height: '100px' }} />
+                {/* <h1 style={{ display: 'inline-block', marginRight: '1rem' }}>MediaVault</h1> */}
+                <ButtonGroup variant="contained" style={{ marginBottom: '1rem', float: 'right', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
                     <Button onClick={() => setFilter('all')} color={filter === 'all' ? 'primary' : 'default'}>All</Button>
                     <Button onClick={() => setFilter('movie')} color={filter === 'movie' ? 'primary' : 'default'}>Movies</Button>
                     <Button 
@@ -319,7 +354,7 @@ const MediaVault = () => {
                     </Button>
                 </ButtonGroup>
                 {menuVisible && (
-                        <div style={{ position: 'absolute', top: '4.3rem', right: '2.5rem' }}
+                        <div style={{ position: 'absolute', top: '3.39rem', right: '2.25rem', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
                             anchorEl={anchorEl}
                             open={Boolean(anchorEl)}
                             onClose={handleSeriesMenuLeave}
@@ -331,6 +366,12 @@ const MediaVault = () => {
                             <MenuItem onClick={() => { setFilter('online_series'); handleSeriesMenuLeave(); }}>Online</MenuItem>
                         </div>
                     )}
+                <TagFilter
+                    selectedTags={selectedTags}
+                    handleTagChange={handleTagChange}
+                    filterMode={filterMode}
+                    toggleFilterMode={toggleFilterMode}
+                />
                 <Grid container spacing={2} justifyContent="center">
                     {filteredCollections.map(collection => (
                         <Grid item xs={12} sm={6} md={3} key={collection.id}>
@@ -348,28 +389,12 @@ const MediaVault = () => {
                 <Fab 
                     color="primary" 
                     aria-label="add" 
-                    onClick={handleFabClick} 
+                    onClick={handleFabClick}
                     style={{ position: 'fixed', bottom: '2rem', right: '2rem' }}
                 >
                     <AddIcon />
                 </Fab>
-
-                <Zoom in={openFabMenu} unmountOnExit>
-                    <div style={{ position: 'fixed', bottom: '6rem', right: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                        <Fab color="secondary" size="medium" aria-label="add-movie">
-                            <VideocamIcon />
-                        </Fab>
-                        <Fab color="secondary" size="medium" aria-label="add-series">
-                            <VideoLibraryIcon />
-                        </Fab>
-                        <Fab color="secondary" size="medium" aria-label="add-online-series" onClick={handleOpenOnlineSeriesDialog}>
-                            <OndemandVideoIcon />
-                        </Fab>
-                    </div>
-                </Zoom>
-
                 {addOnlineSeries}
-
             </div>
         </ThemeProvider>
     );
