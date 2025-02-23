@@ -3,9 +3,7 @@ import { FormGroup, FormControlLabel, Checkbox, Button, Box } from '@mui/materia
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
-const tags = ['Ісекай', 'Імба ГГ', 'Комедія', 'Романтика', "Фантастика", 'Фентезі', "Супер здібності", "Китайське"]; // Масив тегів
-
-const TagFilter = ({ selectedTags, handleTagChange, filterMode, toggleFilterMode }) => {
+const TagFilter = ({ tags, selectedTags, handleTagChange, filterMode, toggleFilterMode }) => {
     return (
         <Box sx={{ display: 'flex', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)', padding: '0.5rem', borderRadius: '4px' }}>
             <FormGroup row sx={{ flexGrow: 1 }}>

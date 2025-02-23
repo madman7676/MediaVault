@@ -4,9 +4,11 @@
             "id": "c405e55e-7596-416f-8712-d7277362e5b0",
             "title": "Futurama",
             "path": "F:\\Serials\\Futurama",
-            "tags": [],
-            "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.125540",
+            "tags": [
+                "Комедія"
+            ],
+            "auto_added": false,
+            "last_modified": "2025-02-24T01:52:27.685997",
             "type": "series",
             "seasons": [
                 {
@@ -422,7 +424,7 @@
             "path": "F:\\Serials\\Moon Knight",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.129541",
+            "last_modified": "2025-02-24T01:52:27.689999",
             "type": "series",
             "seasons": [
                 {
@@ -456,8 +458,8 @@
             "title": "Академія героїв",
             "path": "F:\\Serials\\Академія героїв",
             "tags": [],
-            "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.129541",
+            "auto_added": false,
+            "last_modified": "2025-02-24T01:52:27.689999",
             "type": "series",
             "seasons": [
                 {
@@ -836,10 +838,11 @@
             "title": "Аріфуєта",
             "path": "F:\\Serials\\Аріфуєта",
             "tags": [
-                "Ісекай"
+                "Ісекай",
+                "Імба ГГ"
             ],
-            "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.132539",
+            "auto_added": false,
+            "last_modified": "2025-02-24T01:52:27.695000",
             "type": "series",
             "seasons": [
                 {
@@ -945,8 +948,8 @@
                 "Комедія",
                 "Романтика"
             ],
-            "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.133539",
+            "auto_added": false,
+            "last_modified": "2025-02-24T01:52:27.696024",
             "type": "series",
             "seasons": [
                 {
@@ -1021,10 +1024,11 @@
             "tags": [
                 "Ісекай",
                 "Фентезі",
-                "Романтика"
+                "Романтика",
+                "Імба ГГ"
             ],
             "auto_added": false,
-            "last_modified": "2025-02-16T08:48:06.947208",
+            "last_modified": "2025-02-24T01:45:47.985512",
             "type": "series",
             "seasons": [
                 {
@@ -1088,10 +1092,11 @@
             "title": "Ванпанч",
             "path": "F:\\Serials\\Ванпанч",
             "tags": [
-                "Імба ГГ"
+                "Імба ГГ",
+                "Комедія"
             ],
-            "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.134539",
+            "auto_added": false,
+            "last_modified": "2025-02-24T01:52:27.696998",
             "type": "series",
             "seasons": [
                 {
@@ -1222,8 +1227,8 @@
                 "Фентезі",
                 "Імба ГГ"
             ],
-            "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.135539",
+            "auto_added": false,
+            "last_modified": "2025-02-24T01:52:27.697999",
             "type": "series",
             "seasons": [
                 {
@@ -1280,8 +1285,8 @@
                 "Комедія",
                 "Імба ГГ"
             ],
-            "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.135539",
+            "auto_added": false,
+            "last_modified": "2025-02-24T01:52:27.698998",
             "type": "series",
             "seasons": [
                 {
@@ -1524,7 +1529,7 @@
                 "Романтика"
             ],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.136540",
+            "last_modified": "2025-02-24T01:52:27.700000",
             "type": "series",
             "seasons": [
                 {
@@ -1581,7 +1586,7 @@
                 "Імба ГГ"
             ],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.137540",
+            "last_modified": "2025-02-24T01:52:27.700000",
             "type": "series",
             "seasons": [
                 {
@@ -1860,7 +1865,7 @@
                 "Імба ГГ"
             ],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.139540",
+            "last_modified": "2025-02-24T01:52:27.702998",
             "type": "series",
             "seasons": [
                 {
@@ -1917,7 +1922,7 @@
                 "Імба ГГ"
             ],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.139540",
+            "last_modified": "2025-02-24T01:52:27.702998",
             "type": "series",
             "seasons": [
                 {
@@ -1974,7 +1979,7 @@
                 "Імба ГГ"
             ],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.140540",
+            "last_modified": "2025-02-24T01:52:27.703998",
             "type": "series",
             "seasons": [
                 {
@@ -2211,7 +2216,7 @@
             "path": "F:\\Serials\\Невколупний",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.141542",
+            "last_modified": "2025-02-24T01:52:27.704999",
             "type": "series",
             "seasons": [
                 {
@@ -2256,7 +2261,7 @@
                 "Імба ГГ"
             ],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.141542",
+            "last_modified": "2025-02-24T01:52:27.705998",
             "type": "series",
             "seasons": [
                 {
@@ -2535,9 +2540,13 @@
             "id": "332eddcb-ff20-47d3-9c69-430b242a0ca9",
             "title": "Переродження мечем",
             "path": "F:\\Serials\\Переродження мечем",
-            "tags": [],
+            "tags": [
+                "Ісекай",
+                "Імба ГГ",
+                "Фентезі"
+            ],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.142539",
+            "last_modified": "2025-02-24T01:52:27.705998",
             "type": "series",
             "seasons": [
                 {
@@ -2588,9 +2597,13 @@
             "id": "89e9b647-1cd4-4f7d-b482-61f51117a2bc",
             "title": "Повелитель",
             "path": "F:\\Serials\\Повелитель",
-            "tags": [],
+            "tags": [
+                "Ісекай",
+                "Імба ГГ",
+                "Фентезі"
+            ],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.143540",
+            "last_modified": "2025-02-24T01:52:27.706998",
             "type": "series",
             "seasons": [
                 {
@@ -2779,9 +2792,13 @@
             "id": "d5656669-6e28-4340-81f0-0b1307b3580a",
             "title": "Повтор цілителя",
             "path": "F:\\Serials\\Повтор цілителя",
-            "tags": [],
+            "tags": [
+                "Регресія",
+                "Імба ГГ",
+                "Фентезі"
+            ],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.144541",
+            "last_modified": "2025-02-24T01:52:27.707998",
             "type": "series",
             "seasons": [
                 {
@@ -2832,9 +2849,13 @@
             "id": "01d4ae93-3abf-4b76-b037-a1dd13d6c4b8",
             "title": "Про Моє Переродження у Сьомого Принца",
             "path": "F:\\Serials\\Про Моє Переродження у Сьомого Принца",
-            "tags": [],
+            "tags": [
+                "Регресія",
+                "Імба ГГ",
+                "Фентезі"
+            ],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.145540",
+            "last_modified": "2025-02-24T01:52:27.708997",
             "type": "series",
             "seasons": [
                 {
@@ -2885,9 +2906,12 @@
             "id": "ddcad520-0b0f-4b23-b3f8-e1b230bfbb31",
             "title": "Проиграйте, чтобы разбогатеть",
             "path": "F:\\Serials\\Проиграйте, чтобы разбогатеть",
-            "tags": [],
+            "tags": [
+                "Регресія",
+                "Комедія"
+            ],
             "auto_added": false,
-            "last_modified": "2024-12-26T02:31:50.940356",
+            "last_modified": "2025-02-24T01:34:40.066852",
             "type": "series",
             "seasons": [
                 {
@@ -3146,9 +3170,12 @@
             "id": "77bc00f1-1e69-4cf4-8c72-d016a964bec5",
             "title": "Реінкарнація безробітного",
             "path": "F:\\Serials\\Реінкарнація безробітного",
-            "tags": [],
+            "tags": [
+                "Ісекай",
+                "Фентезі"
+            ],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.146541",
+            "last_modified": "2025-02-24T01:52:27.709997",
             "type": "series",
             "seasons": [
                 {
@@ -3241,9 +3268,12 @@
             "id": "cc53c203-d88f-4d54-a295-e3a8e4199136",
             "title": "Сасакі та Пі",
             "path": "F:\\Serials\\Сасакі та Пі",
-            "tags": [],
+            "tags": [
+                "Ісекай",
+                "Фентезі"
+            ],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.147540",
+            "last_modified": "2025-02-24T01:52:27.709997",
             "type": "series",
             "seasons": [
                 {
@@ -3294,9 +3324,11 @@
             "id": "e9a45a74-6405-48b4-a03d-d26561a1deb9",
             "title": "Світ отоме-гри занадто жорстокий до мобів",
             "path": "F:\\Serials\\Світ отоме-гри занадто жорстокий до мобів",
-            "tags": [],
+            "tags": [
+                "Ісекай"
+            ],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.147540",
+            "last_modified": "2025-02-24T01:52:27.710998",
             "type": "series",
             "seasons": [
                 {
@@ -3347,9 +3379,11 @@
             "id": "9dc1d202-b6cf-4cfd-b789-4793ddb43082",
             "title": "Смертельна гра мертвої гори",
             "path": "F:\\Serials\\Смертельна гра мертвої гори",
-            "tags": [],
+            "tags": [
+                "Ісекай"
+            ],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.148539",
+            "last_modified": "2025-02-24T01:52:27.711998",
             "type": "series",
             "seasons": [
                 {
@@ -3442,9 +3476,11 @@
             "id": "f5564f9e-61b7-435b-b193-52b693e26aca",
             "title": "Стратегія «Один в іншому світі»",
             "path": "F:\\Serials\\Стратегія «Один в іншому світі»",
-            "tags": [],
+            "tags": [
+                "Ісекай"
+            ],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.149539",
+            "last_modified": "2025-02-24T01:52:27.711998",
             "type": "series",
             "seasons": [
                 {
@@ -3495,9 +3531,13 @@
             "id": "81a35d4d-6d7c-4219-ba2e-f7642c7c724e",
             "title": "Сходження в тіні",
             "path": "F:\\Serials\\Сходження в тіні",
-            "tags": [],
+            "tags": [
+                "Ісекай",
+                "Імба ГГ",
+                "Фентезі"
+            ],
             "auto_added": false,
-            "last_modified": "2024-12-22T21:57:25.357714",
+            "last_modified": "2025-02-24T01:49:36.289120",
             "type": "series",
             "seasons": [
                 {
@@ -4074,9 +4114,11 @@
             "id": "a458c49c-232a-4309-b34b-7b103b523eae",
             "title": "Тільки я візьму новий рівень",
             "path": "F:\\Serials\\Тільки я візьму новий рівень",
-            "tags": [],
+            "tags": [
+                "Імба ГГ"
+            ],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.149539",
+            "last_modified": "2025-02-24T01:52:27.712998",
             "type": "series",
             "seasons": [
                 {
@@ -4127,9 +4169,12 @@
             "id": "dc908350-5e34-442f-b100-f6b3ebbf3549",
             "title": "У лабіринті іншого світу",
             "path": "F:\\Serials\\У лабіринті іншого світу",
-            "tags": [],
+            "tags": [
+                "Ісекай",
+                "Фентезі"
+            ],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.150539",
+            "last_modified": "2025-02-24T01:52:27.713998",
             "type": "series",
             "seasons": [
                 {
@@ -4180,9 +4225,13 @@
             "id": "2b746a49-b718-4f33-9d03-39c7cb3cf271",
             "title": "Фантазія місячного світла",
             "path": "F:\\Serials\\Фантазія місячного світла",
-            "tags": [],
+            "tags": [
+                "Ісекай",
+                "Імба ГГ",
+                "Фентезі"
+            ],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.150539",
+            "last_modified": "2025-02-24T01:52:27.714999",
             "type": "series",
             "seasons": [
                 {
@@ -4233,9 +4282,13 @@
             "id": "e18896c0-eee6-4900-a9b9-6bbd8003595a",
             "title": "Фермерське життя в іншому світі",
             "path": "F:\\Serials\\Фермерське життя в іншому світі",
-            "tags": [],
+            "tags": [
+                "Ісекай",
+                "Імба ГГ",
+                "Фентезі"
+            ],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.151539",
+            "last_modified": "2025-02-24T01:52:27.714999",
             "type": "series",
             "seasons": [
                 {
@@ -4286,9 +4339,13 @@
             "id": "5ad2de1f-321b-475c-a5c6-a37071fec0fa",
             "title": "Хроніки духів",
             "path": "F:\\Serials\\Хроніки духів",
-            "tags": [],
+            "tags": [
+                "Ісекай",
+                "Імба ГГ",
+                "Фентезі"
+            ],
             "auto_added": false,
-            "last_modified": "2024-12-24T19:48:59.507148",
+            "last_modified": "2025-02-24T01:49:36.289120",
             "type": "series",
             "seasons": [
                 {
@@ -4455,9 +4512,13 @@
             "id": "03c55f78-45d0-4bfa-8242-0b3ae5d29cee",
             "title": "Чи справді я найсильніший",
             "path": "F:\\Serials\\Чи справді я найсильніший",
-            "tags": [],
+            "tags": [
+                "Ісекай",
+                "Імба ГГ",
+                "Фентезі"
+            ],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.152539",
+            "last_modified": "2025-02-24T01:52:27.716043",
             "type": "series",
             "seasons": [
                 {
@@ -4508,9 +4569,12 @@
             "id": "4796badc-d702-4ef8-9efe-e0fe8e978d90",
             "title": "Я не играю по правилам",
             "path": "F:\\Serials\\Я не играю по правилам",
-            "tags": [],
+            "tags": [
+                "Ісекай",
+                "Імба ГГ"
+            ],
             "auto_added": false,
-            "last_modified": "2025-02-05T23:12:50.576404",
+            "last_modified": "2025-02-24T01:45:47.985512",
             "type": "series",
             "seasons": [
                 {
@@ -4705,7 +4769,7 @@
             "path": "F:\\Movies\\Cloudy with a Chance of Meatballs. Dilogy",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.153539",
+            "last_modified": "2025-02-24T01:52:27.717043",
             "type": "collection",
             "parts": [
                 {
@@ -4724,7 +4788,7 @@
             "path": "F:\\Movies\\Riddick",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.153539",
+            "last_modified": "2025-02-24T01:52:27.717043",
             "type": "collection",
             "parts": [
                 {
@@ -4747,7 +4811,7 @@
             "path": "F:\\Movies\\Ukrainianize Marvel Cinematic Universe",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.153539",
+            "last_modified": "2025-02-24T01:52:27.717043",
             "type": "collection",
             "parts": [
                 {
@@ -4866,7 +4930,7 @@
             "path": "F:\\Movies\\X-Men. Collection",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.154539",
+            "last_modified": "2025-02-24T01:52:27.717999",
             "type": "collection",
             "parts": [
                 {
@@ -4945,7 +5009,7 @@
             "path": "F:\\Movies\\Собаче життя",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.154539",
+            "last_modified": "2025-02-24T01:52:27.717999",
             "type": "collection",
             "parts": [
                 {
@@ -4964,7 +5028,7 @@
             "path": "F:\\Movies\\Футурама",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.154539",
+            "last_modified": "2025-02-24T01:52:27.717999",
             "type": "collection",
             "parts": [
                 {
@@ -4991,7 +5055,7 @@
             "path": "F:\\Movies\\Як приборкати дракона",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.154539",
+            "last_modified": "2025-02-24T01:52:27.717999",
             "type": "collection",
             "parts": [
                 {
@@ -5005,152 +5069,182 @@
             ]
         },
         {
-            "id": "c86064d4-df4b-4ad9-a9f3-83bfd9157fbd",
-            "title": "Big Hero 6.mkv",
-            "path": "F:\\Movies\\Big Hero 6.mkv",
+            "id": "6d6a3995-063e-4535-9978-442fc579c67d",
+            "title": "2012.mp4",
+            "path": "F:\\Movies\\2012.mp4",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.155539",
+            "last_modified": "2025-02-24T01:52:27.717999",
             "type": "collection",
             "parts": [
                 {
-                    "title": "Big Hero 6.mkv",
-                    "path": "F:\\Movies\\Big Hero 6.mkv"
+                    "title": "2012.mp4",
+                    "path": "F:\\Movies\\2012.mp4"
                 }
             ]
         },
         {
-            "id": "12f2393f-ae73-4c6d-96ce-cce77be9e85a",
-            "title": "Bolt.avi",
-            "path": "F:\\Movies\\Bolt.avi",
+            "id": "be2b1869-2fc2-4b51-85d4-f3a1df8d36be",
+            "title": "Absolutely Anything.avi",
+            "path": "F:\\Movies\\Absolutely Anything.avi",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.155539",
+            "last_modified": "2025-02-24T01:52:27.717999",
             "type": "collection",
             "parts": [
                 {
-                    "title": "Bolt.avi",
-                    "path": "F:\\Movies\\Bolt.avi"
+                    "title": "Absolutely Anything.avi",
+                    "path": "F:\\Movies\\Absolutely Anything.avi"
                 }
             ]
         },
         {
-            "id": "92cb5588-309f-4876-91eb-17234d2450c7",
-            "title": "Boss Level.mkv",
-            "path": "F:\\Movies\\Boss Level.mkv",
+            "id": "a474f05e-b707-4ae8-a398-0205d1692362",
+            "title": "Moonfall.avi",
+            "path": "F:\\Movies\\Moonfall.avi",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.155539",
+            "last_modified": "2025-02-24T01:52:27.719037",
             "type": "collection",
             "parts": [
                 {
-                    "title": "Boss Level.mkv",
-                    "path": "F:\\Movies\\Boss Level.mkv"
+                    "title": "Moonfall.avi",
+                    "path": "F:\\Movies\\Moonfall.avi"
                 }
             ]
         },
         {
-            "id": "2079448f-84a0-4f3c-9f64-05e869d5dc69",
-            "title": "Bruce Almighty.avi",
-            "path": "F:\\Movies\\Bruce Almighty.avi",
+            "id": "ba293138-1da5-429f-90ef-8542eb6f600f",
+            "title": "Pixels.avi",
+            "path": "F:\\Movies\\Pixels.avi",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.155539",
+            "last_modified": "2025-02-24T01:52:27.719037",
             "type": "collection",
             "parts": [
                 {
-                    "title": "Bruce Almighty.avi",
-                    "path": "F:\\Movies\\Bruce Almighty.avi"
+                    "title": "Pixels.avi",
+                    "path": "F:\\Movies\\Pixels.avi"
                 }
             ]
         },
         {
-            "id": "c1f41f04-5211-49c7-ae71-35e853ad118e",
-            "title": "Edge of Tomorrow.mkv",
-            "path": "F:\\Movies\\Edge of Tomorrow.mkv",
+            "id": "bf221b43-6b20-418c-8963-fb537e333030",
+            "title": "Ratatouille.mkv",
+            "path": "F:\\Movies\\Ratatouille.mkv",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.155539",
+            "last_modified": "2025-02-24T01:52:27.719037",
             "type": "collection",
             "parts": [
                 {
-                    "title": "Edge of Tomorrow.mkv",
-                    "path": "F:\\Movies\\Edge of Tomorrow.mkv"
+                    "title": "Ratatouille.mkv",
+                    "path": "F:\\Movies\\Ratatouille.mkv"
                 }
             ]
         },
         {
-            "id": "2399f704-9168-4cb2-b4fe-ca8ae600ee1c",
-            "title": "Knowing.avi",
-            "path": "F:\\Movies\\Knowing.avi",
+            "id": "6f6f2551-ff01-4230-b420-211b67460713",
+            "title": "Raya and the Last Dragon.avi",
+            "path": "F:\\Movies\\Raya and the Last Dragon.avi",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.155539",
+            "last_modified": "2025-02-24T01:52:27.719037",
             "type": "collection",
             "parts": [
                 {
-                    "title": "Knowing.avi",
-                    "path": "F:\\Movies\\Knowing.avi"
+                    "title": "Raya and the Last Dragon.avi",
+                    "path": "F:\\Movies\\Raya and the Last Dragon.avi"
                 }
             ]
         },
         {
-            "id": "075b06f5-54b5-4729-8aeb-8e0c3d7bcd60",
-            "title": "Liar Liar.mkv",
-            "path": "F:\\Movies\\Liar Liar.mkv",
+            "id": "6a9a6b9a-8c13-48d7-b434-1a1b23cce819",
+            "title": "Tangled.mkv",
+            "path": "F:\\Movies\\Tangled.mkv",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.155539",
+            "last_modified": "2025-02-24T01:52:27.719037",
             "type": "collection",
             "parts": [
                 {
-                    "title": "Liar Liar.mkv",
-                    "path": "F:\\Movies\\Liar Liar.mkv"
+                    "title": "Tangled.mkv",
+                    "path": "F:\\Movies\\Tangled.mkv"
                 }
             ]
         },
         {
-            "id": "3ab4070d-f789-4310-9237-1327c1216a48",
-            "title": "Megamind.mkv",
-            "path": "F:\\Movies\\Megamind.mkv",
+            "id": "ea089f31-4694-400e-a008-463159840287",
+            "title": "The Core.avi",
+            "path": "F:\\Movies\\The Core.avi",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.155539",
+            "last_modified": "2025-02-24T01:52:27.719037",
             "type": "collection",
             "parts": [
                 {
-                    "title": "Megamind.mkv",
-                    "path": "F:\\Movies\\Megamind.mkv"
+                    "title": "The Core.avi",
+                    "path": "F:\\Movies\\The Core.avi"
                 }
             ]
         },
         {
-            "id": "d6fd3825-c003-404d-8631-0eddddcb6421",
-            "title": "The Mask.mkv",
-            "path": "F:\\Movies\\The Mask.mkv",
+            "id": "409e9217-f40b-4d3c-a706-38ea4571d90f",
+            "title": "The Day After Tomorrow.mkv",
+            "path": "F:\\Movies\\The Day After Tomorrow.mkv",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.155539",
+            "last_modified": "2025-02-24T01:52:27.719037",
             "type": "collection",
             "parts": [
                 {
-                    "title": "The Mask.mkv",
-                    "path": "F:\\Movies\\The Mask.mkv"
+                    "title": "The Day After Tomorrow.mkv",
+                    "path": "F:\\Movies\\The Day After Tomorrow.mkv"
                 }
             ]
         },
         {
-            "id": "dfe8e672-0387-4f48-8214-cb68c1eec402",
-            "title": "WALL-E.mkv",
-            "path": "F:\\Movies\\WALL-E.mkv",
+            "id": "00dc5d0c-ee27-4c49-9ce6-4c0da07d0396",
+            "title": "Turbo.avi",
+            "path": "F:\\Movies\\Turbo.avi",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-02-23T22:46:21.155539",
+            "last_modified": "2025-02-24T01:52:27.719037",
             "type": "collection",
             "parts": [
                 {
-                    "title": "WALL-E.mkv",
-                    "path": "F:\\Movies\\WALL-E.mkv"
+                    "title": "Turbo.avi",
+                    "path": "F:\\Movies\\Turbo.avi"
+                }
+            ]
+        },
+        {
+            "id": "d6b30b65-f2da-4523-98c5-1f961ede4e78",
+            "title": "World War Z.mkv",
+            "path": "F:\\Movies\\World War Z.mkv",
+            "tags": [],
+            "auto_added": true,
+            "last_modified": "2025-02-24T01:52:27.719037",
+            "type": "collection",
+            "parts": [
+                {
+                    "title": "World War Z.mkv",
+                    "path": "F:\\Movies\\World War Z.mkv"
+                }
+            ]
+        },
+        {
+            "id": "350c3031-94eb-42e0-bc0e-22c1e95e1465",
+            "title": "Смокінг.avi",
+            "path": "F:\\Movies\\Смокінг.avi",
+            "tags": [],
+            "auto_added": true,
+            "last_modified": "2025-02-24T01:52:27.719037",
+            "type": "collection",
+            "parts": [
+                {
+                    "title": "Смокінг.avi",
+                    "path": "F:\\Movies\\Смокінг.avi"
                 }
             ]
         }

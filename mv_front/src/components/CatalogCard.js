@@ -2,7 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, Typography, Box, Badge } from '@mui/material';
+import { Card, CardContent, Typography, Box, Badge, Checkbox } from '@mui/material';
 import palette from '../theme/palette';
 
 const cardStyles = {
@@ -70,14 +70,17 @@ const renderLayers = (isMovie, partsCount) => (
     ))
 );
 
-const CatalogCard = ({ title, type, partsCount, thumbnailUrl, link }) => {
+const CatalogCard = ({ title, type, partsCount, thumbnailUrl, link, showCheckbox, isSelected, onSelect }) => {
     const isMovie = type === 'movie';
     const colors = isMovie ? palette.movie : palette.series;
 
     const navigate = useNavigate();
 
-    const handleCardClick = () => {
-        if (link) {
+    const handleCardClick = (event) => {
+        if (showCheckbox) {
+            event.stopPropagation();
+            onSelect();
+        } else if (link) {
             navigate(link);
         }
     };
@@ -137,6 +140,18 @@ const CatalogCard = ({ title, type, partsCount, thumbnailUrl, link }) => {
                     {title}
                 </Typography>
             </CardContent>
+            
+            {/* Checkbox (Visible in Selection Mode) */}
+            {showCheckbox && (
+                <Checkbox
+                    checked={isSelected}
+                    onClick={(e) => e.stopPropagation()}
+                    sx={{
+                        position: 'absolute', bottom: 8, right: 8,
+                        backgroundColor: 'rgba(0,0,0,0.5)', borderRadius: '50%'
+                    }}
+                />
+            )}
         </Card>
     );
 };
@@ -146,11 +161,19 @@ CatalogCard.propTypes = {
     type: PropTypes.oneOf(['movie', 'series']).isRequired, // Must be 'movie' or 'series'
     partsCount: PropTypes.number, // Number of parts is optional
     thumbnailUrl: PropTypes.string, // URL of the thumbnail is optional
+    link: PropTypes.string,
+    showCheckbox: PropTypes.bool,
+    isSelected: PropTypes.bool,
+    onSelect: PropTypes.func,
 };
 
 CatalogCard.defaultProps = {
     partsCount: 0, // Default parts count is 0
     thumbnailUrl: '', // Default to an empty string if no thumbnail
+    link: '',
+    showCheckbox: false,
+    isSelected: false,
+    onSelect: () => {},
 };
 
 export default CatalogCard;

@@ -3,6 +3,16 @@ import axios from 'axios';
 
 const API_BASE_URL = `${config.API_BASE_URL}/api/metadata`;
 
+export const fetchAllTags = async () => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}/tags`);
+        return response.data.tags;
+    } catch (error) {
+        console.error(`Failed to fetch all tags: ${error.message}`);
+        throw error;
+    }
+};
+
 export const addTagToItems = async (ids, tag) => {
     try {
         const response = await axios.post(`${API_BASE_URL}/add_tag`, { ids, tag });

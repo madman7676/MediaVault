@@ -35,6 +35,27 @@ def error_response(message, status=400):
 
 def register_routes(app):
     
+    @app.route('/api/metadata/tags', methods=['GET'])
+    def get_all_tags():
+        """
+        Повертає всі наявні теги без повторів.
+
+        Returns:
+            Response: Список унікальних тегів.
+        """
+        try:
+            metadata = load_metadata()
+        except Exception as e:
+            return error_response(f"Failed to load metadata: {str(e)}", 500)
+
+        tags = set()
+        for category in ["series", "movies", "online_series"]:
+            for item in metadata.get(category, []):
+                item_tags = item.get("tags", [])
+                tags.update(item_tags)
+
+        return jsonify({"status": "success", "tags": list(tags)}), 200
+    
     @app.route('/api/metadata/add_tag', methods=['POST'])
     def add_tag():
         """
@@ -69,6 +90,7 @@ def register_routes(app):
                     if new_tag not in item["tags"]:
                         item["tags"].append(new_tag)
                         item["last_modified"] = datetime.now().isoformat()
+                        item["auto_added"] = False
                         updated = True
 
         if not updated:

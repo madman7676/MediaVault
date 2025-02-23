@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import CatalogCard from '../components/CatalogCard';
-import { fetchMetadata } from '../api/metadataAPI';
+import { fetchMetadata, addTagToItems, fetchAllTags} from '../api/metadataAPI';
 import { fetchThumbnail } from '../api/thumbnailAPI';
 import TagFilter from '../components/TagFilter';
-import { Grid2 as Grid, CssBaseline, ThemeProvider, createTheme, ButtonGroup, Button, Menu, MenuItem, Fab, Zoom, Dialog, DialogTitle, DialogContent, TextField, IconButton, Checkbox, FormControlLabel, FormGroup, Box } from '@mui/material';
+import { Grid2 as Grid, SpeedDial, SpeedDialAction, SpeedDialIcon, CssBaseline, ThemeProvider, createTheme, ButtonGroup, Button, Menu, MenuItem, Fab, Zoom, Dialog, DialogTitle, DialogContent, TextField, IconButton, Checkbox, FormControlLabel, FormGroup, Box } from '@mui/material';
+import BookmarksIcon from '@mui/icons-material/Bookmarks';
 import AddIcon from '@mui/icons-material/Add';
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
+import SettingsIcon from '@mui/icons-material/Settings';
+import TagSettings from '../components/TagSettings';
 import palette from '../theme/palette';
 import MVLogo from '../images/MV_Logo2.png';
 import background from '../images/background.png';
@@ -44,8 +47,58 @@ const MediaVault = () => {
     const [onlineSeriesEpisodes, setOnlineSeriesEpisodes] = useState('');
     const [seasons, setSeasons] = useState([{ name: 'Сезон 1', episodes: '' }]);
 
-    const [selectedTags, setSelectedTags] = useState([]); // Стан для вибраних тегів
+    const [selectedTags, setSelectedTags] = useState([]); // Стан для тегів фільтрації
     const [filterMode, setFilterMode] = useState('include'); // Стан для режиму фільтрації
+
+    const [openTagSettings, setOpenTagSettings] = useState(false);
+    const [tags, setTags] = useState([]); // Масив тегів
+
+    const [selectionMode, setSelectionMode] = useState(false);
+    const [selectedItems, setSelectedItems] = useState([]);
+
+    const [selectedTag, setSelectedTag] = useState(null); // Стан для вибраного тегу
+
+    const [openSettingsMenu, setOpenSettingsMenu] = useState(false);
+
+    const handleTagSelectForAssignment = (tag) => {
+        setSelectedTag(tag);
+        setSelectionMode(true);
+        setSelectedItems([]);
+    };    
+
+    const handleAddTag = (newTag) => {
+        setTags((prevTags) => [...prevTags, newTag]);
+    };
+    
+    const handleUpdateTags = async () => {
+        if (selectedTag && selectedItems.length > 0) {
+            try {
+                await addTagToItems(selectedItems, selectedTag); // Додаємо тег до елементів
+                const updatedTags = await fetchAllTags(); // Оновлюємо список тегів з API
+                setTags(updatedTags); // Оновлюємо стан тегів
+            } catch (error) {
+                console.error('Не вдалося оновити теги:', error);
+            } finally {
+                setSelectionMode(false);
+                setSelectedItems([]);
+                setSelectedTag(null);
+            }
+        }
+    };
+    
+
+    useEffect(() => {
+        const loadTags = async () => {
+            try {
+                const fetchedTags = await fetchAllTags();
+                setTags(fetchedTags);
+            } catch (error) {
+                console.error('Не вдалося завантажити теги:', error);
+            }
+        };
+    
+        loadTags();
+    }, []);
 
     useEffect(() => {
         const fetchCollections = async () => {
@@ -59,9 +112,9 @@ const MediaVault = () => {
                 const movieCollections = await Promise.all(
                     movies.map(async (movie) => {
                         try {
-                            console.log(`Fetching thumbnail for movie: ${movie.title}`);
+                            // console.log(`Fetching thumbnail for movie: ${movie.title}`);
                             const thumbnailUrl = await fetchThumbnail(movie.path);
-                            console.log(`Thumbnail fetched for movie ${movie.title}:`, thumbnailUrl); // Debugging
+                            // console.log(`Thumbnail fetched for movie ${movie.title}:`, thumbnailUrl); // Debugging
                             return {
                                 id: movie.id,
                                 title: movie.title.replace(/\.[^/.]+$/, ""),
@@ -87,9 +140,9 @@ const MediaVault = () => {
                 const seriesCollections = await Promise.all(
                     series.map(async (serie) => {
                         try {
-                            console.log(`Fetching thumbnail for series: ${serie.title}`);
+                            // console.log(`Fetching thumbnail for series: ${serie.title}`);
                             const thumbnailUrl = await fetchThumbnail(serie.path);
-                            console.log(`Thumbnail fetched for series ${serie.title}:`, thumbnailUrl); // Debugging
+                            // console.log(`Thumbnail fetched for series ${serie.title}:`, thumbnailUrl); // Debugging
                             return {
                                 id: serie.id,
                                 title: serie.title,
@@ -115,9 +168,9 @@ const MediaVault = () => {
                 const onlineSeriesCollections = await Promise.all(
                     online_series.map(async (onlineSerie) => {
                         try {
-                            console.log(`Fetching thumbnail for online series: ${onlineSerie.title}`);
+                            // console.log(`Fetching thumbnail for online series: ${onlineSerie.title}`);
                             const thumbnailUrl = onlineSerie.image_url;
-                            console.log(`Thumbnail fetched for online series ${onlineSerie.title}:`, thumbnailUrl); // Debugging
+                            // console.log(`Thumbnail fetched for online series ${onlineSerie.title}:`, thumbnailUrl); // Debugging
                             return {
                                 id: onlineSerie.id,
                                 title: onlineSerie.title,
@@ -182,7 +235,7 @@ const MediaVault = () => {
                 ? prevSelectedTags.filter(t => t !== tag)
                 : [...prevSelectedTags, tag]
         );
-    };
+    };      
 
     const toggleFilterMode = () => {
         setFilterMode(prevMode => (prevMode === 'include' ? 'exclude' : 'include'));
@@ -335,6 +388,10 @@ const MediaVault = () => {
         </Dialog>
     </>
 
+    const gridStyle = {
+        justifyContent: openTagSettings ? 'left' : 'center',
+    };
+    
     return (
         <ThemeProvider theme={darkTheme}>
             <CssBaseline />
@@ -367,34 +424,63 @@ const MediaVault = () => {
                         </div>
                     )}
                 <TagFilter
+                    tags={tags}
                     selectedTags={selectedTags}
                     handleTagChange={handleTagChange}
                     filterMode={filterMode}
                     toggleFilterMode={toggleFilterMode}
                 />
-                <Grid container spacing={2} justifyContent="center">
+                <Grid container spacing={2} justifyContent="center" style={gridStyle}>
                     {filteredCollections.map(collection => (
-                        <Grid item xs={12} sm={6} md={3} key={collection.id}>
+                        <Grid item xs={12} sm={6} md={4} key={collection.id}>
                             <CatalogCard 
                                 title={collection.title} 
                                 type={collection.type} 
                                 partsCount={collection.partsCount} 
                                 thumbnailUrl={collection.thumbnailUrl} 
                                 link={'/player/' + collection.id}
+                                showCheckbox={selectionMode}
+                                isSelected={selectedItems.includes(collection.id)}
+                                onSelect={() => {
+                                    setSelectedItems(prev =>
+                                        prev.includes(collection.id) ? prev.filter(id => id !== collection.id) : [...prev, collection.id]
+                                    );
+                                }}
                             />
                         </Grid>
                     ))}
                 </Grid>
 
-                <Fab 
-                    color="primary" 
-                    aria-label="add" 
-                    onClick={handleFabClick}
+                <SpeedDial
+                    ariaLabel="Settings"
+                    icon={<SettingsIcon />}
+                    direction="up"
+                    onClick={() => setOpenSettingsMenu((prev) => !prev)} // Перемикає відкриття по кліку
+                    open={openSettingsMenu} // Визначає, чи відкритий SpeedDial
                     style={{ position: 'fixed', bottom: '2rem', right: '2rem' }}
                 >
-                    <AddIcon />
-                </Fab>
-                {addOnlineSeries}
+                    <SpeedDialAction
+                        icon={<BookmarksIcon />}
+                        tooltipTitle="Tag Settings"
+                        onClick={() => {setOpenTagSettings(!openTagSettings); setOpenSettingsMenu(false);}}
+                    />
+                    <SpeedDialAction
+                        icon={<AddIcon />}
+                        tooltipTitle="Add Online Series"
+                        onClick={() => {handleOpenOnlineSeriesDialog(); setOpenSettingsMenu(false);}}
+                    />
+                    
+                </SpeedDial>
+                {openTagSettings && (
+                    <TagSettings
+                        tags={tags}
+                        onAddTag={handleAddTag}
+                        onUpdateTags={() => handleUpdateTags(selectedItems, selectedTag)}
+                        selectedTag={selectedTag}
+                        setSelectedTag={handleTagSelectForAssignment} // Використовуємо нову функцію
+                        selectedItems={selectedItems}
+                    />
+                )}
             </div>
         </ThemeProvider>
     );
