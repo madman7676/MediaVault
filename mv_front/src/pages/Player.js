@@ -1,7 +1,7 @@
 // Player.js component for displaying video and collection/season files
 import 'videojs-hotkeys';
 import config from '../config.json';
-import palette from '../theme/palette';
+import palette from '../styles/theme/palette';
 import FileList from '../components/FileList';
 import PlayerControls from '../components/Player/PlayerControls';
 import { Settings, CheckBox, CheckBoxOutlineBlank } from '@mui/icons-material';
@@ -105,7 +105,14 @@ const Player = () => {
             const item = await fetchMetadataById(itemId);
             setTitle(item.title || 'Files');
             setFileList(processFiles(item));
-            allPaths.current=item.seasons.map(season => season.path);
+            if (item.type === 'series' && Array.isArray(item.seasons)) {
+                allPaths.current = item.seasons.map(season => season.path);
+            } else if (item.type === 'movie' && Array.isArray(item.parts)) {
+                allPaths.current = item.parts.map(part => part.path);
+            } else {
+                allPaths.current = [];
+            }
+            // allPaths.current=item.seasons.map(season => season.path);
         } catch (err) {
             setError(`Error fetching metadata: ${err.message}`);
         } finally {

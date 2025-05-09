@@ -1,7 +1,8 @@
+import json
 import uuid
 from flask import jsonify, request, send_file, Response
 import os
-from metadata import load_metadata, save_metadata, auto_add_metadata, find_metadata_item
+from metadata import load_metadata, save_metadata, auto_add_metadata, find_metadata_item, update_paths_only
 from analyze_video import analyze_video, clear_analysis_cache
 from thumbnails import find_first_video_in_directory, get_or_create_thumbnail
 from config import THUMBNAILS_DIR, MOVIES_PATHS, SERIES_PATHS
@@ -552,6 +553,28 @@ def register_routes(app):
 
         return error_response("Item not found")
 
+    @app.route('/api/metadata/item/<string:item_id>/update-paths', methods=['POST'])
+    def update_item_paths(item_id):
+        """
+        Оновлює тільки шляхи до файлів для вказаного елемента.
+        
+        Parameters:
+            item_id (str): Ідентифікатор елемента
+
+        Returns:
+            Response: Статус оновлення шляхів
+        """
+        metadata = load_metadata()
+        success, message = update_paths_only(metadata, item_id)
+        
+        if success:
+            return jsonify({
+                "status": "success",
+                "message": message
+            }), 200
+        else:
+            return error_response(message, 404)
+
     # API endpoint to get metadata
     @app.route('/api/metadata', methods=['GET'])
     def get_metadata():
@@ -645,3 +668,87 @@ def register_routes(app):
             return send_file(thumbnail_path, mimetype='image/jpeg')
         else:
             return jsonify({"error": "No thumbnail could be created"}), 404
+
+    @app.route('/api/video/audio-tracks', methods=['GET'])
+    def get_audio_tracks():
+        """
+        Повертає список доступних аудіодоріжок для відеофайлу.
+
+        Query Parameters:
+            path (str): Шлях до відеофайлу.
+
+        Returns:
+            Response: Список аудіодоріжок або помилка.
+        """
+        video_path = request.args.get('path')
+        if not video_path or not os.path.exists(video_path):
+            return error_response("File not found", 404)
+
+        try:
+            command = [
+                "ffprobe",
+                "-v", "quiet",
+                "-print_format", "json",
+                "-show_streams",
+                "-select_streams", "a",
+                video_path
+            ]
+            result = subprocess.run(command, capture_output=True, text=True)
+            audio_info = json.loads(result.stdout)
+            
+            tracks = []
+            for idx, stream in enumerate(audio_info.get('streams', [])):
+                tracks.append({
+                    'index': stream.get('index'),
+                    'codec': stream.get('codec_name'),
+                    'language': stream.get('tags', {}).get('language'),
+                    'title': stream.get('tags', {}).get('title'),
+                })
+            
+            return jsonify({
+                "status": "success",
+                "tracks": tracks
+            }), 200
+            
+        except Exception as e:
+            return error_response(f"Failed to get audio tracks: {str(e)}", 500)
+
+    @app.route('/api/metadata/audio-track', methods=['POST'])
+    def save_audio_track():
+        """
+        Зберігає вибрану аудіодоріжку в метаданих.
+
+        Body Parameters:
+            path (str): Шлях до сезону
+            name (str): Назва файлу
+            trackIndex (int): Індекс вибраної аудіодоріжки
+
+        Returns:
+            Response: Статус збереження
+        """
+        data = request.json
+        season_path = data.get('path')
+        file_name = data.get('name')
+        track_index = data.get('trackIndex')
+
+        if not all([season_path, file_name, track_index is not None]):
+            return error_response("Missing required fields", 400)
+
+        metadata = load_metadata()
+        updated = False
+
+        for series in metadata.get("series", []):
+            for season in series.get("seasons", []):
+                if os.path.normpath(season.get("path")) == os.path.normpath(season_path):
+                    for file in season.get("files", []):
+                        if file.get("name") == file_name:
+                            file["preferredAudioTrack"] = track_index
+                            series["auto_added"] = False
+                            updated = True
+                            break
+
+        if updated:
+            save_metadata(metadata)
+            return jsonify({"status": "success", "message": "Audio track preference saved"}), 200
+        
+        return error_response("File not found in metadata", 404)

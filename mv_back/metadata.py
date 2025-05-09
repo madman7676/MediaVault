@@ -5,6 +5,74 @@ from datetime import datetime
 from config import MOVIES_PATHS, SERIES_PATHS, METADATA_FILE, BASE_URL, THUMBNAILS_DIR
 from flask import Flask, request, send_file
 
+def update_paths_only(metadata, item_id):
+    """
+    Оновлює тільки шляхи до файлів для вказаного елемента метаданих.
+    Зберігає всі інші метадані (теги, налаштування тощо).
+
+    Parameters:
+        metadata (dict): Поточні метадані
+        item_id (str): ID елемента для оновлення
+
+    Returns:
+        tuple: (bool, str) - (успіх оновлення, повідомлення)
+    """
+    item, category = find_metadata_item(metadata, item_id=item_id)
+    
+    if not item or not os.path.exists(item["path"]):
+        return False, "Item not found or path doesn't exist"
+    try:
+        if item["type"] == "series":
+            print(f"Processing series: {item['title']}")
+            # Отримуємо список реальних папок сезонів
+            real_seasons = [d for d in os.listdir(item["path"]) 
+                          if os.path.isdir(os.path.join(item["path"], d))]
+            print(f"Found seasons directories: {real_seasons}")
+            
+            # Словник існуючих сезонів для збереження метаданих
+            existing_seasons = {s["title"]: s for s in item["seasons"]}
+            item["seasons"] = []
+
+            # Для кожної реальної папки сезону
+            for season_name in real_seasons:
+                season_path = os.path.join(item["path"], season_name)
+                # Беремо існуючий сезон або створюємо новий
+                season = existing_seasons.get(season_name, {"title": season_name})
+                season["path"] = season_path
+                
+                # Зберігаємо існуючі метадані файлів
+                existing_files = {f["name"]: f for f in season.get("files", [])}
+                season["files"] = []
+                
+                # Оновлюємо файли
+                for file in os.listdir(season_path):
+                    if os.path.isfile(os.path.join(season_path, file)):
+                        # Зберігаємо існуючі метадані файлу або створюємо нові
+                        file_data = existing_files.get(file, {})
+                        file_data["name"] = file
+                        season["files"].append(file_data)
+                
+                item["seasons"].append(season)
+                print(f"Updated season {season_name} with {len(season['files'])} files")
+                
+        elif item["type"] == "collection":
+            # Оновлюємо шляхи для фільму/колекції
+            item["parts"] = [
+                {
+                    "title": file,
+                    "path": os.path.join(item["path"], file)
+                }
+                for file in os.listdir(item["path"])
+                if os.path.isfile(os.path.join(item["path"], file))
+            ]
+        
+        item["last_modified"] = datetime.now().isoformat()
+        save_metadata(metadata)
+        return True, "Paths updated successfully"
+        
+    except Exception as e:
+        return False, f"Error updating paths: {str(e)}"
+
 def find_metadata_item(metadata, item_id=None, path=None):
     # Пошук запису за id або шляхом у метаданих.
     for category in ["series", "movies"]:

@@ -67,12 +67,21 @@ const SettingsMenu = forwardRef(({ onOptionSelect, buttonRef }, ref) => {
                 </li>
                 <li
                     className="vjs-menu-item"
-                    style={listItemStyles}
+                    style={{
+                        ...listItemStyles,
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center'
+                    }}
                     onMouseEnter={(e) => e.target.style.backgroundColor = listItemHoverStyles.backgroundColor}
                     onMouseLeave={(e) => e.target.style.backgroundColor = ''}
-                    onClick={() => onOptionSelect('Option 2')}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onOptionSelect('audioTracks');
+                    }}
                 >
-                    Option 2
+                    <span style={{ marginRight: '10px' }}>◀</span>
+                    <span>Audio Track</span>
                 </li>
                 <li
                     className="vjs-menu-item"

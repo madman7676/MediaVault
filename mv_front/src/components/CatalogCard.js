@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, Typography, Box, Badge, Checkbox } from '@mui/material';
-import palette from '../theme/palette';
+import palette from '../styles/theme/palette';
 
 const cardStyles = {
     width: 345,
