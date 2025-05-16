@@ -282,11 +282,11 @@ const TimeToSkipSettingsMenu = ({ intervals: initialIntervals, onIntervalsChange
                                 </Box>
                                 {/* Save/Cancel column */}
                                 <Box display="flex" justifyContent="flex-end" flexDirection="row" gap={1} mt={1} width="100%">
-                                    <IconButton onClick={handleSaveEdit} color="primary" sx={saveButtonStyles}>
-                                        <Check />
-                                    </IconButton>
                                     <IconButton onClick={handleCancel} color="error" sx={saveButtonStyles}>
                                         <Cancel />
+                                    </IconButton>
+                                    <IconButton onClick={handleSaveEdit} color="primary" sx={saveButtonStyles}>
+                                        <Check />
                                     </IconButton>
                                 </Box>
                             </Box>

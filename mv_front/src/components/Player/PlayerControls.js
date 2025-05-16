@@ -85,6 +85,9 @@ const PlayerControls = ({
     
     const handleCloseTimeToSkipMenu = () => {
         setShowTimeToSkipMenu(false);
+        if (playerRef.current) {
+            playerRef.current.focus();
+        }
     };
 
     const renderTimeSkips = (intervals) => {
@@ -335,6 +338,23 @@ const PlayerControls = ({
                     playerInstance.current.off('error', handleError);
                     playerInstance.current.off('audiotrackchange', handleTrackChange);
                 }
+            };
+        }
+    }, []);
+
+    useEffect(() => {
+        // Add styles after player initialization
+        if (playerInstance.current) {
+            const style = document.createElement('style');
+            style.textContent = `
+                .video-js:focus { outline: none !important; }
+                .video-js *:focus { outline: none !important; }
+                .vjs-control:focus { outline: none !important; }
+            `;
+            document.head.appendChild(style);
+
+            return () => {
+                document.head.removeChild(style);
             };
         }
     }, []);

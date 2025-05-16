@@ -424,7 +424,7 @@
             "path": "F:\\Serials\\Moon Knight",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.752458",
+            "last_modified": "2025-05-16T19:51:42.489221",
             "type": "series",
             "seasons": [
                 {
@@ -1580,69 +1580,133 @@
                 "Комедія"
             ],
             "auto_added": false,
-            "last_modified": "2025-02-24T01:52:27.696998",
+            "last_modified": "2025-05-11T22:31:35.355971",
             "type": "series",
             "seasons": [
                 {
-                    "title": "[FanVoxUA]_Onepunchman_[720p]",
-                    "path": "F:\\Serials\\Ванпанч\\[FanVoxUA]_Onepunchman_[720p]",
+                    "title": "Ванпанчмен",
+                    "path": "F:\\Serials\\Ванпанч\\Ванпанчмен",
                     "files": [
                         {
-                            "name": "[FanVoxUA]_Onepunchman_01_[720p].mkv"
+                            "name": "Ванпанчмен 01.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 191,
+                                    "end": 281
+                                },
+                                {
+                                    "start": 1330,
+                                    "end": 1420
+                                },
+                                {
+                                    "start": 1441,
+                                    "end": 1461
+                                }
+                            ]
                         },
                         {
-                            "name": "[FanVoxUA]_Onepunchman_02_[720p].mkv"
+                            "name": "Ванпанчмен 02.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 120,
+                                    "end": 210
+                                },
+                                {
+                                    "start": 1329,
+                                    "end": 1419
+                                },
+                                {
+                                    "start": 1439,
+                                    "end": 1461
+                                }
+                            ]
                         },
                         {
-                            "name": "[FanVoxUA]_Onepunchman_03_[720p].mkv"
+                            "name": "Ванпанчмен 03.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 0,
+                                    "end": 8
+                                },
+                                {
+                                    "start": 153,
+                                    "end": 243
+                                },
+                                {
+                                    "start": 1325,
+                                    "end": 1415
+                                },
+                                {
+                                    "start": 1446,
+                                    "end": 1465
+                                }
+                            ]
                         },
                         {
-                            "name": "[FanVoxUA]_Onepunchman_04_[720p].mkv"
+                            "name": "Ванпанчмен 04.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 0,
+                                    "end": 5
+                                },
+                                {
+                                    "start": 70,
+                                    "end": 160
+                                },
+                                {
+                                    "start": 1335,
+                                    "end": 1425
+                                },
+                                {
+                                    "start": 1445,
+                                    "end": 1465
+                                }
+                            ]
                         },
                         {
-                            "name": "[FanVoxUA]_Onepunchman_05_[720p].mkv"
+                            "name": "Ванпанчмен 05.mkv"
                         },
                         {
-                            "name": "[FanVoxUA]_Onepunchman_06_[720p].mkv"
+                            "name": "Ванпанчмен 06.mkv"
                         },
                         {
-                            "name": "[FanVoxUA]_Onepunchman_07_[720p].mkv"
+                            "name": "Ванпанчмен 07.mkv"
                         },
                         {
-                            "name": "[FanVoxUA]_Onepunchman_08_[720p].mkv"
+                            "name": "Ванпанчмен 08.mkv"
                         },
                         {
-                            "name": "[FanVoxUA]_Onepunchman_09_[720p].mkv"
+                            "name": "Ванпанчмен 09.mkv"
                         },
                         {
-                            "name": "[FanVoxUA]_Onepunchman_10_[720p].mkv"
+                            "name": "Ванпанчмен 10.mkv"
                         },
                         {
-                            "name": "[FanVoxUA]_Onepunchman_11_[720p].mkv"
+                            "name": "Ванпанчмен 11.mkv"
                         },
                         {
-                            "name": "[FanVoxUA]_Onepunchman_12_[720p].mkv"
+                            "name": "Ванпанчмен 12.mkv"
                         },
                         {
-                            "name": "[FanVoxUA]_Onepunchman_OVA_[576p].mkv"
+                            "name": "Ванпанчмен 13.mkv"
                         },
                         {
-                            "name": "[FanVoxUA]_Onepunchman_SP_01_[720p].mkv"
+                            "name": "Ванпанчмен 14.mkv"
                         },
                         {
-                            "name": "[FanVoxUA]_Onepunchman_SP_02_[720p].mkv"
+                            "name": "Ванпанчмен 15.mkv"
                         },
                         {
-                            "name": "[FanVoxUA]_Onepunchman_SP_03_[720p].mkv"
+                            "name": "Ванпанчмен 16.mkv"
                         },
                         {
-                            "name": "[FanVoxUA]_Onepunchman_SP_04_[720p].mkv"
+                            "name": "Ванпанчмен 17.mkv"
                         },
                         {
-                            "name": "[FanVoxUA]_Onepunchman_SP_05_[720p].mkv"
+                            "name": "Ванпанчмен 18.mkv"
                         },
                         {
-                            "name": "[FanVoxUA]_Onepunchman_SP_06_[720p].mkv"
+                            "name": "Ванпанчмен 19.mkv"
                         }
                     ]
                 },
@@ -2013,7 +2077,7 @@
                 "Романтика"
             ],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.753457",
+            "last_modified": "2025-05-16T19:51:42.489221",
             "type": "series",
             "seasons": [
                 {
@@ -2252,7 +2316,7 @@
                 "Імба ГГ"
             ],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.755457",
+            "last_modified": "2025-05-16T19:51:42.491727",
             "type": "series",
             "seasons": [
                 {
@@ -2531,7 +2595,7 @@
                 "Імба ГГ"
             ],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.762458",
+            "last_modified": "2025-05-16T19:51:42.498729",
             "type": "series",
             "seasons": [
                 {
@@ -2588,7 +2652,7 @@
                 "Імба ГГ"
             ],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.763458",
+            "last_modified": "2025-05-16T19:51:42.501232",
             "type": "series",
             "seasons": [
                 {
@@ -2645,7 +2709,7 @@
                 "Імба ГГ"
             ],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.765460",
+            "last_modified": "2025-05-16T19:51:42.503694",
             "type": "series",
             "seasons": [
                 {
@@ -2882,7 +2946,7 @@
             "path": "F:\\Serials\\Невколупний",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.767458",
+            "last_modified": "2025-05-16T19:51:42.505226",
             "type": "series",
             "seasons": [
                 {
@@ -2927,7 +2991,7 @@
                 "Імба ГГ"
             ],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.768459",
+            "last_modified": "2025-05-16T19:51:42.506257",
             "type": "series",
             "seasons": [
                 {
@@ -3212,7 +3276,7 @@
                 "Фентезі"
             ],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.770463",
+            "last_modified": "2025-05-16T19:51:42.508305",
             "type": "series",
             "seasons": [
                 {
@@ -3269,7 +3333,7 @@
                 "Фентезі"
             ],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.774463",
+            "last_modified": "2025-05-16T19:51:42.510356",
             "type": "series",
             "seasons": [
                 {
@@ -3464,7 +3528,7 @@
                 "Фентезі"
             ],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.778464",
+            "last_modified": "2025-05-16T19:51:42.513995",
             "type": "series",
             "seasons": [
                 {
@@ -3521,7 +3585,7 @@
                 "Фентезі"
             ],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.780464",
+            "last_modified": "2025-05-16T19:51:42.516552",
             "type": "series",
             "seasons": [
                 {
@@ -3842,7 +3906,7 @@
                 "Фентезі"
             ],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.782463",
+            "last_modified": "2025-05-16T19:51:42.518094",
             "type": "series",
             "seasons": [
                 {
@@ -4103,7 +4167,7 @@
                 "Ісекай"
             ],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.785975",
+            "last_modified": "2025-05-16T19:51:42.520649",
             "type": "series",
             "seasons": [
                 {
@@ -4466,8 +4530,8 @@
             "tags": [
                 "Ісекай"
             ],
-            "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.787976",
+            "auto_added": false,
+            "last_modified": "2025-05-16T00:40:28.977781",
             "type": "series",
             "seasons": [
                 {
@@ -4475,31 +4539,117 @@
                     "path": "F:\\Serials\\Стратегія «Один в іншому світі»",
                     "files": [
                         {
-                            "name": "Стратегія «Один в іншому світі» - 01.mkv"
+                            "name": "Стратегія «Один в іншому світі» - 01.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 1330,
+                                    "end": 1423
+                                }
+                            ]
                         },
                         {
-                            "name": "Стратегія «Один в іншому світі» - 02.mkv"
+                            "name": "Стратегія «Один в іншому світі» - 02.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 60,
+                                    "end": 150
+                                },
+                                {
+                                    "start": 1330,
+                                    "end": 1423
+                                }
+                            ]
                         },
                         {
-                            "name": "Стратегія «Один в іншому світі» - 03.mkv"
+                            "name": "Стратегія «Один в іншому світі» - 03.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 62,
+                                    "end": 152
+                                },
+                                {
+                                    "start": 1330,
+                                    "end": 1423
+                                }
+                            ]
                         },
                         {
-                            "name": "Стратегія «Один в іншому світі» - 04.mkv"
+                            "name": "Стратегія «Один в іншому світі» - 04.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 27,
+                                    "end": 117
+                                },
+                                {
+                                    "start": 1331,
+                                    "end": 1423
+                                }
+                            ]
                         },
                         {
-                            "name": "Стратегія «Один в іншому світі» - 05.mkv"
+                            "name": "Стратегія «Один в іншому світі» - 05.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 46,
+                                    "end": 136
+                                },
+                                {
+                                    "start": 1331,
+                                    "end": 1423
+                                }
+                            ]
                         },
                         {
-                            "name": "Стратегія «Один в іншому світі» - 06.mkv"
+                            "name": "Стратегія «Один в іншому світі» - 06.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 69,
+                                    "end": 158
+                                },
+                                {
+                                    "start": 1331,
+                                    "end": 1423
+                                }
+                            ]
                         },
                         {
-                            "name": "Стратегія «Один в іншому світі» - 07.mkv"
+                            "name": "Стратегія «Один в іншому світі» - 07.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 68,
+                                    "end": 158
+                                },
+                                {
+                                    "start": 1330,
+                                    "end": 1423
+                                }
+                            ]
                         },
                         {
-                            "name": "Стратегія «Один в іншому світі» - 08.mkv"
+                            "name": "Стратегія «Один в іншому світі» - 08.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 41,
+                                    "end": 130
+                                },
+                                {
+                                    "start": 1331,
+                                    "end": 1421
+                                }
+                            ]
                         },
                         {
-                            "name": "Стратегія «Один в іншому світі» - 09.mkv"
+                            "name": "Стратегія «Один в іншому світі» - 09.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 49,
+                                    "end": 139
+                                },
+                                {
+                                    "start": 1331,
+                                    "end": 1423
+                                }
+                            ]
                         },
                         {
                             "name": "Стратегія «Один в іншому світі» - 10.mkv"
@@ -5448,7 +5598,7 @@
                 "Фентезі"
             ],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.789975",
+            "last_modified": "2025-05-16T19:51:42.522185",
             "type": "series",
             "seasons": [
                 {
@@ -5505,7 +5655,7 @@
                 "Фентезі"
             ],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.792975",
+            "last_modified": "2025-05-16T19:51:42.524231",
             "type": "series",
             "seasons": [
                 {
@@ -5562,7 +5712,7 @@
                 "Фентезі"
             ],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.793975",
+            "last_modified": "2025-05-16T19:51:42.526277",
             "type": "series",
             "seasons": [
                 {
@@ -5788,7 +5938,7 @@
             "path": "F:\\Serials\\Ця фарфорова лялечка закохалася",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.796975",
+            "last_modified": "2025-05-16T19:51:42.527814",
             "type": "series",
             "seasons": [
                 {
@@ -5931,22 +6081,86 @@
                             ]
                         },
                         {
-                            "name": "Чи справді я найсильніший 07.mkv"
+                            "name": "Чи справді я найсильніший 07.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 42,
+                                    "end": 132
+                                },
+                                {
+                                    "start": 868,
+                                    "end": 958
+                                },
+                                {
+                                    "start": 1389,
+                                    "end": 1404
+                                }
+                            ]
                         },
                         {
-                            "name": "Чи справді я найсильніший 08.mkv"
+                            "name": "Чи справді я найсильніший 08.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 27,
+                                    "end": 117
+                                },
+                                {
+                                    "start": 1300,
+                                    "end": 1405
+                                }
+                            ]
                         },
                         {
-                            "name": "Чи справді я найсильніший 09.mkv"
+                            "name": "Чи справді я найсильніший 09.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 224,
+                                    "end": 314
+                                },
+                                {
+                                    "start": 1299,
+                                    "end": 1405
+                                }
+                            ]
                         },
                         {
-                            "name": "Чи справді я найсильніший 10.mkv"
+                            "name": "Чи справді я найсильніший 10.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 93,
+                                    "end": 183
+                                },
+                                {
+                                    "start": 1299,
+                                    "end": 1405
+                                }
+                            ]
                         },
                         {
-                            "name": "Чи справді я найсильніший 11.mkv"
+                            "name": "Чи справді я найсильніший 11.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 101,
+                                    "end": 191
+                                },
+                                {
+                                    "start": 1299,
+                                    "end": 1404
+                                }
+                            ]
                         },
                         {
-                            "name": "Чи справді я найсильніший 12.mkv"
+                            "name": "Чи справді я найсильніший 12.mkv",
+                            "timeToSkip": [
+                                {
+                                    "start": 191,
+                                    "end": 281
+                                },
+                                {
+                                    "start": 1314,
+                                    "end": 1404
+                                }
+                            ]
                         }
                     ]
                 }
@@ -6157,7 +6371,7 @@
             "path": "F:\\Movies\\Cloudy with a Chance of Meatballs. Dilogy",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.800975",
+            "last_modified": "2025-05-16T19:51:42.530459",
             "type": "collection",
             "parts": [
                 {
@@ -6176,7 +6390,7 @@
             "path": "F:\\Movies\\Riddick",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.800975",
+            "last_modified": "2025-05-16T19:51:42.530968",
             "type": "collection",
             "parts": [
                 {
@@ -6199,7 +6413,7 @@
             "path": "F:\\Movies\\Ukrainianize Marvel Cinematic Universe",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.800975",
+            "last_modified": "2025-05-16T19:51:42.530968",
             "type": "collection",
             "parts": [
                 {
@@ -6322,7 +6536,7 @@
             "path": "F:\\Movies\\X-Men. Collection",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.802975",
+            "last_modified": "2025-05-16T19:51:42.533501",
             "type": "collection",
             "parts": [
                 {
@@ -6401,7 +6615,7 @@
             "path": "F:\\Movies\\Собаче життя",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.803975",
+            "last_modified": "2025-05-16T19:51:42.534503",
             "type": "collection",
             "parts": [
                 {
@@ -6420,7 +6634,7 @@
             "path": "F:\\Movies\\Футурама",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.804975",
+            "last_modified": "2025-05-16T19:51:42.534503",
             "type": "collection",
             "parts": [
                 {
@@ -6447,7 +6661,7 @@
             "path": "F:\\Movies\\Як приборкати дракона",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.804975",
+            "last_modified": "2025-05-16T19:51:42.535505",
             "type": "collection",
             "parts": [
                 {
@@ -6461,12 +6675,12 @@
             ]
         },
         {
-            "id": "8d1c2907-d3f6-4c1c-8b43-ab2b63c0c733",
+            "id": "7f026f13-3fd1-4b13-8ddb-a65748a35829",
             "title": "Big Hero 6.mkv",
             "path": "F:\\Movies\\Big Hero 6.mkv",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.805975",
+            "last_modified": "2025-05-16T19:51:42.535505",
             "type": "collection",
             "parts": [
                 {
@@ -6476,12 +6690,12 @@
             ]
         },
         {
-            "id": "fa358758-946b-41ad-a245-39a36f81f746",
+            "id": "7b3ec5aa-2033-4c11-9599-356bcf46f371",
             "title": "Bolt.avi",
             "path": "F:\\Movies\\Bolt.avi",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.805975",
+            "last_modified": "2025-05-16T19:51:42.536506",
             "type": "collection",
             "parts": [
                 {
@@ -6491,12 +6705,12 @@
             ]
         },
         {
-            "id": "71ee36ff-3953-4e36-ae67-163f3e56bbbf",
+            "id": "bf47e8a3-0bbf-4263-9bce-dbc3192d4435",
             "title": "Boss Level.mkv",
             "path": "F:\\Movies\\Boss Level.mkv",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.805975",
+            "last_modified": "2025-05-16T19:51:42.536506",
             "type": "collection",
             "parts": [
                 {
@@ -6506,12 +6720,12 @@
             ]
         },
         {
-            "id": "2755a9d0-4a50-4931-a598-1f5e86167360",
+            "id": "87f3ae93-fae0-4d61-a404-0b690f5c8701",
             "title": "Bruce Almighty.avi",
             "path": "F:\\Movies\\Bruce Almighty.avi",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.805975",
+            "last_modified": "2025-05-16T19:51:42.536506",
             "type": "collection",
             "parts": [
                 {
@@ -6521,12 +6735,12 @@
             ]
         },
         {
-            "id": "6145eba2-4a3f-482a-84f3-294cc3b84276",
+            "id": "40613884-22bf-4d2b-a479-278f5e66ad6f",
             "title": "Edge of Tomorrow.mkv",
             "path": "F:\\Movies\\Edge of Tomorrow.mkv",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.806975",
+            "last_modified": "2025-05-16T19:51:42.536506",
             "type": "collection",
             "parts": [
                 {
@@ -6536,12 +6750,12 @@
             ]
         },
         {
-            "id": "db6c0a69-4296-431a-b42b-c83d82157f9f",
+            "id": "56047411-55ea-4960-8ca5-65f6373a1a76",
             "title": "Knowing.avi",
             "path": "F:\\Movies\\Knowing.avi",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.806975",
+            "last_modified": "2025-05-16T19:51:42.536506",
             "type": "collection",
             "parts": [
                 {
@@ -6551,12 +6765,12 @@
             ]
         },
         {
-            "id": "ca0cbe48-3945-4ea8-ac92-dc94fc687d59",
+            "id": "eb1a4af2-b869-496f-b2d1-8bc0c0aa176a",
             "title": "Liar Liar.mkv",
             "path": "F:\\Movies\\Liar Liar.mkv",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.806975",
+            "last_modified": "2025-05-16T19:51:42.536506",
             "type": "collection",
             "parts": [
                 {
@@ -6566,12 +6780,12 @@
             ]
         },
         {
-            "id": "73437a0e-78ef-4759-9760-db90245ccf11",
+            "id": "722ad4d8-3b42-45be-9261-1d4c71487c9b",
             "title": "Megamind.mkv",
             "path": "F:\\Movies\\Megamind.mkv",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.806975",
+            "last_modified": "2025-05-16T19:51:42.536506",
             "type": "collection",
             "parts": [
                 {
@@ -6581,12 +6795,12 @@
             ]
         },
         {
-            "id": "210a0dbc-046b-4539-b6f6-ce61b8442886",
+            "id": "7471b48a-4051-4881-9858-7b0fbf0e738d",
             "title": "The Mask.mkv",
             "path": "F:\\Movies\\The Mask.mkv",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.807975",
+            "last_modified": "2025-05-16T19:51:42.538008",
             "type": "collection",
             "parts": [
                 {
@@ -6596,12 +6810,12 @@
             ]
         },
         {
-            "id": "16c051b9-3b48-428f-a63f-4ac172fb443c",
+            "id": "4bbb3d60-db88-412d-b997-2f218161701d",
             "title": "WALL-E.mkv",
             "path": "F:\\Movies\\WALL-E.mkv",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-05-09T22:21:13.807975",
+            "last_modified": "2025-05-16T19:51:42.538008",
             "type": "collection",
             "parts": [
                 {

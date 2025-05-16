@@ -185,6 +185,18 @@ const Player = () => {
         }));
     };
 
+    const playerBoxRef = useRef(null);
+
+    const focusPlayer = () => {
+        if (playerBoxRef.current) {
+            playerBoxRef.current.focus();
+        }
+    };
+
+    useEffect(() => {
+        focusPlayer();
+    }, []);
+
     if (loading) return <Typography>Loading...</Typography>;
     if (error) return <Typography color="error">{error}</Typography>;
 
@@ -201,6 +213,8 @@ const Player = () => {
                 }}
             >
                 <PlayerControls
+                    onBlur={focusPlayer}
+                    ref={playerBoxRef}
                     currentFile={currentFile}
                     currentName={findFileName(currentFile)}
                     currentPath={currentPath.current}
@@ -223,6 +237,7 @@ const Player = () => {
                 }}
             >
                 <FileList
+                    itemId={itemId}
                     fileList={fileList}
                     currentFile={currentFile}
                     currentTitle={title}

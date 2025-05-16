@@ -96,6 +96,16 @@ export const updateMetadataById = async (itemId, updates) => {
     }
 };
 
+export const updateFilesPath = async (itemId) => {
+    try {
+        const response = await axios.post(`${API_BASE_URL}/item/${itemId}/update-paths`);
+        return response.data.message;
+    } catch (error) {
+        console.error(`Failed to update files path: ${error.message}`);
+        throw error;
+    }
+}
+
 export const forceUpdateMetadata = async () => {
     try {
         const response = await axios.post(`${API_BASE_URL}/force-update`);
@@ -135,3 +145,4 @@ export const fetchMetadata = async () => {
         throw error;
     }
 };
+

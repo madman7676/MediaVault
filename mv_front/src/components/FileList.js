@@ -1,9 +1,13 @@
 // FileList.js component for rendering file list
 import React, { Fragment } from 'react';
-import { List, ListItem, ListItemText, Collapse, Typography } from '@mui/material';
+import { List, ListItem, ListItemText, Collapse, Typography, Box } from '@mui/material';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
+import { IconButton } from '@mui/material';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import { updateFilesPath } from '../api/metadataAPI';
 
 const FileList = ({
+    itemId,
     fileList,
     currentTitle,
     currentFile,
@@ -16,9 +20,37 @@ const FileList = ({
     
     return (
         <>
-            <Typography variant="h6" sx={{ marginBottom: 2, color: palette.text.lightPrimary }}>
-                {fileList.length > 0 ? currentTitle : 'No files available'}
-            </Typography>
+            <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
+                <Typography variant="h6" sx={{ color: palette.text.lightPrimary }}>
+                    {fileList.length > 0 ? currentTitle : 'No files available'}
+                </Typography>
+                <IconButton
+                    size="small"
+                    onClick={async () => {
+                        try {
+                            await updateFilesPath(itemId);
+                            window.location.reload(); // простий спосіб оновити все
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    }}
+
+                    /// TODO: Fix force reload, to normal refresh list
+
+                    sx={{
+                        color: palette.primary,
+                        backgroundColor: palette.background.paper,
+                        border: '1px solid ' + palette.primary,
+                        '&:hover': {
+                            backgroundColor: palette.primary,
+                            color: palette.background.paper,
+                        },
+                        ml: 1
+                    }}
+                >
+                    <RefreshIcon fontSize="small" />
+                </IconButton>
+            </Box>
             {fileList.length > 0 && (
                 <List>
                     {fileList.map((season, seasonIndex) => (
