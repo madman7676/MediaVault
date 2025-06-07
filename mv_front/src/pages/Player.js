@@ -1,14 +1,14 @@
 // Player.js component for displaying video and collection/season files
 import 'videojs-hotkeys';
-import axios from 'axios';
 import config from '../config.json';
-import palette from '../theme/palette';
+import palette from '../styles/theme/palette';
 import FileList from '../components/FileList';
 import PlayerControls from '../components/Player/PlayerControls';
 import { Settings, CheckBox, CheckBoxOutlineBlank } from '@mui/icons-material';
 import React, { useState, useEffect, useRef } from 'react';
 import { Box, Typography, Menu, MenuItem, Checkbox, IconButton } from '@mui/material';
 import { useParams } from 'react-router-dom';
+import { fetchMetadataById, fetchTimeToSkip, updateTimeToSkip } from '../api/metadataAPI';
 
 const Player = () => {
     const [fileList, setFileList] = useState([]);
@@ -18,25 +18,50 @@ const Player = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [openSeasons, setOpenSeasons] = useState({});
-    const [settingsAnchorEl, setSettingsAnchorEl] = useState(null);
     const [skipTimeEnabled, setSkipTimeEnabled] = useState(true);
     const { itemId } = useParams();
-
-    const handleOpenSettingsMenu = (event) => {
-        setSettingsAnchorEl(event.currentTarget);
-    };
-
-    const handleCloseSettingsMenu = () => {
-        setSettingsAnchorEl(null);
-    };
+    const allPaths = useRef([]);
+    const currentPath = useRef(null);
 
     const handleToggleSkipTime = () => {
         setSkipTimeEnabled((prev) => !prev);
     };
 
-    const handleEditSkipTime = () => {
-        console.log("Edit skip time settings (to be implemented)");
+    function getLastIntFromString(input) {
+        const parts = input.trim().split(/\s+/); // Розбиваємо рядок на частини
+        const lastPart = parts[parts.length - 1]; // Беремо останню частину
+    
+        const parsedValue = parseInt(lastPart, 10); // Пробуємо перетворити в int
+        return isNaN(parsedValue) ? 1 : parsedValue; // Перевіряємо, чи вдалося
+    }
+
+    const getCurrentPath = (itemList, itemName) => {
+        if (!itemList || !itemList.item || !itemList.item.path || !itemList.item.seasons) {
+            return null; // Перевірка на валідність структури
+        }
+    
+        for (const season of itemList.item.seasons) {
+            for (const file of season.files) {
+                if (file.name === itemName) {
+                    return itemList.item.path; // Повертаємо path, якщо знайдено
+                }
+            }
+        }
+    
+        return null; // Якщо файл не знайдено
     };
+
+    const findFileName = (url) => {
+        if (!url) return null;
+        for (const season of fileList) {
+            for (const file of season.files) {
+                if (file.url === url) {
+                    return file.name;
+                }
+            }
+        }
+        return null; // Якщо URL не знайдено
+    }
 
     const processFiles = (item) => {
         if (item.type === 'series') {
@@ -66,25 +91,28 @@ const Player = () => {
         if (currentIndex !== -1 && currentIndex < flatFileList.length - 1) {
             const nextFile = flatFileList[currentIndex + 1];
             if (nextFile) {
+                handleFetchTimeToSkip(currentPath.current, nextFile.name);
                 currentTimeToSkipRef.current = nextFile.timeToSkip || [];
 
                 setCurrentFile(nextFile.url);
-                localStorage.setItem('lastWatched', JSON.stringify({ itemId, fileUrl: nextFile.url }));
+                saveLastWatched(itemId, nextFile.url);
             }
         }
     };
 
     const fetchMetadata = async () => {
         try {
-            const response = await axios.get(`${config.API_BASE_URL}/api/metadata/item/${itemId}`);
-            const { item, status } = response.data;
-
-            if (status === 'success') {
-                setTitle(item.title || 'Files');
-                setFileList(processFiles(item));
+            const item = await fetchMetadataById(itemId);
+            setTitle(item.title || 'Files');
+            setFileList(processFiles(item));
+            if (item.type === 'series' && Array.isArray(item.seasons)) {
+                allPaths.current = item.seasons.map(season => season.path);
+            } else if (item.type === 'movie' && Array.isArray(item.parts)) {
+                allPaths.current = item.parts.map(part => part.path);
             } else {
-                setError('Failed to load item metadata.');
+                allPaths.current = [];
             }
+            // allPaths.current=item.seasons.map(season => season.path);
         } catch (err) {
             setError(`Error fetching metadata: ${err.message}`);
         } finally {
@@ -92,14 +120,52 @@ const Player = () => {
         }
     };
 
+    const handleFetchTimeToSkip = async (path, name) => {
+        try {
+            console.log('Fetching timeToSkip for:', { path, name }); // Логування
+            const timeToSkip = await fetchTimeToSkip(path, name);
+            console.log('Fetched timeToSkip:', timeToSkip);
+            currentTimeToSkipRef.current = timeToSkip;
+        } catch (error) {
+            console.error(`Error fetching timeToSkip: ${error.message}`);
+        }
+    };
+
+    const handleUpdateTimeToSkip = async (updatedTimeToSkip) => {
+        try {
+            await updateTimeToSkip(currentFile, itemId, updatedTimeToSkip);
+            currentTimeToSkipRef.current = updatedTimeToSkip;
+            console.log('timeToSkip updated successfully');
+        } catch (error) {
+            console.error(`Error updating timeToSkip: ${error.message}`);
+        }
+    };
+
+    // Зберігаємо lastWatched як об'єкт з itemId як ключем
+    const saveLastWatched = (itemId, fileUrl) => {
+        const lastWatchedAll = JSON.parse(localStorage.getItem('lastWatchedAll')) || {};
+        lastWatchedAll[itemId] = { fileUrl };
+        localStorage.setItem('lastWatchedAll', JSON.stringify(lastWatchedAll));
+    };
+
+    const getLastWatched = (itemId) => {
+        const lastWatchedAll = JSON.parse(localStorage.getItem('lastWatchedAll')) || {};
+        return lastWatchedAll[itemId]?.fileUrl;
+    };
+
     const handleSelectFile = (url) => {
         const selectedFileMetadata = fileList
-            .flatMap(season => season.files)
+            .flatMap(season => {
+                if (season.files.some(file=>file.url === url)) currentPath.current=allPaths.current[(getLastIntFromString(season.seasonTitle)-1)];
+                return season.files;
+            })
             .find(file => file.url === url);
 
-        currentTimeToSkipRef.current = selectedFileMetadata?.timeToSkip || [];
+        if (selectedFileMetadata) {
+            handleFetchTimeToSkip(currentPath.current, selectedFileMetadata.name);
+        }
         setCurrentFile(url);
-        localStorage.setItem('lastWatched', JSON.stringify({ itemId, fileUrl: url }));
+        saveLastWatched(itemId, url);
     };
 
     useEffect(() => {
@@ -108,15 +174,15 @@ const Player = () => {
     }, [itemId]);
 
     useEffect(() => {
-        const lastWatched = JSON.parse(localStorage.getItem('lastWatched'));
-        if (lastWatched?.itemId === itemId && fileList.length > 0) {
+        const lastFileUrl = getLastWatched(itemId);
+        if (lastFileUrl && fileList.length > 0) {
+            // ...existing code, заміни lastWatched.fileUrl на lastFileUrl...
             const flatFileList = fileList.flatMap(season => season.files);
-            const lastFile = flatFileList.find(file => file.url === lastWatched.fileUrl);
+            const lastFile = flatFileList.find(file => file.url === lastFileUrl);
             if (lastFile) {
                 const seasonIndex = fileList.findIndex(season =>
-                    season.files.some(file => file.url === lastWatched.fileUrl)
+                    season.files.some(file => file.url === lastFileUrl)
                 );
-
                 if (seasonIndex >= 0) {
                     setOpenSeasons(prev => ({ ...prev, [seasonIndex]: true }));
                 }
@@ -131,73 +197,70 @@ const Player = () => {
         }));
     };
 
+    const playerBoxRef = useRef(null);
+
+    const focusPlayer = () => {
+        if (playerBoxRef.current) {
+            playerBoxRef.current.focus();
+        }
+    };
+
+    useEffect(() => {
+        focusPlayer();
+    }, []);
+
     if (loading) return <Typography>Loading...</Typography>;
     if (error) return <Typography color="error">{error}</Typography>;
 
     return (
-        <>
-            {/* <Menu
-                anchorEl={settingsAnchorEl}
-                open={Boolean(settingsAnchorEl)}
-                onClose={handleCloseSettingsMenu}
+        <Box sx={{ display: 'flex', flexDirection: 'row', height: '100vh', width: '100vw', backgroundColor: palette.background.page, overflow: 'hidden' }}>
+            <Box
+                sx={{
+                    flex: 3,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: palette.background.dark,
+                    padding: 2,
+                }}
             >
-                <MenuItem>
-                    <Checkbox
-                        checked={skipTimeEnabled}
-                        onChange={handleToggleSkipTime}
-                        icon={<CheckBoxOutlineBlank />}
-                        checkedIcon={<CheckBox />}
-                    />
-                    <Typography sx={{ flex: 1 }}>Час для пропуску</Typography>
-                    <IconButton onClick={handleEditSkipTime}>
-                        <Settings />
-                    </IconButton>
-                </MenuItem>
-            </Menu> */}
-            <Box sx={{ display: 'flex', flexDirection: 'row', height: '100vh', width: '100vw', backgroundColor: palette.background.page, overflow: 'hidden' }}>
-                <Box
-                    sx={{
-                        flex: 3,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        backgroundColor: palette.background.dark,
-                        padding: 2,
-                    }}
-                >
-                    <PlayerControls
-                        currentFile={currentFile}
-                        currentTimeToSkip={currentTimeToSkipRef.current}
-                        skipTimeEnabled={skipTimeEnabled}
-                        handleVideoEnd={handleVideoEnd}
-                    />
-
-                </Box>
-
-                <Box
-                    sx={{
-                        flex: 1,
-                        overflowY: 'auto',
-                        borderLeft: 'none',
-                        padding: 2,
-                        backgroundColor: palette.background.card,
-                        '::-webkit-scrollbar': { display: 'none' },
-                        '-ms-overflow-style': 'none',
-                        'scrollbar-width': 'none',
-                    }}
-                >
-                    <FileList
-                        fileList={fileList}
-                        currentFile={currentFile}
-                        openSeasons={openSeasons}
-                        handleToggleSeason={handleToggleSeason}
-                        handleSelectFile={handleSelectFile}
-                        palette={palette}
-                        lastWatched={JSON.parse(localStorage.getItem('lastWatched'))?.fileUrl}
-                    />
-                </Box>
+                <PlayerControls
+                    onBlur={focusPlayer}
+                    ref={playerBoxRef}
+                    currentFile={currentFile}
+                    currentName={findFileName(currentFile)}
+                    currentPath={currentPath.current}
+                    // currentTimeToSkip={currentTimeToSkipRef.current}
+                    skipTimeEnabled={skipTimeEnabled}
+                    handleVideoEnd={handleVideoEnd}
+                />
             </Box>
-        </>
+
+            <Box
+                sx={{
+                    flex: 1,
+                    overflowY: 'auto',
+                    borderLeft: 'none',
+                    padding: 2,
+                    backgroundColor: palette.background.card,
+                    '::-webkit-scrollbar': { display: 'none' },
+                    '-ms-overflow-style': 'none',
+                    'scrollbar-width': 'none',
+                }}
+            >
+                <FileList
+                    itemId={itemId}
+                    fileList={fileList}
+                    currentFile={currentFile}
+                    currentTitle={title}
+                    openSeasons={openSeasons}
+                    handleToggleSeason={handleToggleSeason}
+                    handleSelectFile={handleSelectFile}
+                    palette={palette}
+                    lastWatched={getLastWatched(itemId)}
+                />
+            </Box>
+        </Box>
     );
 };
 

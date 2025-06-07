@@ -1,18 +1,119 @@
 // PlayerControls.js: Component for managing the video.js player
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import ReactDOM from 'react-dom/client';
 import videojs from 'video.js';
 import 'video.js/dist/video-js.css';
 import 'videojs-hotkeys';
+import SettingsMenu from './SettingsMenu';
+import TimeToSkipSettingsMenu from './TimeToSkipSettingsMenu';
+import { fetchTimeToSkip } from '../../api/metadataAPI';
+import { getAudioTracks } from '../../api/videoAPI';
+import AudioTracksSubmenu from './AudioTracksSubmenu';
 
 const PlayerControls = ({
     currentFile,
+    currentPath,
+    currentName,
     onPlayerReady,
     handleVideoEnd,
-    currentTimeToSkip,
     skipTimeEnabled
 }) => {
     const playerRef = useRef(null);
     const playerInstance = useRef(null);
+    const settingsButtonRef = useRef(null);
+    const settingsMenuRef = useRef(null);
+    const timeToSkipMenuRef = useRef(null);
+    const currentTimeToSkip = useRef([]);
+    const currentPathRef = useRef(null);
+    const currentNameRef = useRef(null);
+    const [showTimeToSkipMenu, setShowTimeToSkipMenu] = useState(false);
+    const [showAudioSubmenu, setShowAudioSubmenu] = useState(false);
+    const [audioTracks, setAudioTracks] = useState([]);
+    const [currentAudioTrack, setCurrentAudioTrack] = useState(0);
+
+    const handleOptionSelect = (option, menu) => {
+        if (option === 'audioTracks') {
+            setShowAudioSubmenu (!showAudioSubmenu);
+
+            const fullPath = currentPathRef.current && currentNameRef.current ? 
+            `${currentPathRef.current}\\${currentNameRef.current}` : null;
+            console.log('Current file:', fullPath);
+            if (!fullPath) {
+                console.error('Cannot get full file path');
+                return;
+            }
+            getAudioTracks(fullPath)
+            .then(tracks => {
+                const tracksInfo = tracks.map((track, index) => ({
+                    index,
+                    label: track.title || `Audio ${index + 1}`,
+                    language: track.language,
+                    enabled: index === currentAudioTrack
+                }));
+                setAudioTracks(tracksInfo);
+            })
+            .catch(error => {
+                console.error('Failed to load audio tracks:', error);
+                setAudioTracks([]);
+            });
+            return;
+        }
+        if (option === 'openTimeToSkipMenu') {
+            setShowTimeToSkipMenu(true);
+        }
+        menu.style.display = 'none';
+    };
+
+    const handleTrackSelect = (index) => {
+        console.log('Changing audio track to:', index);
+        setCurrentAudioTrack(index);
+        
+        if (playerInstance.current) {
+            const tracks = playerInstance.current.audioTracks();
+            console.log('Available tracks:', tracks);
+            
+            if (tracks && tracks.length > 0) {
+                tracks.forEach((track, i) => {
+                    track.enabled = (i === index);
+                });
+                console.log('Track changed successfully');
+            } else {
+                console.error('No audio tracks available');
+            }
+        }
+    };
+    
+    const handleCloseTimeToSkipMenu = () => {
+        setShowTimeToSkipMenu(false);
+        if (playerRef.current) {
+            playerRef.current.focus();
+        }
+    };
+
+    const renderTimeSkips = (intervals) => {
+        const progressBar = document.querySelector('.vjs-progress-holder');
+        if (!progressBar || !playerInstance.current || !playerInstance.current.duration()) return;
+
+        // Очистити попередні елементи
+        const existingSkips = progressBar.querySelectorAll('.time-skip-highlight');
+        existingSkips.forEach((element) => element.remove());
+
+        const videoDuration = playerInstance.current.duration();
+
+        // Додати нові
+        intervals.forEach(({ start, end }) => {
+            if (start >= 0 && end <= videoDuration) {
+                const skipElement = document.createElement('div');
+                skipElement.className = 'time-skip-highlight';
+                skipElement.style.position = 'absolute';
+                skipElement.style.height = '100%';
+                skipElement.style.backgroundColor = 'rgba(0, 0, 255, 0.5)';
+                skipElement.style.left = `${(start / videoDuration) * 100}%`;
+                skipElement.style.width = `${((end - start) / videoDuration) * 100}%`;
+                progressBar.appendChild(skipElement);
+            }
+        });
+    };
 
     const initializePlayer = () => {
         if (playerInstance.current) return; // Prevent re-initialization
@@ -34,6 +135,16 @@ const PlayerControls = ({
                     'fullscreenToggle'
                 ]
             }
+        }, function() {
+            this.on('ready', () => {
+                const progressElement = this.el().querySelector('.vjs-play-progress.vjs-slider-bar');
+                if (progressElement) {
+                    const timeTooltip = progressElement.querySelector('.vjs-time-tooltip');
+                    if (timeTooltip) {
+                        timeTooltip.style.display = 'none';
+                    }
+                }
+            });
         });
 
         playerInstance.current.hotkeys({
@@ -56,6 +167,11 @@ const PlayerControls = ({
         });
 
         if (!controlBar.el().querySelector('.vjs-settings-button')) {
+            const settingsContainer = videojs.dom.createEl('div', {
+                className: 'vjs-settings-container',
+                style: 'position: relative; display: inline-block;'
+            });
+
             const settingsButton = videojs.dom.createEl('button', {
                 className: 'vjs-settings-button vjs-control vjs-button vjs-icon-cog',
                 title: 'Settings',
@@ -67,69 +183,43 @@ const PlayerControls = ({
             settingsButton.style.display = 'inline-flex';
             settingsButton.style.justifyContent = 'center';
             settingsButton.style.alignItems = 'center';
-        
-            controlBar.el().appendChild(settingsButton);
 
-            const fullscreenControl = controlBar.el().querySelector('.vjs-fullscreen-control');
-            if (fullscreenControl) {
-                controlBar.el().insertBefore(settingsButton, fullscreenControl);
-            }
+            settingsButtonRef.current = settingsButton;
 
-            const menu = videojs.dom.createEl('div', {
-                className: 'vjs-settings-menu',
-                innerHTML: `
-                    <ul class="vjs-menu-content">
-                        <li class="vjs-menu-item">Option 1</li>
-                        <li class="vjs-menu-item">Option 2</li>
-                        <li class="vjs-menu-item">Option 3</li>
-                    </ul>
-                `
-            });
+            const menu = document.createElement('div');
+            menu.id = 'settingsMenu';
+            const root = ReactDOM.createRoot(menu);
+            root.render(
+                <SettingsMenu
+                    ref={settingsMenuRef}
+                    buttonRef={settingsButtonRef}
+                    onOptionSelect={(option) => handleOptionSelect(option, menu)}
+                />
+            );
 
             menu.style.display = 'none';
             menu.style.position = 'absolute';
-            menu.style.backgroundColor = '#000';
-            menu.style.color = '#fff';
-            menu.style.padding = '10px';
-            menu.style.borderRadius = '4px';
 
             settingsButton.addEventListener('click', (event) => {
                 event.stopPropagation();
                 const isMenuOpen = menu.style.display === 'block';
                 menu.style.display = isMenuOpen ? 'none' : 'block';
-
-                const rect = settingsButton.getBoundingClientRect();
-                const menuWidth = 200; // Assume menu width for calculations
-                const menuHeight = 120; // Assume menu height for calculations
-
-                let top = rect.bottom + window.scrollY;
-                let left = rect.left + window.scrollX;
-
-                // Ensure menu stays within viewport
-                if (top + menuHeight > window.innerHeight + window.scrollY) {
-                    top = rect.top + window.scrollY - menuHeight;
+                if (settingsMenuRef.current) {
+                    settingsMenuRef.current.calculateMenuPosition(); // Виклик методу
                 }
-
-                if (left + menuWidth > window.innerWidth + window.scrollX) {
-                    left = window.innerWidth + window.scrollX - menuWidth;
-                }
-
-                menu.style.top = `${top}px`;
-                menu.style.left = `${left}px`;
             });
 
             document.addEventListener('click', () => {
                 menu.style.display = 'none';
             });
 
-            menu.addEventListener('click', (event) => {
-                if (event.target.classList.contains('vjs-menu-item')) {
-                    console.log(`Selected: ${event.target.textContent}`);
-                    menu.style.display = 'none';
-                }
-            });            
+            settingsContainer.appendChild(settingsButton);
+            settingsContainer.appendChild(menu);
 
-            controlBar.el().appendChild(menu);
+            const fullscreenControl = controlBar.el().querySelector('.vjs-fullscreen-control');
+            if (fullscreenControl) {
+                controlBar.el().insertBefore(settingsContainer, fullscreenControl);
+            }
         }
 
         playerInstance.current.on('ended', handleVideoEnd);
@@ -152,32 +242,37 @@ const PlayerControls = ({
         if (playerInstance.current && currentFile) {
             playerInstance.current.src({ src: currentFile, type: 'video/mp4' });
             playerInstance.current.load();
-    
+
             playerInstance.current.play().catch(console.error);
         }
     }, [currentFile]);
 
     useEffect(() => {
-        if (playerInstance.current) {
-            playerInstance.current.on('ended', () => {
-                handleVideoEnd();
-            });
-        }
-    
-        return () => {
-            if (playerInstance.current) {
-                playerInstance.current.off('ended');
+        const loadTimeToSkip = async () => {
+            try {
+                const timeToSkip = await fetchTimeToSkip(currentPath, currentName);
+                console.log('Fetched timeToSkip:', timeToSkip);
+                currentTimeToSkip.current = timeToSkip;
+                currentPathRef.current = currentPath;
+                currentNameRef.current = currentName;
+                renderTimeSkips(timeToSkip); // Рендерити пропуски
+            } catch (error) {
+                console.error(`Error fetching timeToSkip: ${error.message}`);
             }
         };
-    }, [handleVideoEnd]);
+
+        if (currentPath && currentName) {
+            loadTimeToSkip();
+        }
+    }, [currentPath, currentName]);
 
     useEffect(() => {
         if (playerInstance.current) {
             const handleTimeUpdate = () => {
                 const currentTime = playerInstance.current.currentTime();
-                if (!currentTimeToSkip || currentTimeToSkip.length === 0 || !skipTimeEnabled) return;
+                if (!currentTimeToSkip.current || currentTimeToSkip.current.length === 0 || !skipTimeEnabled) return;
 
-                const skipInterval = currentTimeToSkip.find(
+                const skipInterval = currentTimeToSkip.current.find(
                     interval => currentTime >= interval.start && currentTime < interval.end
                 );
 
@@ -187,19 +282,106 @@ const PlayerControls = ({
                 }
             };
 
+            const handleLoadedMetadata = () => {
+                renderTimeSkips(currentTimeToSkip.current);
+            };
+
             playerInstance.current.on('timeupdate', handleTimeUpdate);
+            playerInstance.current.on('loadedmetadata', handleLoadedMetadata);
 
             return () => {
                 if (playerInstance.current) {
                     playerInstance.current.off('timeupdate', handleTimeUpdate);
+                    playerInstance.current.off('loadedmetadata', handleLoadedMetadata);
                 }
             };
         }
     }, [currentTimeToSkip, skipTimeEnabled]);
 
+    useEffect(() => {
+        if (!playerInstance.current) return;
+    
+        const onEnded = () => {
+            console.log('Video ended');
+            handleVideoEnd();
+        };
+    
+        playerInstance.current.on('ended', onEnded);
+    
+        return () => {
+            if (playerInstance.current) {
+                console.log('Removing ended listener');
+                playerInstance.current.off('ended', onEnded);
+            }
+        };
+    }, [handleVideoEnd]);    
+
+    useEffect(() => {
+        if (playerInstance.current) {
+            const handleError = (error) => {
+                console.error('Audio track error:', error);
+            };
+    
+            const handleTrackChange = () => {
+                const tracks = playerInstance.current.audioTracks();
+                if (tracks) {
+                    const currentIndex = Array.from(tracks).findIndex(track => track.enabled);
+                    setCurrentAudioTrack(currentIndex);
+                }
+            };
+    
+            playerInstance.current.on('error', handleError);
+            playerInstance.current.on('audiotrackchange', handleTrackChange);
+    
+            return () => {
+                if (playerInstance.current) {
+                    playerInstance.current.off('error', handleError);
+                    playerInstance.current.off('audiotrackchange', handleTrackChange);
+                }
+            };
+        }
+    }, []);
+
+    useEffect(() => {
+        // Add styles after player initialization
+        if (playerInstance.current) {
+            const style = document.createElement('style');
+            style.textContent = `
+                .video-js:focus { outline: none !important; }
+                .video-js *:focus { outline: none !important; }
+                .vjs-control:focus { outline: none !important; }
+            `;
+            document.head.appendChild(style);
+
+            return () => {
+                document.head.removeChild(style);
+            };
+        }
+    }, []);
+
     return (
         <div data-vjs-player style={{ width: '100%', height: '100%' }}>
             <video ref={playerRef} className="video-js" />
+            {showTimeToSkipMenu && (
+                <TimeToSkipSettingsMenu
+                    intervals={currentTimeToSkip.current}
+                    onIntervalsChange={(updatedIntervals) => {
+                        console.log('Updated intervals:', updatedIntervals);
+                        currentTimeToSkip.current = updatedIntervals;
+                        renderTimeSkips(updatedIntervals); // Рендерити пропуски
+                    }}
+                    onClose={handleCloseTimeToSkipMenu}
+                    currentPath={currentPathRef.current}
+                    currentName={currentNameRef.current}
+                />
+            )}
+            {showAudioSubmenu && (
+                <AudioTracksSubmenu
+                    tracks={audioTracks}
+                    currentTrack={currentAudioTrack}
+                    onTrackSelect={handleTrackSelect}
+                />
+            )}
         </div>
     );
 };

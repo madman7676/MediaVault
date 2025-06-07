@@ -1,8 +1,4 @@
-import React, { useEffect, useState } from "react";
-import MediaVault from "./pages/MediaVault";
-import CatalogCard from "./components/CatalogCard";
-import Player from "./pages/Player";
-import AppRouter from "./routers";
+import AppRouter from "./routers/routers";
 
 function App() {
     return (

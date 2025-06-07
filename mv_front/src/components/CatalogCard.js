@@ -2,8 +2,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, Typography, Box, Badge } from '@mui/material';
-import palette from '../theme/palette';
+import { Card, CardContent, Typography, Box, Badge, Checkbox } from '@mui/material';
+import palette from '../styles/theme/palette';
 
 const cardStyles = {
     width: 345,
@@ -49,6 +49,28 @@ const badgeStyles = (colors) => ({
     right: 16, // Adjust to stay within card boundaries
 });
 
+// Додайте стилі для тегів
+const tagStyles = (colors) => ({
+    position: 'absolute',
+    top: 36, // нижче label
+    left: 8,
+    display: 'flex',
+    flexDirection: 'column',
+    flexWrap: 'nowrap',
+    gap: '4px',
+    zIndex: 2,
+});
+
+const tagChipStyles = (colors) => ({
+    backgroundColor: colors.badge,
+    color: 'white',
+    borderRadius: '4px',
+    fontSize: '0.7rem',
+    padding: '2px 8px',
+    fontWeight: 500,
+    opacity: 0.92,
+});
+
 const renderLayers = (isMovie, partsCount) => (
     Array(Math.min(partsCount, 5)).fill().map((_, index) => (
         <Box
@@ -70,14 +92,17 @@ const renderLayers = (isMovie, partsCount) => (
     ))
 );
 
-const CatalogCard = ({ title, type, partsCount, thumbnailUrl, link }) => {
+const CatalogCard = ({ title, type, partsCount, thumbnailUrl, link, showCheckbox, isSelected, onSelect, tags }) => {
     const isMovie = type === 'movie';
     const colors = isMovie ? palette.movie : palette.series;
 
     const navigate = useNavigate();
 
-    const handleCardClick = () => {
-        if (link) {
+    const handleCardClick = (event) => {
+        if (showCheckbox) {
+            event.stopPropagation();
+            onSelect();
+        } else if (link) {
             navigate(link);
         }
     };
@@ -114,8 +139,17 @@ const CatalogCard = ({ title, type, partsCount, thumbnailUrl, link }) => {
 
             {/* Top Left Label */}
             <Box sx={labelStyles(colors)}>
-                {isMovie ? 'Фільм' : 'Серіал'}
+                {isMovie ? 'Фільм' : (type === 'series' ? 'Серіал' : 'Онлайн')}
             </Box>
+
+            {/* Теги під лейблом */}
+            {tags && tags.length > 0 && (
+                <Box sx={tagStyles(colors)}>
+                    {tags.map((tag, idx) => (
+                        <span key={idx} style={tagChipStyles(colors)}>{tag}</span>
+                    ))}
+                </Box>
+            )}
 
             {/* Top Right Badge */}
             {partsCount > 1 && (
@@ -137,6 +171,18 @@ const CatalogCard = ({ title, type, partsCount, thumbnailUrl, link }) => {
                     {title}
                 </Typography>
             </CardContent>
+            
+            {/* Checkbox (Visible in Selection Mode) */}
+            {showCheckbox && (
+                <Checkbox
+                    checked={isSelected}
+                    onClick={(e) => e.stopPropagation()}
+                    sx={{
+                        position: 'absolute', bottom: 8, right: 8,
+                        backgroundColor: 'rgba(0,0,0,0.5)', borderRadius: '50%'
+                    }}
+                />
+            )}
         </Card>
     );
 };
@@ -146,11 +192,21 @@ CatalogCard.propTypes = {
     type: PropTypes.oneOf(['movie', 'series']).isRequired, // Must be 'movie' or 'series'
     partsCount: PropTypes.number, // Number of parts is optional
     thumbnailUrl: PropTypes.string, // URL of the thumbnail is optional
+    link: PropTypes.string,
+    showCheckbox: PropTypes.bool,
+    isSelected: PropTypes.bool,
+    onSelect: PropTypes.func,
+    tags: PropTypes.array, // додайте проп для тегів
 };
 
 CatalogCard.defaultProps = {
     partsCount: 0, // Default parts count is 0
     thumbnailUrl: '', // Default to an empty string if no thumbnail
+    link: '',
+    showCheckbox: false,
+    isSelected: false,
+    onSelect: () => {},
+    tags: [],
 };
 
 export default CatalogCard;
