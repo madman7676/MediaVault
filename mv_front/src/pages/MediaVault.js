@@ -24,6 +24,9 @@ import background from '../images/background.png';
 import OnlineSeriesDialog from '../components/OnlineSeriesDialog';
 import { mediaTypeFilters, initialState, ACTIONS } from '../constants/mediaConstants';
 
+const FILTER_STORAGE_KEY = 'mediaVaultFilter';
+const TAGS_STORAGE_KEY = 'mediaVaultTags';
+
 // Створюємо тему один раз за межами компонента
 const darkTheme = createTheme({
   palette: {
@@ -215,7 +218,7 @@ function useCollectionsLoader(dispatch) {
 }
 
 // Custom hook для тегів
-function useTagsManager(dispatch, selectedTags) {
+function useTagsManager(dispatch, selectedTags, collections) {
   const [tags, setTags] = useState([]);
 
   useEffect(() => {
@@ -256,6 +259,14 @@ function useTagsManager(dispatch, selectedTags) {
         await addTagToItems(selectedItems, selectedTag);
         const updatedTags = await fetchAllTags();
         setTags(updatedTags);
+        dispatch({
+          type: ACTIONS.SET_COLLECTIONS,
+          payload: collections.map(item =>
+            selectedItems.includes(item.id)
+              ? { ...item, tags: Array.from(new Set([...(item.tags || []), selectedTag])) }
+              : item
+          )
+        });
       } catch (error) {
         console.error('Failed to update tags:', error);
       } finally {
@@ -264,7 +275,7 @@ function useTagsManager(dispatch, selectedTags) {
         dispatch({ type: ACTIONS.SET_SELECTED_TAG, payload: null });
       }
     }
-  }, [dispatch]);
+  }, [dispatch, collections]);
 
   return {
     tags,
@@ -276,8 +287,30 @@ function useTagsManager(dispatch, selectedTags) {
 }
 
 const MediaVault = () => {
+  // 1. Зчитування фільтрів з localStorage при ініціалізації
+  const getInitialFilter = () => {
+    try {
+      return localStorage.getItem(FILTER_STORAGE_KEY) || initialState.filter;
+    } catch {
+      return initialState.filter;
+    }
+  };
+  const getInitialTags = () => {
+    try {
+      const tags = localStorage.getItem(TAGS_STORAGE_KEY);
+      return tags ? JSON.parse(tags) : initialState.selectedTags;
+    } catch {
+      return initialState.selectedTags;
+    }
+  };
+
   // Використовуємо useReducer замість multiple useState
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(reducer, {
+    ...initialState,
+    filter: getInitialFilter(),
+    selectedTags: getInitialTags(),
+  });
+
   const {
     collections, filteredCollections, filter, loading, error,
     selectedTags, filterMode, openTagSettings, selectionMode,
@@ -306,7 +339,7 @@ const MediaVault = () => {
     handleTagSelectForAssignment,
     handleAddTag,
     handleUpdateTags
-  } = useTagsManager(dispatch, selectedTags);
+  } = useTagsManager(dispatch, selectedTags, collections);
 
   // Фільтрація колекцій з використанням useMemo
   const filteredResults = useMemo(() => {
@@ -339,6 +372,20 @@ const MediaVault = () => {
   useEffect(() => {
     dispatch({ type: ACTIONS.SET_FILTERED_COLLECTIONS, payload: filteredResults });
   }, [filteredResults]);
+
+  // 2. Зберігаємо фільтр у localStorage при зміні
+  useEffect(() => {
+    try {
+      localStorage.setItem(FILTER_STORAGE_KEY, state.filter);
+    } catch {}
+  }, [state.filter]);
+
+  // 3. Зберігаємо теги у localStorage при зміні
+  useEffect(() => {
+    try {
+      localStorage.setItem(TAGS_STORAGE_KEY, JSON.stringify(state.selectedTags));
+    } catch {}
+  }, [state.selectedTags]);
 
   // Обробники подій з useCallback
   const handleFilterChange = useCallback((newFilter) => {
@@ -478,6 +525,7 @@ const MediaVault = () => {
                 showCheckbox={selectionMode}
                 isSelected={selectedItems.includes(collection.id)}
                 onSelect={() => handleItemSelection(collection.id)}
+                tags={collection.tags}
               />
             </Grid>
           ))}
@@ -512,6 +560,7 @@ const MediaVault = () => {
             selectedTag={selectedTag}
             setSelectedTag={handleTagSelectForAssignment}
             selectedItems={selectedItems}
+            setSelectionMode={(val) => dispatch({ type: ACTIONS.TOGGLE_SELECTION_MODE, payload: val })}
           />
         )}
 

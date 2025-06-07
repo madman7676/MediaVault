@@ -49,6 +49,28 @@ const badgeStyles = (colors) => ({
     right: 16, // Adjust to stay within card boundaries
 });
 
+// Додайте стилі для тегів
+const tagStyles = (colors) => ({
+    position: 'absolute',
+    top: 36, // нижче label
+    left: 8,
+    display: 'flex',
+    flexDirection: 'column',
+    flexWrap: 'nowrap',
+    gap: '4px',
+    zIndex: 2,
+});
+
+const tagChipStyles = (colors) => ({
+    backgroundColor: colors.badge,
+    color: 'white',
+    borderRadius: '4px',
+    fontSize: '0.7rem',
+    padding: '2px 8px',
+    fontWeight: 500,
+    opacity: 0.92,
+});
+
 const renderLayers = (isMovie, partsCount) => (
     Array(Math.min(partsCount, 5)).fill().map((_, index) => (
         <Box
@@ -70,7 +92,7 @@ const renderLayers = (isMovie, partsCount) => (
     ))
 );
 
-const CatalogCard = ({ title, type, partsCount, thumbnailUrl, link, showCheckbox, isSelected, onSelect }) => {
+const CatalogCard = ({ title, type, partsCount, thumbnailUrl, link, showCheckbox, isSelected, onSelect, tags }) => {
     const isMovie = type === 'movie';
     const colors = isMovie ? palette.movie : palette.series;
 
@@ -117,8 +139,17 @@ const CatalogCard = ({ title, type, partsCount, thumbnailUrl, link, showCheckbox
 
             {/* Top Left Label */}
             <Box sx={labelStyles(colors)}>
-                {isMovie ? 'Фільм' : 'Серіал'}
+                {isMovie ? 'Фільм' : (type === 'series' ? 'Серіал' : 'Онлайн')}
             </Box>
+
+            {/* Теги під лейблом */}
+            {tags && tags.length > 0 && (
+                <Box sx={tagStyles(colors)}>
+                    {tags.map((tag, idx) => (
+                        <span key={idx} style={tagChipStyles(colors)}>{tag}</span>
+                    ))}
+                </Box>
+            )}
 
             {/* Top Right Badge */}
             {partsCount > 1 && (
@@ -165,6 +196,7 @@ CatalogCard.propTypes = {
     showCheckbox: PropTypes.bool,
     isSelected: PropTypes.bool,
     onSelect: PropTypes.func,
+    tags: PropTypes.array, // додайте проп для тегів
 };
 
 CatalogCard.defaultProps = {
@@ -174,6 +206,7 @@ CatalogCard.defaultProps = {
     showCheckbox: false,
     isSelected: false,
     onSelect: () => {},
+    tags: [],
 };
 
 export default CatalogCard;

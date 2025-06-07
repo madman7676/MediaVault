@@ -28,11 +28,33 @@ def update_paths_only(metadata, item_id):
             real_seasons = [d for d in os.listdir(item["path"]) 
                           if os.path.isdir(os.path.join(item["path"], d))]
             print(f"Found seasons directories: {real_seasons}")
-            
+
+            # --- SPECIAL CASE: Було лише один сезон, і його просто перемістили у підпапку ---
+            if (
+                len(item["seasons"]) == 1 and
+                item["seasons"][0].get("title") == "Season 1" and
+                len(real_seasons) > 0
+            ):
+                # Просто оновлюємо title і path першого сезону, не чіпаючи files
+                item["seasons"][0]["title"] = real_seasons[0]
+                item["seasons"][0]["path"] = os.path.join(item["path"], real_seasons[0])
+                # Якщо з'явилися ще сезони — додаємо їх як нові
+                for season_name in real_seasons[1:]:
+                    season_path = os.path.join(item["path"], season_name)
+                    files = [{"name": f} for f in os.listdir(season_path) if os.path.isfile(os.path.join(season_path, f))]
+                    item["seasons"].append({
+                        "title": season_name,
+                        "path": season_path,
+                        "files": files
+                    })
+                item["last_modified"] = datetime.now().isoformat()
+                save_metadata(metadata)
+                return True, "Season path updated without losing metadata"
+
             # Словник існуючих сезонів для збереження метаданих
             existing_seasons = {s["title"]: s for s in item["seasons"]}
             item["seasons"] = []
-
+            
             # Для кожної реальної папки сезону
             for season_name in real_seasons:
                 season_path = os.path.join(item["path"], season_name)

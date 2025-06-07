@@ -95,7 +95,7 @@ const Player = () => {
                 currentTimeToSkipRef.current = nextFile.timeToSkip || [];
 
                 setCurrentFile(nextFile.url);
-                localStorage.setItem('lastWatched', JSON.stringify({ itemId, fileUrl: nextFile.url }));
+                saveLastWatched(itemId, nextFile.url);
             }
         }
     };
@@ -141,6 +141,18 @@ const Player = () => {
         }
     };
 
+    // Зберігаємо lastWatched як об'єкт з itemId як ключем
+    const saveLastWatched = (itemId, fileUrl) => {
+        const lastWatchedAll = JSON.parse(localStorage.getItem('lastWatchedAll')) || {};
+        lastWatchedAll[itemId] = { fileUrl };
+        localStorage.setItem('lastWatchedAll', JSON.stringify(lastWatchedAll));
+    };
+
+    const getLastWatched = (itemId) => {
+        const lastWatchedAll = JSON.parse(localStorage.getItem('lastWatchedAll')) || {};
+        return lastWatchedAll[itemId]?.fileUrl;
+    };
+
     const handleSelectFile = (url) => {
         const selectedFileMetadata = fileList
             .flatMap(season => {
@@ -153,7 +165,7 @@ const Player = () => {
             handleFetchTimeToSkip(currentPath.current, selectedFileMetadata.name);
         }
         setCurrentFile(url);
-        localStorage.setItem('lastWatched', JSON.stringify({ itemId, fileUrl: url }));
+        saveLastWatched(itemId, url);
     };
 
     useEffect(() => {
@@ -162,15 +174,15 @@ const Player = () => {
     }, [itemId]);
 
     useEffect(() => {
-        const lastWatched = JSON.parse(localStorage.getItem('lastWatched'));
-        if (lastWatched?.itemId === itemId && fileList.length > 0) {
+        const lastFileUrl = getLastWatched(itemId);
+        if (lastFileUrl && fileList.length > 0) {
+            // ...existing code, заміни lastWatched.fileUrl на lastFileUrl...
             const flatFileList = fileList.flatMap(season => season.files);
-            const lastFile = flatFileList.find(file => file.url === lastWatched.fileUrl);
+            const lastFile = flatFileList.find(file => file.url === lastFileUrl);
             if (lastFile) {
                 const seasonIndex = fileList.findIndex(season =>
-                    season.files.some(file => file.url === lastWatched.fileUrl)
+                    season.files.some(file => file.url === lastFileUrl)
                 );
-
                 if (seasonIndex >= 0) {
                     setOpenSeasons(prev => ({ ...prev, [seasonIndex]: true }));
                 }
@@ -245,7 +257,7 @@ const Player = () => {
                     handleToggleSeason={handleToggleSeason}
                     handleSelectFile={handleSelectFile}
                     palette={palette}
-                    lastWatched={JSON.parse(localStorage.getItem('lastWatched'))?.fileUrl}
+                    lastWatched={getLastWatched(itemId)}
                 />
             </Box>
         </Box>
