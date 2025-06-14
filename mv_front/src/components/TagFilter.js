@@ -7,7 +7,7 @@ const TagFilter = ({ tags, selectedTags, handleTagChange, filterMode, toggleFilt
     return (
         <Box sx={{ display: 'flex', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)', padding: '0.5rem', borderRadius: '4px' }}>
             <FormGroup row sx={{ flexGrow: 1 }}>
-                {tags.map(tag => (
+                {[...tags].sort((a, b) => a.localeCompare(b)).map(tag => (
                     <FormControlLabel
                         key={tag}
                         control={
