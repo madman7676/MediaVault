@@ -3,7 +3,7 @@ import uuid
 import json
 from datetime import datetime
 from config import MOVIES_PATHS, SERIES_PATHS, METADATA_FILE, BASE_URL, THUMBNAILS_DIR
-from flask import Flask, request, send_file
+# from flask import Flask, request, send_file
 
 def update_paths_only(metadata, item_id):
     """
@@ -33,7 +33,7 @@ def update_paths_only(metadata, item_id):
             if (
                 len(item["seasons"]) == 1 and
                 item["seasons"][0].get("title") == "Season 1" and
-                len(real_seasons) > 0
+                len(real_seasons) > 1
             ):
                 # Просто оновлюємо title і path першого сезону, не чіпаючи files
                 item["seasons"][0]["title"] = real_seasons[0]
@@ -76,7 +76,21 @@ def update_paths_only(metadata, item_id):
                 
                 item["seasons"].append(season)
                 print(f"Updated season {season_name} with {len(season['files'])} files")
-                
+
+            # Додаємо "Season 1", якщо підпапок немає (усі файли у корені)
+            if not real_seasons:
+                season = existing_seasons.get("Season 1", {"title": "Season 1"})
+                season["path"] = item["path"]
+                existing_files = {f["name"]: f for f in season.get("files", [])}
+                season["files"] = []
+                for file in os.listdir(item["path"]):
+                    if os.path.isfile(os.path.join(item["path"], file)):
+                        file_data = existing_files.get(file, {})
+                        file_data["name"] = file
+                        season["files"].append(file_data)
+                item["seasons"].append(season)
+                print(f"Added Season 1 with {len(season['files'])} files")
+    
         elif item["type"] == "collection":
             # Оновлюємо шляхи для фільму/колекції
             item["parts"] = [

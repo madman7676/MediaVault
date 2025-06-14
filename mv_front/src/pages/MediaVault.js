@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback, useReducer } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useReducer, useRef } from 'react';
 import CatalogCard from '../components/CatalogCard';
 import { fetchMetadata, addTagToItems, fetchAllTags } from '../api/metadataAPI';
 import { fetchThumbnail } from '../api/thumbnailAPI';
@@ -12,7 +12,12 @@ import {
   createTheme, 
   ButtonGroup, 
   Button, 
-  MenuItem 
+  MenuItem,
+  Box,
+  List,
+  ListItem,
+  ListItemButton,
+  Typography
 } from '@mui/material';
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
 import AddIcon from '@mui/icons-material/Add';
@@ -23,6 +28,7 @@ import MVLogo from '../images/MV_Logo2.png';
 import background from '../images/background.png';
 import OnlineSeriesDialog from '../components/OnlineSeriesDialog';
 import { mediaTypeFilters, initialState, ACTIONS } from '../constants/mediaConstants';
+import Bookmarks from '../components/Bookmarks';
 
 const FILTER_STORAGE_KEY = 'mediaVaultFilter';
 const TAGS_STORAGE_KEY = 'mediaVaultTags';
@@ -430,155 +436,211 @@ const MediaVault = () => {
     });
   }, []);
 
+  // 1. Формуємо список букв: беремо першу букву з усіх імен карток, латиниця вище кирилиці
+  // Формуємо список букв у тому ж порядку, як і картки (без сортування)
+  const letters = useMemo(() => {
+    const result = [];
+    const seen = new Set();
+    filteredCollections.forEach(item => {
+      const first = item.title?.trim()?.[0]?.toUpperCase();
+      if (first && !seen.has(first)) {
+        result.push(first);
+        seen.add(first);
+      }
+    });
+    return result;
+  }, [filteredCollections]);
+
+  // 2. Створюємо ref для кожної букви
+  const letterRefs = useRef({});
+  filteredCollections.forEach(item => {
+    const first = item.title?.[0]?.toUpperCase();
+    if (first && letterRefs.current[first] && !letterRefs.current[first].current) {
+      letterRefs.current[first] = React.createRef();
+    }
+  });
+
+  // 3. Функція скролу
+  const scrollToLetter = (letter) => {
+    const ref = letterRefs.current[letter];
+    if (ref && ref.current) {
+      ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
 
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
-      <div className="media-vault-container" style={{ 
-        padding: '1rem 2rem', 
-        position: 'relative', 
-        backgroundImage: `url(${background})`, 
-        backgroundRepeat: 'repeat' 
-      }}>
-        <header className="media-vault-header">
-          <img 
-            src={MVLogo} 
-            alt="MediaVault Logo" 
-            className="media-vault-logo" 
-            style={{ 
-              display: 'inline-block', 
-              marginRight: '1rem', 
-              height: '100px' 
-            }} 
-          />
+      <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+        {/* Основний контент */}
+        <Box sx={{ flexGrow: 1, position: 'relative'}}>
           
-          <ButtonGroup 
-            variant="contained" 
-            className="filter-buttons" 
-            style={{ 
-              marginBottom: '1rem', 
-              float: 'right', 
-              backgroundColor: 'rgba(0, 0, 0, 0.5)' 
-            }}
-          >
-            <Button 
-              onClick={() => handleFilterChange('all')} 
-              color={filter === 'all' ? 'primary' : 'default'}
-            >
-              All
-            </Button>
-            <Button 
-              onClick={() => handleFilterChange('movie')} 
-              color={filter === 'movie' ? 'primary' : 'default'}
-            >
-              Movies
-            </Button>
-            <Button 
-              onClick={() => handleFilterChange('series_combined')}
-              color={
-                filter === 'series_combined' || 
-                filter === 'series' || 
-                filter === 'online_series' ? 'primary' : 'default'
-              }
-            >
-              Series
-            </Button>
-          </ButtonGroup>
-          
-          {filter === 'series_combined' && (
-            <div className="series-submenu" style={{ 
-              position: 'absolute', 
-              top: '3.39rem', 
-              right: '2.25rem', 
-              backgroundColor: 'rgba(0, 0, 0, 0.5)' 
-            }}>
-              <MenuItem onClick={() => handleFilterChange('series')}>Local</MenuItem>
-              <MenuItem onClick={() => handleFilterChange('online_series')}>Online</MenuItem>
-            </div>
-          )}
-        </header>
-
-        <TagFilter
-          tags={tags}
-          selectedTags={selectedTags}
-          handleTagChange={handleTagChange}
-          filterMode={filterMode}
-          toggleFilterMode={toggleFilterMode}
-        />
-
-        <Grid 
-          container 
-          spacing={2} 
-          justifyContent="center" 
-          style={{ justifyContent: openTagSettings ? 'left' : 'center' }}
-        >
-          {filteredCollections.map(collection => (
-            <Grid item xs={12} sm={6} md={4} key={collection.id}>
-              <CatalogCard 
-                title={collection.title} 
-                type={collection.type} 
-                partsCount={collection.partsCount} 
-                thumbnailUrl={collection.thumbnailUrl} 
-                link={'/player/' + collection.id}
-                showCheckbox={selectionMode}
-                isSelected={selectedItems.includes(collection.id)}
-                onSelect={() => handleItemSelection(collection.id)}
-                tags={collection.tags}
+          <div className="media-vault-container" style={{
+            padding: '1rem 2rem',
+            position: 'relative',
+            backgroundImage: `url(${background})`,
+            backgroundRepeat: 'repeat'
+          }}>
+            <header className="media-vault-header">
+              <img 
+                src={MVLogo} 
+                alt="MediaVault Logo" 
+                className="media-vault-logo" 
+                style={{ 
+                  display: 'inline-block', 
+                  marginRight: '1rem', 
+                  height: '100px' 
+                }} 
               />
+              
+              <ButtonGroup 
+                variant="contained" 
+                className="filter-buttons" 
+                style={{ 
+                  marginBottom: '1rem', 
+                  float: 'right', 
+                  backgroundColor: 'rgba(0, 0, 0, 0.5)' 
+                }}
+              >
+                <Button 
+                  onClick={() => handleFilterChange('all')} 
+                  color={filter === 'all' ? 'primary' : 'default'}
+                >
+                  All
+                </Button>
+                <Button 
+                  onClick={() => handleFilterChange('movie')} 
+                  color={filter === 'movie' ? 'primary' : 'default'}
+                >
+                  Movies
+                </Button>
+                <Button 
+                  onClick={() => handleFilterChange('series_combined')}
+                  color={
+                    filter === 'series_combined' || 
+                    filter === 'series' || 
+                    filter === 'online_series' ? 'primary' : 'default'
+                  }
+                >
+                  Series
+                </Button>
+              </ButtonGroup>
+              
+              {filter === 'series_combined' && (
+                <div className="series-submenu" style={{ 
+                  position: 'absolute', 
+                  top: '3.39rem', 
+                  right: '2.25rem', 
+                  backgroundColor: 'rgba(0, 0, 0, 0.5)' 
+                }}>
+                  <MenuItem onClick={() => handleFilterChange('series')}>Local</MenuItem>
+                  <MenuItem onClick={() => handleFilterChange('online_series')}>Online</MenuItem>
+                </div>
+              )}
+            </header>
+
+            <TagFilter
+              tags={tags}
+              selectedTags={selectedTags}
+              handleTagChange={handleTagChange}
+              filterMode={filterMode}
+              toggleFilterMode={toggleFilterMode}
+            />
+            <Bookmarks letters={letters} onLetterClick={scrollToLetter} />
+            <Grid
+              container
+              spacing={2}
+              justifyContent="center"
+              style={{ justifyContent: openTagSettings ? 'left' : 'center' }}
+            >
+              {(() => {
+                const usedLetters = new Set();
+                return filteredCollections.map(collection => {
+                  const first = collection.title?.[0]?.toUpperCase();
+                  let ref = null;
+                  if (first && letterRefs.current[first] && !usedLetters.has(first)) {
+                    ref = letterRefs.current[first];
+                    usedLetters.add(first);
+                  }
+                  return (
+                    <Grid
+                      item
+                      xs={12}
+                      sm={6}
+                      md={4}
+                      key={collection.id}
+                      ref={ref}
+                    >
+                      <CatalogCard
+                        title={collection.title}
+                        type={collection.type}
+                        partsCount={collection.partsCount}
+                        thumbnailUrl={collection.thumbnailUrl}
+                        link={'/player/' + collection.id}
+                        showCheckbox={selectionMode}
+                        isSelected={selectedItems.includes(collection.id)}
+                        onSelect={() => handleItemSelection(collection.id)}
+                        tags={collection.tags}
+                      />
+                    </Grid>
+                  );
+                });
+              })()}
             </Grid>
-          ))}
-        </Grid>
 
-        <SpeedDial
-          ariaLabel="Settings"
-          icon={<SettingsIcon />}
-          direction="up"
-          onClick={() => dispatch({ type: ACTIONS.TOGGLE_SETTINGS_MENU })}
-          open={openSettingsMenu}
-          className="settings-dial"
-          style={{ position: 'fixed', bottom: '2rem', right: '2rem' }}
-        >
-          <SpeedDialAction
-            icon={<BookmarksIcon />}
-            tooltipTitle="Tag Settings"
-            onClick={handleTagSettings}
-          />
-          <SpeedDialAction
-            icon={<AddIcon />}
-            tooltipTitle="Add Online Series"
-            onClick={handleOpenOnlineSeriesDialog}
-          />
-        </SpeedDial>
+            <SpeedDial
+              ariaLabel="Settings"
+              icon={<SettingsIcon />}
+              direction="up"
+              onClick={() => dispatch({ type: ACTIONS.TOGGLE_SETTINGS_MENU })}
+              open={openSettingsMenu}
+              className="settings-dial"
+              style={{ position: 'fixed', bottom: '2rem', right: '2rem' }}
+            >
+              <SpeedDialAction
+                icon={<BookmarksIcon />}
+                tooltipTitle="Tag Settings"
+                onClick={handleTagSettings}
+              />
+              <SpeedDialAction
+                icon={<AddIcon />}
+                tooltipTitle="Add Online Series"
+                onClick={handleOpenOnlineSeriesDialog}
+              />
+            </SpeedDial>
 
-        {openTagSettings && (
-          <TagSettings
-            tags={tags}
-            onAddTag={handleAddTag}
-            onUpdateTags={() => handleUpdateTags(selectedItems, selectedTag)}
-            selectedTag={selectedTag}
-            setSelectedTag={handleTagSelectForAssignment}
-            selectedItems={selectedItems}
-            setSelectionMode={(val) => dispatch({ type: ACTIONS.TOGGLE_SELECTION_MODE, payload: val })}
-          />
-        )}
+            {openTagSettings && (
+              <TagSettings
+                tags={tags}
+                onAddTag={handleAddTag}
+                onUpdateTags={() => handleUpdateTags(selectedItems, selectedTag)}
+                selectedTag={selectedTag}
+                setSelectedTag={handleTagSelectForAssignment}
+                selectedItems={selectedItems}
+                setSelectionMode={(val) => dispatch({ type: ACTIONS.TOGGLE_SELECTION_MODE, payload: val })}
+              />
+            )}
 
-        <OnlineSeriesDialog 
-          open={openOnlineSeriesDialog}
-          onClose={handleCloseOnlineSeriesDialog}
-          title={formData.title}
-          onTitleChange={updateTitle}
-          imageUrl={formData.imageUrl}
-          onImageUrlChange={updateImageUrl}
-          seasons={formData.seasons}
-          onUpdateSeasonName={updateSeasonName}
-          onUpdateSeasonEpisodes={updateSeasonEpisodes}
-          onAddSeason={addSeason}
-          onRemoveSeason={removeSeason}
-          onSave={handleSaveOnlineSeries}
-        />
-      </div>
+            <OnlineSeriesDialog 
+              open={openOnlineSeriesDialog}
+              onClose={handleCloseOnlineSeriesDialog}
+              title={formData.title}
+              onTitleChange={updateTitle}
+              imageUrl={formData.imageUrl}
+              onImageUrlChange={updateImageUrl}
+              seasons={formData.seasons}
+              onUpdateSeasonName={updateSeasonName}
+              onUpdateSeasonEpisodes={updateSeasonEpisodes}
+              onAddSeason={addSeason}
+              onRemoveSeason={removeSeason}
+              onSave={handleSaveOnlineSeries}
+            />
+          </div>
+        </Box>
+      </Box>
     </ThemeProvider>
   );
 };

@@ -580,6 +580,12 @@ def register_routes(app):
     def get_metadata():
         metadata = load_metadata()
         metadata = auto_add_metadata(metadata)
+        # Сортуємо колекції за алфавітом (title)
+        for category in ["series", "movies", "online_series"]:
+            if category in metadata:
+                metadata[category] = sorted(
+                    metadata[category], key=lambda x: x.get("title", "").lower()
+                )
         save_metadata(metadata)
         return jsonify(metadata)
 
