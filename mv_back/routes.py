@@ -1,32 +1,22 @@
 import json
 import uuid
-from flask import jsonify, request, send_file, Response
+from flask import jsonify, request, send_file, Response, g
 import os
 from metadata import load_metadata, save_metadata, auto_add_metadata, find_metadata_item, update_paths_only
 from analyze_video import analyze_video, clear_analysis_cache
+from new_metadata import *
 from thumbnails import find_first_video_in_directory, get_or_create_thumbnail
-from config import THUMBNAILS_DIR, MOVIES_PATHS, SERIES_PATHS
+from config import *
 from datetime import datetime
 import mimetypes
 import subprocess
 from concurrent.futures import ThreadPoolExecutor
+import pyodbc
 
-def convert_to_mp4(input_path, output_path):
-    command = [
-        "ffmpeg",
-        "-i", input_path,
-        "-c:v", "libx264",
-        "-crf", "23",
-        "-preset", "fast",
-        "-c:a", "aac",
-        "-b:a", "192k",
-        output_path
-    ]
-    result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    if result.returncode != 0:
-        print(f"Error converting file: {result.stderr.decode('utf-8')}")
-        return False
-    return True
+def get_db():
+    if 'db' not in g:
+        g.db = pyodbc.connect(DB_CONNECTION_STRING)
+    return g.db
 
 if not os.path.exists(THUMBNAILS_DIR):
     os.makedirs(THUMBNAILS_DIR)
@@ -35,6 +25,12 @@ def error_response(message, status=400):
     return jsonify({"status": "error", "message": message}), status
 
 def register_routes(app):
+    
+    @app.teardown_appcontext
+    def close_db(exception=None):
+        db = g.pop('db', None)
+        if db is not None:
+            db.close()
     
     @app.route('/api/metadata/tags', methods=['GET'])
     def get_all_tags():
@@ -328,181 +324,6 @@ def register_routes(app):
             return error_response(f"Failed to save metadata: {str(e)}", 500)
 
         return jsonify({"status": "success", "message": "Bulk update completed successfully"}), 200
-    
-    @app.route('/api/analyze/clear_cache', methods=['POST'])
-    def clear_cache_route():
-        """
-        Видаляє кешований результат аналізу для вказаного відеофайлу.
-
-        Body Parameters:
-            path (str): Шлях до відеофайлу.
-
-        Returns:
-            Response: Результат видалення кешу.
-        """
-        video_path = request.json.get('path')
-        if not video_path:
-            return error_response("Path parameter is required",400)
-
-        try:
-            clear_analysis_cache(video_path=video_path)
-            return jsonify({"status": "success", "message": f"Cache cleared for file: {video_path}"}), 200
-        except Exception as e:
-            return error_response(f"Failed to clear cache for file {video_path}", 404)
-            # error_response(f"Failed to clear cache for file {video_path}: {e}")
-            # return jsonify({"status": "error", "message": str(e)}), 500
-
-    @app.route('/api/analyze/video', methods=['GET'])
-    def get_video_analysis():
-        """
-        Повертає результати аналізу для конкретного відео.
-
-        Query Parameters:
-            path (str): Шлях до відеофайлу.
-
-        Returns:
-            Response: Результати аналізу або помилка.
-        """
-        video_path = request.args.get('path')
-        if not video_path or not os.path.exists(video_path):
-            return error_response("File not found", 404)
-
-        metadata = load_metadata()
-        for series in metadata.get("series", []):
-            for season in series.get("seasons", []):
-                for file in season.get("files", []):
-                    if os.path.normpath(os.path.join(season["path"], file["name"])) == os.path.normpath(video_path):
-                        return jsonify({"status": "success", "recommendToSkip": file.get("recommendToSkip", [])})
-
-        return error_response("Analysis not found", 404)
-
-    @app.route('/api/analyze/series/<string:series_id>', methods=['POST'])
-    def analyze_series(series_id):
-        """
-        Запускає аналіз для серіалу за його ідентифікатором з використанням паралельної обробки.
-
-        Parameters:
-            series_id (str): Унікальний ідентифікатор серіалу.
-
-        Returns:
-            Response: Статус запуску аналізу.
-        """
-        metadata = load_metadata()
-        series, _ = find_metadata_item(metadata, item_id=series_id)
-
-        if not series or series.get("type") != "series":
-            return error_response("Series not found", 404)
-
-        def process_video(file_info):
-            video_path = os.path.join(file_info["season_path"], file_info["name"])
-            analysis_result = analyze_video(video_path)
-            file_info["file"]["recommendToSkip"] = analysis_result
-            return {"file": file_info["name"], "recommendToSkip": analysis_result}
-
-        files_to_analyze = []
-        for season in series.get("seasons", []):
-            for file in season.get("files", []):
-                files_to_analyze.append({"season_path": season["path"], "name": file["name"], "file": file})
-
-        with ThreadPoolExecutor(max_workers=4) as executor:
-            results = list(executor.map(process_video, files_to_analyze))
-
-        save_metadata(metadata)
-        return jsonify({"status": "success", "results": results})
-    
-    @app.route('/api/analyze/file', methods=['POST'])
-    def analyze_file():
-        """
-        Аналізує один відеофайл та повертає результати.
-
-        Query Parameters:
-            path (str): Шлях до відеофайлу.
-
-        Returns:
-            Response: Результати аналізу або повідомлення про помилку.
-        """
-        video_path = request.json.get('path')
-
-        if not video_path or not os.path.exists(video_path):
-            return jsonify({"status": "error", "message": "File not found or invalid path"}), 404
-
-        try:
-            results = analyze_video(video_path)
-            return jsonify({"status": "success", "results": results})
-        except Exception as e:
-            return jsonify({"status": "error", "message": str(e)}), 500
-
-    @app.route('/api/video', methods=['GET'])
-    def serve_video_with_range():
-        """
-        Надає доступ до відеофайлу з підтримкою Range-запитів і потоковою передачею.
-
-        Query Parameters:
-            path (str): Шлях до відеофайлу.
-
-        Returns:
-            Response: Відеофайл або помилка.
-        """
-        video_path = request.args.get('path')
-        if not video_path or not os.path.exists(video_path):
-            return jsonify({"status": "error", "message": "File not found"}), 404
-
-        extension = os.path.splitext(video_path)[-1].lower()
-        if extension == ".avi":
-            # Конвертація AVI у MP4
-            converted_path = video_path.replace(".avi", ".mp4")
-            if not os.path.exists(converted_path):
-                success = convert_to_mp4(video_path, converted_path)
-                if not success:
-                    return jsonify({"status": "error", "message": "Failed to convert file"}), 500
-            video_path = converted_path
-        
-        # Визначення MIME-типу
-        mime_type, _ = mimetypes.guess_type(video_path)
-        mime_type = mime_type or "application/octet-stream"
-
-        range_header = request.headers.get('Range', None)
-
-        try:
-            file_size = os.path.getsize(video_path)
-
-            if range_header:
-                # Обробка Range-запиту
-                range_value = range_header.strip().split('=')[-1]
-                start, end = range_value.split('-')
-                start = int(start) if start else 0
-                end = int(end) if end else file_size - 1
-                length = end - start + 1
-
-                with open(video_path, 'rb') as f:
-                    f.seek(start)
-                    data = f.read(length)
-
-                headers = {
-                    'Content-Range': f'bytes {start}-{end}/{file_size}',
-                    'Accept-Ranges': 'bytes',
-                    'Content-Length': str(length),
-                    'Content-Type': mime_type
-                }
-
-                return Response(data, status=206, headers=headers)
-
-            # Потокова передача всього файлу без Range-запиту
-            def generate():
-                with open(video_path, 'rb') as f:
-                    while chunk := f.read(8192):
-                        yield chunk
-
-            headers = {
-                'Content-Length': str(file_size),
-                'Content-Type': mime_type
-            }
-
-            return Response(generate(), headers=headers)
-        except Exception as e:
-            import traceback
-            print("Error:", traceback.format_exc())
-            return jsonify({"status": "error", "message": str(e)}), 500
 
     @app.route('/api/metadata/item/<string:item_id>', methods=['GET'])
     def get_metadata_by_id(item_id):
@@ -578,78 +399,49 @@ def register_routes(app):
     # API endpoint to get metadata
     @app.route('/api/metadata', methods=['GET'])
     def get_metadata():
-        metadata = load_metadata()
-        metadata = auto_add_metadata(metadata)
-        # Сортуємо колекції за алфавітом (title)
-        for category in ["series", "movies", "online_series"]:
-            if category in metadata:
-                metadata[category] = sorted(
-                    metadata[category], key=lambda x: x.get("title", "").lower()
-                )
-        save_metadata(metadata)
-        return jsonify(metadata)
-
-    # API endpoint to force update metadata
-    @app.route('/api/metadata/force-update', methods=['POST'])
-    def force_update_metadata():
-        metadata = load_metadata()
-        metadata = auto_add_metadata(metadata, force_update=True)
-        save_metadata(metadata)
-        return jsonify({"status": "success", "message": "Metadata forcibly updated"})
-
-    # API endpoint to add or update metadata
-    @app.route('/api/metadata/add', methods=['POST'])
-    def add_metadata():
-        data = request.json
-        metadata = load_metadata()
-
-        # Check if the item already exists in metadata
-        for item in metadata["series"] + metadata["movies"]:
-            if os.path.normpath(item["path"]) == os.path.normpath(data["path"]):
-                item.update(data)
-                item["auto_added"] = False
-                item["last_modified"] = datetime.now().isoformat()
-                save_metadata(metadata)
-                return jsonify({"status": "success", "message": "Metadata updated"})
-
-        # Add new metadata
-        data["id"] = str(uuid.uuid4())
-        data["auto_added"] = False
-        data["last_modified"] = datetime.now().isoformat()
-        category = "series" if "series" in data["tags"] else "movies"
-        metadata[category].append(data)
-        save_metadata(metadata)
-        return jsonify({"status": "success", "message": "Metadata added"})
+        conn = get_db()
+        if not conn:
+            return error_response("Database connection error", 500)
+        success, media_list, code = load_media(conn)
+        if success is True:
+            metadata = {
+                "series": [],
+                "movies": [],
+                "online_series": []
+            }
+            for media in media_list:
+                if media["type"] == "series":
+                    metadata["series"].append(media)
+                elif media["type"] == "collection":
+                    metadata["movies"].append(media)
+                elif media["type"] == "online_series":
+                    metadata["online_series"].append(media)
+            return jsonify(metadata), 200
+        elif success is False:
+            return error_response("No media found", 404)
+        else:
+            return error_response(success, code)
 
     # API endpoint to delete metadata
-    @app.route('/api/metadata/delete', methods=['POST'])
-    def delete_metadata():
-        """
-        Видаляє запис із метаданих для `series`, `movies` або `online_series`.
-
-        Body Parameters:
-            id (str): Унікальний ідентифікатор запису, який потрібно видалити.
-
-        Returns:
-            Response: Статус видалення.
-        """
+    @app.post("/api/metadata/delete")
+    def delete_metadata_route():
         data = request.json
-        record_id = data.get("id")
+        media_id = data.get("id")
 
-        if not record_id:
+        if not media_id:
             return error_response("Field `id` is required", 400)
 
-        metadata = load_metadata()
+        conn = get_db()
+        if not conn:
+            return error_response("Database connection error", 500)
+        success, code = delete_metadata(conn, media_id)
 
-        # Пошук і видалення запису
-        for category in ["series", "movies", "online_series"]:
-            for item in metadata.get(category, []):
-                if item.get("id") == record_id:
-                    metadata[category].remove(item)
-                    save_metadata(metadata)
-                    return jsonify({"status": "success", "message": "Metadata deleted"}), 200
-
-        return error_response("Item not found", 404)
+        if success is True:
+            return jsonify({"status": "success", "message": "Metadata deleted"}), code
+        elif success is False:
+            return error_response("Metadata not found", code)
+        else:
+            return error_response(success, code)
 
     @app.route('/api/thumbnail', methods=['GET'])
     def get_thumbnail():

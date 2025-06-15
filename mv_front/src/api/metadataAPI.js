@@ -106,15 +106,15 @@ export const updateFilesPath = async (itemId) => {
     }
 }
 
-export const forceUpdateMetadata = async () => {
-    try {
-        const response = await axios.post(`${API_BASE_URL}/force-update`);
-        return response.data.message;
-    } catch (error) {
-        console.error(`Failed to force update metadata: ${error.message}`);
-        throw error;
-    }
-};
+// export const forceUpdateMetadata = async () => {
+//     try {
+//         const response = await axios.post(`${API_BASE_URL}/force-update`);
+//         return response.data.message;
+//     } catch (error) {
+//         console.error(`Failed to force update metadata: ${error.message}`);
+//         throw error;
+//     }
+// };
 
 export const deleteMetadata = async (path) => {
     try {
@@ -126,15 +126,15 @@ export const deleteMetadata = async (path) => {
     }
 };
 
-export const addOrUpdateMetadata = async (metadata) => {
-    try {
-        const response = await axios.post(`${API_BASE_URL}/add`, metadata);
-        return response.data.message;
-    } catch (error) {
-        console.error(`Failed to add or update metadata: ${error.message}`);
-        throw error;
-    }
-};
+// export const addOrUpdateMetadata = async (metadata) => {
+//     try {
+//         const response = await axios.post(`${API_BASE_URL}/add`, metadata);
+//         return response.data.message;
+//     } catch (error) {
+//         console.error(`Failed to add or update metadata: ${error.message}`);
+//         throw error;
+//     }
+// };
 
 export const fetchMetadata = async () => {
     try {

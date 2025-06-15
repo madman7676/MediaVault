@@ -185,7 +185,7 @@ function useCollectionsLoader(dispatch) {
               id: item.id,
               title: type === 'movie' ? item.title.replace(/\.[^/.]+$/, "") : item.title,
               type,
-              partsCount: type === 'movie' ? item.parts.length : item.seasons.length,
+              partsCount: item.units_count,
               thumbnailUrl,
               tags: item.tags || [],
             };
@@ -195,7 +195,7 @@ function useCollectionsLoader(dispatch) {
               id: item.id,
               title: type === 'movie' ? item.title.replace(/\.[^/.]+$/, "") : item.title,
               type,
-              partsCount: type === 'movie' ? item.parts.length : item.seasons.length,
+              partsCount: item.units_count,
               thumbnailUrl: '',
               tags: item.tags || [],
             };

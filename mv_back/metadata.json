@@ -2942,7 +2942,7 @@
                 "Романтика"
             ],
             "auto_added": true,
-            "last_modified": "2025-06-14T23:03:00.087839",
+            "last_modified": "2025-06-15T14:00:09.766852",
             "type": "series",
             "seasons": [
                 {
@@ -2999,7 +2999,7 @@
                 "Імба ГГ"
             ],
             "auto_added": true,
-            "last_modified": "2025-06-14T23:03:00.089839",
+            "last_modified": "2025-06-15T14:00:09.770854",
             "type": "series",
             "seasons": [
                 {
@@ -3636,7 +3636,7 @@
                 "Імба ГГ"
             ],
             "auto_added": true,
-            "last_modified": "2025-06-14T23:03:00.095838",
+            "last_modified": "2025-06-15T14:00:09.783850",
             "type": "series",
             "seasons": [
                 {
@@ -3865,7 +3865,7 @@
                 "Імба ГГ"
             ],
             "auto_added": true,
-            "last_modified": "2025-06-14T23:03:00.096840",
+            "last_modified": "2025-06-15T14:00:09.787850",
             "type": "series",
             "seasons": [
                 {
@@ -3922,7 +3922,7 @@
                 "Імба ГГ"
             ],
             "auto_added": true,
-            "last_modified": "2025-06-14T23:03:00.098839",
+            "last_modified": "2025-06-15T14:00:09.789850",
             "type": "series",
             "seasons": [
                 {
@@ -4159,7 +4159,7 @@
             "path": "F:\\Serials\\Невколупний",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-06-14T23:03:00.100838",
+            "last_modified": "2025-06-15T14:00:09.795867",
             "type": "series",
             "seasons": [
                 {
@@ -4204,7 +4204,7 @@
                 "Імба ГГ"
             ],
             "auto_added": true,
-            "last_modified": "2025-06-14T23:03:00.100838",
+            "last_modified": "2025-06-15T14:00:09.798867",
             "type": "series",
             "seasons": [
                 {
@@ -4489,7 +4489,7 @@
                 "Фентезі"
             ],
             "auto_added": true,
-            "last_modified": "2025-06-14T23:03:00.101838",
+            "last_modified": "2025-06-15T14:00:09.800866",
             "type": "series",
             "seasons": [
                 {
@@ -4546,7 +4546,7 @@
                 "Фентезі"
             ],
             "auto_added": true,
-            "last_modified": "2025-06-14T23:03:00.102838",
+            "last_modified": "2025-06-15T14:00:09.803871",
             "type": "series",
             "seasons": [
                 {
@@ -4741,7 +4741,7 @@
                 "Фентезі"
             ],
             "auto_added": true,
-            "last_modified": "2025-06-14T23:03:00.103838",
+            "last_modified": "2025-06-15T14:00:09.808866",
             "type": "series",
             "seasons": [
                 {
@@ -5121,7 +5121,7 @@
                 "Фентезі"
             ],
             "auto_added": true,
-            "last_modified": "2025-06-14T23:03:00.104840",
+            "last_modified": "2025-06-15T14:00:09.811375",
             "type": "series",
             "seasons": [
                 {
@@ -6987,7 +6987,7 @@
                 "Фентезі"
             ],
             "auto_added": true,
-            "last_modified": "2025-06-14T23:03:00.105839",
+            "last_modified": "2025-06-15T14:00:09.814378",
             "type": "series",
             "seasons": [
                 {
@@ -7125,7 +7125,7 @@
                 "Фентезі"
             ],
             "auto_added": true,
-            "last_modified": "2025-06-14T23:03:00.106838",
+            "last_modified": "2025-06-15T14:00:09.818376",
             "type": "series",
             "seasons": [
                 {
@@ -8014,12 +8014,12 @@
     ],
     "movies": [
         {
-            "id": "0db839e7-2c8e-477b-99c5-39c346e89036",
+            "id": "a95a0753-9cf8-4e49-af71-0cc7f09db816",
             "title": "Big Hero 6.mkv",
             "path": "F:\\Movies\\Big Hero 6.mkv",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-06-14T23:03:00.109840",
+            "last_modified": "2025-06-15T14:00:09.828378",
             "type": "collection",
             "parts": [
                 {
@@ -8029,12 +8029,12 @@
             ]
         },
         {
-            "id": "db1c98a1-dbbe-4898-8e8e-457b1d4d0e6d",
+            "id": "3b15288f-92dc-407f-a3a9-81b69773ab4a",
             "title": "Bolt.avi",
             "path": "F:\\Movies\\Bolt.avi",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-06-14T23:03:00.109840",
+            "last_modified": "2025-06-15T14:00:09.829378",
             "type": "collection",
             "parts": [
                 {
@@ -8044,12 +8044,12 @@
             ]
         },
         {
-            "id": "3fcea033-6de8-44c8-82c6-5a4a77207fe9",
+            "id": "5c65cd49-0770-45ca-ae31-e040eede6d63",
             "title": "Boss Level.mkv",
             "path": "F:\\Movies\\Boss Level.mkv",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-06-14T23:03:00.109840",
+            "last_modified": "2025-06-15T14:00:09.829378",
             "type": "collection",
             "parts": [
                 {
@@ -8059,12 +8059,12 @@
             ]
         },
         {
-            "id": "f604adc4-87a6-455f-b791-87f2cf1382ce",
+            "id": "5c37cc71-895e-4264-bd91-29b776fb859c",
             "title": "Bruce Almighty.avi",
             "path": "F:\\Movies\\Bruce Almighty.avi",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-06-14T23:03:00.109840",
+            "last_modified": "2025-06-15T14:00:09.829378",
             "type": "collection",
             "parts": [
                 {
@@ -8079,7 +8079,7 @@
             "path": "F:\\Movies\\Cloudy with a Chance of Meatballs. Dilogy",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-06-14T23:03:00.107838",
+            "last_modified": "2025-06-15T14:00:09.821375",
             "type": "collection",
             "parts": [
                 {
@@ -8093,12 +8093,12 @@
             ]
         },
         {
-            "id": "32567ae6-9ea6-4e3f-9a53-72dc5a453a56",
+            "id": "12ca0565-2a67-4f98-b649-03a26545b01c",
             "title": "Edge of Tomorrow.mkv",
             "path": "F:\\Movies\\Edge of Tomorrow.mkv",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-06-14T23:03:00.109840",
+            "last_modified": "2025-06-15T14:00:09.829378",
             "type": "collection",
             "parts": [
                 {
@@ -8108,12 +8108,12 @@
             ]
         },
         {
-            "id": "ef57ac4c-58ca-47b1-bd23-401ce54bfc8a",
+            "id": "e87109f6-9e29-4d0e-b777-4411b860bf76",
             "title": "Knowing.avi",
             "path": "F:\\Movies\\Knowing.avi",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-06-14T23:03:00.109840",
+            "last_modified": "2025-06-15T14:00:09.829378",
             "type": "collection",
             "parts": [
                 {
@@ -8123,12 +8123,12 @@
             ]
         },
         {
-            "id": "ed08735c-13ee-4f04-bf22-879c09565fda",
+            "id": "4b3318ea-395b-460b-8419-8f40e1971f91",
             "title": "Liar Liar.mkv",
             "path": "F:\\Movies\\Liar Liar.mkv",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-06-14T23:03:00.109840",
+            "last_modified": "2025-06-15T14:00:09.830377",
             "type": "collection",
             "parts": [
                 {
@@ -8138,12 +8138,12 @@
             ]
         },
         {
-            "id": "35ca780c-5c60-4957-b934-f1cfae11ddb7",
+            "id": "a741a9e9-2586-4d7f-a87a-999ef28a133f",
             "title": "Megamind.mkv",
             "path": "F:\\Movies\\Megamind.mkv",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-06-14T23:03:00.109840",
+            "last_modified": "2025-06-15T14:00:09.830377",
             "type": "collection",
             "parts": [
                 {
@@ -8158,7 +8158,7 @@
             "path": "F:\\Movies\\Riddick",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-06-14T23:03:00.107838",
+            "last_modified": "2025-06-15T14:00:09.822377",
             "type": "collection",
             "parts": [
                 {
@@ -8176,12 +8176,12 @@
             ]
         },
         {
-            "id": "4745073c-9032-4408-b855-7acff335371d",
+            "id": "a30a36c7-1d7f-4a02-ada6-2fecb052280e",
             "title": "The Mask.mkv",
             "path": "F:\\Movies\\The Mask.mkv",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-06-14T23:03:00.110839",
+            "last_modified": "2025-06-15T14:00:09.831377",
             "type": "collection",
             "parts": [
                 {
@@ -8196,7 +8196,7 @@
             "path": "F:\\Movies\\Ukrainianize Marvel Cinematic Universe",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-06-14T23:03:00.107838",
+            "last_modified": "2025-06-15T14:00:09.822377",
             "type": "collection",
             "parts": [
                 {
@@ -8314,12 +8314,12 @@
             ]
         },
         {
-            "id": "a5946662-d3bd-42cb-b66c-3a883ce500b3",
+            "id": "dae16311-b2b7-4c28-a95e-7d9f84df5061",
             "title": "WALL-E.mkv",
             "path": "F:\\Movies\\WALL-E.mkv",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-06-14T23:03:00.110839",
+            "last_modified": "2025-06-15T14:00:09.831377",
             "type": "collection",
             "parts": [
                 {
@@ -8334,7 +8334,7 @@
             "path": "F:\\Movies\\X-Men. Collection",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-06-14T23:03:00.108839",
+            "last_modified": "2025-06-15T14:00:09.824378",
             "type": "collection",
             "parts": [
                 {
@@ -8413,7 +8413,7 @@
             "path": "F:\\Movies\\Собаче життя",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-06-14T23:03:00.108839",
+            "last_modified": "2025-06-15T14:00:09.826378",
             "type": "collection",
             "parts": [
                 {
@@ -8432,7 +8432,7 @@
             "path": "F:\\Movies\\Футурама",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-06-14T23:03:00.108839",
+            "last_modified": "2025-06-15T14:00:09.827378",
             "type": "collection",
             "parts": [
                 {
@@ -8459,7 +8459,7 @@
             "path": "F:\\Movies\\Як приборкати дракона",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-06-14T23:03:00.108839",
+            "last_modified": "2025-06-15T14:00:09.827378",
             "type": "collection",
             "parts": [
                 {
