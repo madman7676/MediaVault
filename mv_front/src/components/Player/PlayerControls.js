@@ -33,7 +33,7 @@ const PlayerControls = ({
 
     const handleOptionSelect = (option, menu) => {
         if (option === 'audioTracks') {
-            setShowAudioSubmenu (!showAudioSubmenu);
+            // setShowAudioSubmenu (!showAudioSubmenu);
 
             const fullPath = currentPathRef.current && currentNameRef.current ? 
             `${currentPathRef.current}\\${currentNameRef.current}` : null;

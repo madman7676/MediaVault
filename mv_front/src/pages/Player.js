@@ -91,6 +91,12 @@ const Player = () => {
         if (currentIndex !== -1 && currentIndex < flatFileList.length - 1) {
             const nextFile = flatFileList[currentIndex + 1];
             if (nextFile) {
+                const seasonIndex = fileList.findIndex(season =>
+                    season.files.some(file => file.url === nextFile.url)
+                );
+                if (seasonIndex >= 0 && allPaths.current[seasonIndex]) {
+                    currentPath.current = allPaths.current[seasonIndex];
+                }
                 handleFetchTimeToSkip(currentPath.current, nextFile.name);
                 currentTimeToSkipRef.current = nextFile.timeToSkip || [];
 

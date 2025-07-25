@@ -240,6 +240,9 @@ function useTagsManager(dispatch, selectedTags, collections) {
     loadTags();
   }, []);
 
+  // Додаємо ∅ лише для фільтрації
+  const filterTags = useMemo(() => ['∅', ...tags.filter(t => t !== '∅')], [tags]);
+
   const handleTagChange = useCallback((tag) => {
     dispatch({ 
       type: ACTIONS.SET_SELECTED_TAGS, 
@@ -284,7 +287,7 @@ function useTagsManager(dispatch, selectedTags, collections) {
   }, [dispatch, collections]);
 
   return {
-    tags,
+    tags: filterTags,
     handleTagChange,
     handleTagSelectForAssignment,
     handleAddTag,
@@ -347,6 +350,10 @@ const MediaVault = () => {
     handleUpdateTags
   } = useTagsManager(dispatch, selectedTags, collections);
 
+  const handleClearTags = useCallback(() => {
+    dispatch({ type: ACTIONS.SET_SELECTED_TAGS, payload: [] });
+  }, []);
+
   // Фільтрація колекцій з використанням useMemo
   const filteredResults = useMemo(() => {
     let filtered = collections;
@@ -360,7 +367,9 @@ const MediaVault = () => {
       }
     }
 
-    if (selectedTags && selectedTags.length > 0) {
+    if (selectedTags.includes('∅')) {
+      filtered = filtered.filter(collection => !collection.tags || collection.tags.length === 0);
+    } else if (selectedTags && selectedTags.length > 0) {
       if (filterMode === 'include') {
         filtered = filtered.filter(collection => 
             collection.tags && selectedTags.some(tag => collection.tags.includes(tag)));
@@ -455,7 +464,7 @@ const MediaVault = () => {
   const letterRefs = useRef({});
   filteredCollections.forEach(item => {
     const first = item.title?.[0]?.toUpperCase();
-    if (first && letterRefs.current[first] && !letterRefs.current[first].current) {
+    if (first && !letterRefs.current[first]) {
       letterRefs.current[first] = React.createRef();
     }
   });
@@ -548,6 +557,7 @@ const MediaVault = () => {
               handleTagChange={handleTagChange}
               filterMode={filterMode}
               toggleFilterMode={toggleFilterMode}
+              handleClearTags={handleClearTags}
             />
             <Bookmarks letters={letters} onLetterClick={scrollToLetter} />
             <Grid
