@@ -25,7 +25,7 @@ yarn-error.log*
 
 #backend
 thumbnails
-
+/mv_back/metadata.json
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
