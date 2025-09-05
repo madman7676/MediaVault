@@ -3,6 +3,7 @@ import CatalogCard from '../components/CatalogCard';
 import { fetchMetadata, addTagToItems, fetchAllTags } from '../api/metadataAPI';
 import { fetchThumbnail } from '../api/thumbnailAPI';
 import TagFilter from '../components/TagFilter';
+import SortingButtons from '../components/SortingButtons';
 import { 
   Grid2 as Grid, 
   SpeedDial, 
@@ -550,15 +551,21 @@ const MediaVault = () => {
                 </div>
               )}
             </header>
-
-            <TagFilter
-              tags={tags}
-              selectedTags={selectedTags}
-              handleTagChange={handleTagChange}
-              filterMode={filterMode}
-              toggleFilterMode={toggleFilterMode}
-              handleClearTags={handleClearTags}
-            />
+            <Box sx={{display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            }}>
+              <TagFilter
+                tags={tags}
+                selectedTags={selectedTags}
+                handleTagChange={handleTagChange}
+                filterMode={filterMode}
+                toggleFilterMode={toggleFilterMode}
+                handleClearTags={handleClearTags}
+              />
+              {/* <SortingButtons sortBy={null} setSortBy={null} /> */}
+            </Box>
             <Bookmarks letters={letters} onLetterClick={scrollToLetter} />
             <Grid
               container
