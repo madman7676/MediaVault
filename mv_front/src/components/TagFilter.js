@@ -6,7 +6,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 
 const TagFilter = ({ tags, selectedTags, handleTagChange, filterMode, toggleFilterMode, handleClearTags }) => {
     return (
-        <Box sx={{ display: 'flex', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)', padding: '0.5rem', borderRadius: '4px' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', padding: '0.5rem', borderRadius: '4px', flex: 1, minWidth: 0 }}>
             <FormGroup row sx={{ flexGrow: 1 }}>
                 {[...tags].sort((a, b) => a.localeCompare(b)).map(tag => (
                     <FormControlLabel
