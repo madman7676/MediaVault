@@ -12,6 +12,10 @@ cursor = conn.cursor()
 metadata = load_metadata()
 
 # Вставка у Media → MediaUnit → Episode → TimeToSkip → Tag → MediaTag
+# Series → Season → Episode → TimeToSkip
+#   
+#  Tag
+# Movies → Part
 inserted_series = 0
 inserted_parts = 0
 tags_dict = {}
