@@ -2,7 +2,7 @@ import os
 import uuid
 import json
 from datetime import datetime
-from config import MOVIES_PATHS, SERIES_PATHS, METADATA_FILE, BASE_URL, THUMBNAILS_DIR
+from .config import *
 # from flask import Flask, request, send_file
 
 def update_paths_only(metadata, item_id):
