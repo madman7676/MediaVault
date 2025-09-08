@@ -1,6 +1,8 @@
 import os
 import json
+import uuid
 import pyodbc
+import jmespath
 from tqdm import tqdm
 from datetime import datetime
 from natsort import natsorted
@@ -130,8 +132,124 @@ def insert_series_to_db(cursor):
         insert_serie_to_db(cursor, path)
     return
 
+def insert_SkipSet_to_db(cursor, episode_id, source, name='Default', priority=0, is_active=1):
+    cursor.execute('SELECT id FROM SkipSet WHERE episode_id = ? AND source = ?', (episode_id, source))
+    if cursor.fetchone() is not None:
+        print(f"SkipSet for episode_id '{episode_id}' with source '{source}' already exists in DB. Skipping...")
+        return None
+    
+    skipSet_id = formate_id(cursor, name+'-'+episode_id+'-'+source, "SkipSet")    
+    query = '''
+        INSERT INTO SkipSet (id, episode_id, name, source, priority, is_active, created_at) VALUES (?, ?, ?, ?, ?, ?, ?);
+    '''
+    cursor.execute(query, (skipSet_id, episode_id, name, source, priority, is_active, datetime.now()))
+    return skipSet_id
+
+def insert_SkipRange_to_db(cursor, skipset_id, start, end, label='NULL'):
+    skipRange_id = str(uuid.uuid4())
+    query = '''
+        INSERT INTO SkipRange (id, skipset_id, start_time_ms, end_time_ms, label) VALUES (?, ?, ?, ?, ?);
+    '''
+    cursor.execute(query, (skipRange_id, skipset_id, start, end, label))
+    return skipRange_id
+
+def transfer_timeToSkip_from_metadata():    
+    metadata = load_metadata()
+    
+    jmesstr = r'series[].seasons[].files[?timeToSkip].{name: name, timeToSkip: timeToSkip}[]'
+    timeToSkipSets = jmespath.search(jmesstr, metadata)
+    
+    for item in tqdm(timeToSkipSets, desc="Transferring timeToSkip to DB"):
+        episode_name = os.path.splitext(item['name'])[0]
+        timeToSkip = item['timeToSkip']
+        
+        # Find episode_id in DB
+        cursor.execute('SELECT id FROM Episode WHERE title = ?', (episode_name,))
+        result = cursor.fetchone()
+        if result is None:
+            print(f"Episode '{episode_name}' not found in DB. Skipping...")
+            continue
+        episode_id = result[0]
+        
+        # Insert SkipSet
+        skipset_id = insert_SkipSet_to_db(cursor, episode_id, source='METADATA', name='Default')
+        if skipset_id is None:
+            continue
+        # Insert SkipRanges
+        for skip in timeToSkip:
+            if not skip:
+                print(f"Empty skip range in episode '{episode_name}'. Skipping...")
+                continue
+            start = skip.get('start', 'NULL')
+            end = skip.get('end', 'NULL')
+            skipRange_id = insert_SkipRange_to_db(cursor, skipset_id, start, end, label='NULL')
+    
+    cursor.commit()
+    return
+
+def insert_Tag_to_db(cursor, name):
+    cursor.execute('SELECT id FROM Tag WHERE name = ?', (name,))
+    if cursor.fetchone() is not None:
+        print(f"Tag '{name}' already exists in DB. Skipping...")
+        return cursor.fetchone()[0]
+    
+    id = formate_id(cursor, name, "Tag")
+    query = '''
+        INSERT INTO Tag (id, name) VALUES (?, ?);
+    '''
+    cursor.execute(query, (id, name))
+    return id
+
+def insert_Xref_Tag2Media_to_db(cursor, media_id, tag_id):
+    cursor.execute('SELECT * FROM Xref_Tag2Media WHERE media_id = ? AND tag_id = ?', (media_id, tag_id))
+    if cursor.fetchone() is not None:
+        print(f"Xref_Tag2Media for media_id '{media_id}' and tag_id '{tag_id}' already exists in DB. Skipping...")
+        return False
+    
+    query = '''
+        INSERT INTO Xref_Tag2Media (media_id, tag_id) VALUES (?, ?);
+    '''
+    cursor.execute(query, (media_id, tag_id))
+    return True
+    
+
+def transfer_tags_from_metadata():
+    metadata = load_metadata()
+    
+    jmesstr = r'*[?tags].{tags:tags[], title:title}[]'
+    tagSets = jmespath.search(jmesstr, metadata)
+    
+    cursor.execute('SELECT * FROM Tag')
+    
+    tagsList = {row[1]:row[0] for row in cursor.fetchall()}
+    
+    for item in tqdm(tagSets, desc="Transferring tags to DB"):
+        title = item['title']
+        tags = item['tags']
+        
+        # Find media_id in DB
+        cursor.execute('SELECT id FROM Media WHERE title = ?', (title,))
+        result = cursor.fetchone()
+        if result is None:
+            print(f"Media '{title}' not found in DB. Skipping...")
+            continue
+        media_id = result[0]
+        
+        for tag in tags:
+            if tag in tagsList:
+                tag_id = tagsList[tag]
+            else:
+                print(f"Tag '{tag}' not found in DB.")
+                continue
+            insert_Xref_Tag2Media_to_db(cursor, media_id, tag_id)
+    
+    cursor.commit()
+    return
+
 if __name__ == "__main__":
     conn = pyodbc.connect(DB_CONNECTION_STRING)
     cursor = conn.cursor()
-    insert_series_to_db(cursor)
     
+    
+    
+    conn.close()
