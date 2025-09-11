@@ -1,9 +1,9 @@
 from datetime import datetime
-from config import *
+from mv_back.config import *
 import os
 import uuid
 
-from metadata import create_movie_metadata, create_series_metadata
+from mv_back.metadata import create_movie_metadata, create_series_metadata
 
 def delete_metadata(conn, media_id):
     """

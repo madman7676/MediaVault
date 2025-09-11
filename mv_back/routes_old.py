@@ -2,11 +2,11 @@ import json
 import uuid
 from flask import jsonify, request, send_file, Response, g
 import os
-from metadata import load_metadata, save_metadata, auto_add_metadata, find_metadata_item, update_paths_only
-from analyze_video import analyze_video, clear_analysis_cache
-from new_metadata import *
-from thumbnails import find_first_video_in_directory, get_or_create_thumbnail
-from config import *
+from mv_back.metadata import load_metadata, save_metadata, auto_add_metadata, find_metadata_item, update_paths_only
+from mv_back.analyze_video import analyze_video, clear_analysis_cache
+from mv_back.new_metadata import *
+from mv_back.thumbnails import find_first_video_in_directory, get_or_create_thumbnail
+from mv_back.config import *
 from datetime import datetime
 import mimetypes
 import subprocess

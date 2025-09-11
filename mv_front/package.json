@@ -22,7 +22,7 @@
   },
   "scripts": {
     "start": "concurrently -n backend,frontend -c blue,green \"npm run backend\" \"npm run frontend\"",
-    "backend": "cd ../mv_back && .\\env\\Scripts\\activate && python app.py",
+    "backend": "cd .. && mv_back\\env\\Scripts\\activate && python -u -m mv_back.app",
     "frontend": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

@@ -2,7 +2,7 @@ import os
 import uuid
 import json
 from datetime import datetime
-from .config import *
+from mv_back.config import *
 # from flask import Flask, request, send_file
 
 def update_paths_only(metadata, item_id):

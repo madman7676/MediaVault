@@ -3,7 +3,7 @@ import subprocess
 from datetime import datetime
 import win32com.client
 
-THUMBNAILS_DIR = "thumbnails"
+from .config import THUMBNAILS_DIR
 
 if not os.path.exists(THUMBNAILS_DIR):
     os.makedirs(THUMBNAILS_DIR)
@@ -60,6 +60,7 @@ def get_or_create_thumbnail(video_path):
     """
     Отримання або створення мініатюри для відео.
     """
+    video_path = '\\\\?\\' + os.path.abspath(video_path)  # Підтримка довгих шляхів у Windows
     if os.path.isdir(video_path):
         folder_name = os.path.basename(video_path.rstrip('/\\'))
         video_path = find_first_video_in_directory(video_path)
@@ -71,6 +72,9 @@ def get_or_create_thumbnail(video_path):
         file_name = os.path.basename(video_path)
         thumbnail_name = os.path.splitext(file_name)[0]
 
+    if not os.path.exists(THUMBNAILS_DIR):
+        os.makedirs(THUMBNAILS_DIR)
+    
     thumbnail_path = os.path.join(THUMBNAILS_DIR, f"{thumbnail_name}.jpg")
 
     # Перевірка існування та актуальності мініатюри
