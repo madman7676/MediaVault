@@ -12,7 +12,7 @@ def get_db():
     return g.db
 
 @media.route(f'/all', methods=['GET'])
-def get_all_media_route():
+def get_all_media_with_tags_route():
     cursor = None
     response = {}
     try:
@@ -31,7 +31,7 @@ def get_media_data_by_id(media_id):
     response = {}
     try:
         cursor = get_db().cursor()
-        response = get_media_by_id(cursor, media_id)
+        response = get_media_with_tags_by_id(cursor, media_id)
     except Exception as e:
         response = {"error": str(e), 'status_code': 500}
     finally:
@@ -57,3 +57,4 @@ def update_media_data_by_id(media_id):
         if cursor:
             cursor.close()
     return response
+

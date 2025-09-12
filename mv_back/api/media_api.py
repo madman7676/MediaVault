@@ -4,7 +4,7 @@ from mv_back.thumbnails import get_or_create_thumbnail
 from mv_back.db.media_db import *
 from mv_back.db.tags_db import *
 
-def get_media_by_id(cursor, media_id):
+def get_media_with_tags_by_id(cursor, media_id):
     media = select_media_by_id(cursor, media_id)
     if not media:
         return {"error": "Media not found", 'status_code': 404, 'id': media_id}

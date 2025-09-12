@@ -19,7 +19,7 @@ def insert_to_Media_table(cursor, path):
 # Selects
 
 def select_media_by_id(cursor, media_id):
-    cursor.execute('SELECT * FROM Media WHERE id = ?', (media_id,))
+    cursor.execute('SELECT * FROM Media WHERE id = ? AND delD IS NULL', (media_id,))
     result = cursor.fetchone()
     if result:
         return result
@@ -40,11 +40,13 @@ def select_all_media_with_tags(cursor):
             JSON_QUERY((
                 SELECT tag.[name] AS [value]
                 FROM Xref_Tag2Media ref
-                left join Tag on tag.id = ref.tag_id
-                WHERE ref.media_id = m.id
+                left join Tag on tag.id = ref.tag_id AND tag.delD IS NULL
+                WHERE ref.media_id = m.id AND ref.delD IS NULL
                 FOR JSON PATH
             )) AS tags_json
-        FROM Media m;
+        FROM Media m
+        WHERE m.delD IS NULL
+        ORDER BY m.title;
     '''
     cursor.execute(query)
     results = cursor.fetchall()
@@ -61,7 +63,7 @@ def update_media_by_id(cursor, media_id, new_media):
     query = '''
         UPDATE Media
         SET title = ?, path = ?, modD = ?
-        WHERE id = ?;
+        WHERE id = ? AND delD IS NULL;
     '''
     cursor.execute(query, (new_media['title'], new_media['path'], datetime.now(), media_id))
     return cursor.rowcount

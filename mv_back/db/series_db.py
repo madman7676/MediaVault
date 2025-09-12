@@ -5,6 +5,9 @@ from mv_back.db.utils import *
 from mv_back.db.media_db import *
 
 
+# --------------------------------------------------------------
+# Inserts
+
 def insert_to_Series_table(cursor, media_id):
     query = '''
         INSERT INTO Series (media_id) VALUES (?);
@@ -52,12 +55,15 @@ def insert_serie_to_db(cursor, path):
     cursor.commit()
     return media_id
 
+# --------------------------------------------------------------
+# Selects
+
 def select_serie_by_id(cursor, series_id):
     query = '''
         SELECT *
         FROM Media as md
-        INNER JOIN Series as sr on sr.media_id = md.id
-        WHERE md.id = ?;
+        INNER JOIN Series as sr on sr.media_id = md.id AND sr.delD IS NULL
+        WHERE md.id = ? AND md.delD IS NULL;
     '''
     cursor.execute(query, (series_id,))
     result = cursor.fetchone()
@@ -70,7 +76,8 @@ def select_all_series(cursor):
     query = '''
         SELECT *
         FROM Media as md
-        INNER JOIN Series as sr on sr.media_id = md.id
+        INNER JOIN Series as sr on sr.media_id = md.id AND sr.delD IS NULL
+        WHERE md.delD IS NULL
         ORDER BY md.title;
     '''
     cursor.execute(query)
