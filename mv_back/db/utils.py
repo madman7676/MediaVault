@@ -1,3 +1,4 @@
+import uuid
 from translitua import translit, UkrainianKMU
 
 
@@ -9,3 +10,5 @@ def formate_id(cursor, title, table, tries=0):
     elif tries < 10:
         tries += 1
         return formate_id(cursor, title, table, tries)
+    else:
+        return base_id[:-4] + str(uuid.uuid4())[:8]

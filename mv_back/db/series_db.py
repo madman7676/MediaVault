@@ -19,7 +19,7 @@ def insert_to_Season_table(cursor, series_id, season_number, path):
     season_title = os.path.basename(path)
     season_id = formate_id(cursor, season_title, "Season") + "_s" + str(season_number)
     query = '''
-        INSERT INTO Season (id, series_id, season_number, title, path) VALUES (?, ?, ?, ?, ?);
+        INSERT INTO Season (id, primary_series_id, season_number, title, path) VALUES (?, ?, ?, ?, ?);
     '''
     cursor.execute(query, (season_id, series_id, season_number, season_title, path))
     return season_id

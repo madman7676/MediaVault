@@ -60,10 +60,14 @@ def select_all_media_with_tags(cursor):
 # Updates
 
 def update_media_by_id(cursor, media_id, new_media):
-    query = '''
-        UPDATE Media
-        SET title = ?, path = ?, modD = ?
-        WHERE id = ? AND delD IS NULL;
-    '''
-    cursor.execute(query, (new_media['title'], new_media['path'], datetime.now(), media_id))
+    fields = []
+    values = []
+    for key, value in new_media.items():
+        fields.append(f"{key} = ?")
+        values.append(value)
+    values.append(media_id)
+    set_clause = ", ".join(fields)
+    current_date = datetime.now()
+    query = f"UPDATE Media SET {set_clause}, modD = {current_date} WHERE id = ? AND delD IS NULL"
+    cursor.execute(query, values)
     return cursor.rowcount

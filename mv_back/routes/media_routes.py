@@ -11,6 +11,10 @@ def get_db():
         g.db = pyodbc.connect(DB_CONNECTION_STRING)
     return g.db
 
+
+#--------------------------------------------------------------
+# GETs
+
 @media.route(f'/all', methods=['GET'])
 def get_all_media_with_tags_route():
     cursor = None
@@ -38,6 +42,15 @@ def get_media_data_by_id(media_id):
         if cursor:
             cursor.close()
     return response
+
+
+#--------------------------------------------------------------
+#POSTs
+
+
+
+#--------------------------------------------------------------
+# UPDATEs
 
 @media.route(f'/<media_id>', methods=['POST'])
 def update_media_data_by_id(media_id):

@@ -4,6 +4,10 @@ from mv_back.thumbnails import get_or_create_thumbnail
 from mv_back.db.media_db import *
 from mv_back.db.tags_db import *
 
+
+# --------------------------------------------------------------
+# GETs
+
 def get_media_with_tags_by_id(cursor, media_id):
     media = select_media_by_id(cursor, media_id)
     if not media:
@@ -42,6 +46,10 @@ def get_all_media_with_tags(cursor):
             'delD': media[6]
         })
     return {"data": formatted_media, 'status_code': 200}
+
+
+# --------------------------------------------------------------
+# UPDATEs
 
 def update_media(cursor, media_id, new_media):
     existing_media = select_media_by_id(cursor, media_id)
