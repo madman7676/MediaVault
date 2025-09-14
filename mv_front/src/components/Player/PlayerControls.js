@@ -7,8 +7,6 @@ import 'videojs-hotkeys';
 import SettingsMenu from './SettingsMenu';
 import TimeToSkipSettingsMenu from './TimeToSkipSettingsMenu';
 import { fetchTimeToSkip } from '../../api/metadataAPI';
-import { getAudioTracks } from '../../api/videoAPI';
-import AudioTracksSubmenu from './AudioTracksSubmenu';
 
 const PlayerControls = ({
     currentFile,
@@ -27,35 +25,9 @@ const PlayerControls = ({
     const currentPathRef = useRef(null);
     const currentNameRef = useRef(null);
     const [showTimeToSkipMenu, setShowTimeToSkipMenu] = useState(false);
-    const [showAudioSubmenu, setShowAudioSubmenu] = useState(false);
-    const [audioTracks, setAudioTracks] = useState([]);
-    const [currentAudioTrack, setCurrentAudioTrack] = useState(0);
 
     const handleOptionSelect = (option, menu) => {
         if (option === 'audioTracks') {
-            // setShowAudioSubmenu (!showAudioSubmenu);
-
-            const fullPath = currentPathRef.current && currentNameRef.current ? 
-            `${currentPathRef.current}\\${currentNameRef.current}` : null;
-            console.log('Current file:', fullPath);
-            if (!fullPath) {
-                console.error('Cannot get full file path');
-                return;
-            }
-            getAudioTracks(fullPath)
-            .then(tracks => {
-                const tracksInfo = tracks.map((track, index) => ({
-                    index,
-                    label: track.title || `Audio ${index + 1}`,
-                    language: track.language,
-                    enabled: index === currentAudioTrack
-                }));
-                setAudioTracks(tracksInfo);
-            })
-            .catch(error => {
-                console.error('Failed to load audio tracks:', error);
-                setAudioTracks([]);
-            });
             return;
         }
         if (option === 'openTimeToSkipMenu') {
@@ -373,13 +345,6 @@ const PlayerControls = ({
                     onClose={handleCloseTimeToSkipMenu}
                     currentPath={currentPathRef.current}
                     currentName={currentNameRef.current}
-                />
-            )}
-            {showAudioSubmenu && (
-                <AudioTracksSubmenu
-                    tracks={audioTracks}
-                    currentTrack={currentAudioTrack}
-                    onTrackSelect={handleTrackSelect}
                 />
             )}
         </div>

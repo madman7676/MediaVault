@@ -1,22 +1,33 @@
 import json
 import uuid
-from flask import jsonify, request, send_file, Response, g
+from flask import jsonify, request, send_file, Response
 import os
-from mv_back.metadata import load_metadata, save_metadata, auto_add_metadata, find_metadata_item, update_paths_only
-from mv_back.analyze_video import analyze_video, clear_analysis_cache
-from mv_back.new_metadata import *
-from mv_back.thumbnails import find_first_video_in_directory, get_or_create_thumbnail
-from mv_back.config import *
+from metadata import load_metadata, save_metadata, auto_add_metadata, find_metadata_item, update_paths_only
+from analyze_video import analyze_video, clear_analysis_cache
+from thumbnails import find_first_video_in_directory, get_or_create_thumbnail
+from config import THUMBNAILS_DIR, MOVIES_PATHS, SERIES_PATHS
 from datetime import datetime
 import mimetypes
 import subprocess
 from concurrent.futures import ThreadPoolExecutor
-import pyodbc
+from mv_back.api.video_api import prepare_video_payload
 
-def get_db():
-    if 'db' not in g:
-        g.db = pyodbc.connect(DB_CONNECTION_STRING)
-    return g.db
+def convert_to_mp4(input_path, output_path):
+    command = [
+        "ffmpeg",
+        "-i", input_path,
+        "-c:v", "libx264",
+        "-crf", "23",
+        "-preset", "fast",
+        "-c:a", "aac",
+        "-b:a", "192k",
+        output_path
+    ]
+    result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if result.returncode != 0:
+        print(f"Error converting file: {result.stderr.decode('utf-8')}")
+        return False
+    return True
 
 if not os.path.exists(THUMBNAILS_DIR):
     os.makedirs(THUMBNAILS_DIR)
@@ -25,12 +36,6 @@ def error_response(message, status=400):
     return jsonify({"status": "error", "message": message}), status
 
 def register_routes(app):
-    
-    @app.teardown_appcontext
-    def close_db(exception=None):
-        db = g.pop('db', None)
-        if db is not None:
-            db.close()
     
     @app.route('/api/metadata/tags', methods=['GET'])
     def get_all_tags():
@@ -101,88 +106,6 @@ def register_routes(app):
 
         return jsonify({"status": "success", "message": "Tag added successfully"}), 200
     
-    @app.route('/api/metadata/online_series', methods=['POST'])
-    def add_online_series():
-        """
-        Додає новий онлайн-серіал до метаданих.
-
-        Body Parameters:
-            title (str): Назва серіалу.
-            image_url (str): URL зображення або локальний шлях.
-            seasons (list): Список сезонів із епізодами та їх URL.
-
-        Returns:
-            Response: Статус додавання.
-        """
-        data = request.json
-        title = data.get('title')
-        image_url = data.get('image_url')  # Додано нове поле
-        seasons = data.get('seasons')
-
-        if not title or not seasons:
-            return error_response("Fields `title` and `seasons` are required", 400)
-
-        # Завантаження метаданих
-        try:
-            metadata = load_metadata()
-        except Exception as e:
-            return error_response(f"Failed to load metadata: {str(e)}", 500)
-
-        new_series = {
-            "id": str(uuid.uuid4()),
-            "title": title,
-            "image_url": image_url,  # Додаємо поле image_url
-            "auto_added": True,
-            "last_modified": datetime.now().isoformat(),
-            "type": "online_series",
-            "seasons": seasons
-        }
-        metadata.setdefault("online_series", []).append(new_series)
-
-        # Збереження метаданих
-        try:
-            save_metadata(metadata)
-        except Exception as e:
-            return error_response(f"Failed to save metadata: {str(e)}", 500)
-
-        return jsonify({"status": "success", "message": "Online series added successfully"}), 201
-
-    @app.route('/api/metadata/online_time_to_skip', methods=['GET'])
-    def get_online_time_to_skip():
-        """
-        Повертає параметр `timeToSkip` для онлайн-епізоду.
-
-        Query Parameters:
-            id (str): Унікальний ідентифікатор серіалу.
-            season (str): Назва сезону.
-            episode (str): Назва епізоду.
-
-        Returns:
-            Response: Параметр `timeToSkip` або помилка.
-        """
-        series_id = request.args.get('id')  # Унікальний ID онлайн-серіалу
-        season_title = request.args.get('season')  # Назва сезону
-        episode_title = request.args.get('episode')  # Назва епізоду
-
-        if not series_id or not season_title or not episode_title:
-            return error_response("Fields `id`, `season`, and `episode` are required", 400)
-
-        try:
-            metadata = load_metadata()
-        except Exception as e:
-            return error_response(f"Failed to load metadata: {str(e)}", 500)
-
-        for online_series in metadata.get("online_series", []):
-            if online_series.get("id") == series_id:
-                for season in online_series.get("seasons", []):
-                    if season.get("title") == season_title:
-                        for episode in season.get("episodes", []):
-                            if episode.get("title") == episode_title:
-                                time_to_skip = episode.get("timeToSkip", [])
-                                return jsonify({"status": "success", "timeToSkip": time_to_skip}), 200
-
-        return error_response("Episode not found in metadata", 404)
-
     @app.route('/api/metadata/time_to_skip', methods=['GET'])
     def get_time_to_skip():
         """
@@ -324,6 +247,7 @@ def register_routes(app):
             return error_response(f"Failed to save metadata: {str(e)}", 500)
 
         return jsonify({"status": "success", "message": "Bulk update completed successfully"}), 200
+    
 
     @app.route('/api/metadata/item/<string:item_id>', methods=['GET'])
     def get_metadata_by_id(item_id):
@@ -399,49 +323,16 @@ def register_routes(app):
     # API endpoint to get metadata
     @app.route('/api/metadata', methods=['GET'])
     def get_metadata():
-        conn = get_db()
-        if not conn:
-            return error_response("Database connection error", 500)
-        success, media_list, code = load_media(conn)
-        if success is True:
-            metadata = {
-                "series": [],
-                "movies": [],
-                "online_series": []
-            }
-            for media in media_list:
-                if media["type"] == "series":
-                    metadata["series"].append(media)
-                elif media["type"] == "collection":
-                    metadata["movies"].append(media)
-                elif media["type"] == "online_series":
-                    metadata["online_series"].append(media)
-            return jsonify(metadata), 200
-        elif success is False:
-            return error_response("No media found", 404)
-        else:
-            return error_response(success, code)
-
-    # API endpoint to delete metadata
-    @app.post("/api/metadata/delete")
-    def delete_metadata_route():
-        data = request.json
-        media_id = data.get("id")
-
-        if not media_id:
-            return error_response("Field `id` is required", 400)
-
-        conn = get_db()
-        if not conn:
-            return error_response("Database connection error", 500)
-        success, code = delete_metadata(conn, media_id)
-
-        if success is True:
-            return jsonify({"status": "success", "message": "Metadata deleted"}), code
-        elif success is False:
-            return error_response("Metadata not found", code)
-        else:
-            return error_response(success, code)
+        metadata = load_metadata()
+        metadata = auto_add_metadata(metadata)
+        # Сортуємо колекції за алфавітом (title)
+        for category in ["series", "movies", "online_series"]:
+            if category in metadata:
+                metadata[category] = sorted(
+                    metadata[category], key=lambda x: x.get("title", "").lower()
+                )
+        save_metadata(metadata)
+        return jsonify(metadata)
 
     @app.route('/api/thumbnail', methods=['GET'])
     def get_thumbnail():
@@ -466,87 +357,54 @@ def register_routes(app):
             return send_file(thumbnail_path, mimetype='image/jpeg')
         else:
             return jsonify({"error": "No thumbnail could be created"}), 404
-
-    @app.route('/api/video/audio-tracks', methods=['GET'])
-    def get_audio_tracks():
-        """
-        Повертає список доступних аудіодоріжок для відеофайлу.
-
-        Query Parameters:
-            path (str): Шлях до відеофайлу.
-
-        Returns:
-            Response: Список аудіодоріжок або помилка.
-        """
+        
+        
+    @app.route('/api/video', methods=['GET'])
+    def serve_video_with_range():
         video_path = request.args.get('path')
-        if not video_path or not os.path.exists(video_path):
-            return error_response("File not found", 404)
+        range_header = request.headers.get('Range', None)
+
+        result = prepare_video_payload(video_path, range_header)
+        status = result.get('status_code', 500)
+
+        if 'error' in result:
+            return jsonify({"status": "error", "message": result['error']}), status
+
+        payload = result['data']
+        vpath = payload['video_path']
+        mime = payload['mime_type']
+        file_size = payload['file_size']
+        r = payload['range']
 
         try:
-            command = [
-                "ffprobe",
-                "-v", "quiet",
-                "-print_format", "json",
-                "-show_streams",
-                "-select_streams", "a",
-                video_path
-            ]
-            result = subprocess.run(command, capture_output=True, text=True)
-            audio_info = json.loads(result.stdout)
-            
-            tracks = []
-            for idx, stream in enumerate(audio_info.get('streams', [])):
-                tracks.append({
-                    'index': stream.get('index'),
-                    'codec': stream.get('codec_name'),
-                    'language': stream.get('tags', {}).get('language'),
-                    'title': stream.get('tags', {}).get('title'),
-                })
-            
-            return jsonify({
-                "status": "success",
-                "tracks": tracks
-            }), 200
-            
+            if r:
+                start = r['start']
+                end = r['end']
+                length = r['length']
+                with open(vpath, 'rb') as f:
+                    f.seek(start)
+                    data = f.read(length)
+
+                headers = {
+                    'Content-Range': f'bytes {start}-{end}/{file_size}',
+                    'Accept-Ranges': 'bytes',
+                    'Content-Length': str(length),
+                    'Content-Type': mime
+                }
+                return Response(data, status=206, headers=headers)
+
+            # stream whole file
+            def generate():
+                with open(vpath, 'rb') as f:
+                    while chunk := f.read(8192):
+                        yield chunk
+
+            headers = {
+                'Content-Length': str(file_size),
+                'Content-Type': mime
+            }
+            return Response(generate(), headers=headers)
         except Exception as e:
-            return error_response(f"Failed to get audio tracks: {str(e)}", 500)
-
-    @app.route('/api/metadata/audio-track', methods=['POST'])
-    def save_audio_track():
-        """
-        Зберігає вибрану аудіодоріжку в метаданих.
-
-        Body Parameters:
-            path (str): Шлях до сезону
-            name (str): Назва файлу
-            trackIndex (int): Індекс вибраної аудіодоріжки
-
-        Returns:
-            Response: Статус збереження
-        """
-        data = request.json
-        season_path = data.get('path')
-        file_name = data.get('name')
-        track_index = data.get('trackIndex')
-
-        if not all([season_path, file_name, track_index is not None]):
-            return error_response("Missing required fields", 400)
-
-        metadata = load_metadata()
-        updated = False
-
-        for series in metadata.get("series", []):
-            for season in series.get("seasons", []):
-                if os.path.normpath(season.get("path")) == os.path.normpath(season_path):
-                    for file in season.get("files", []):
-                        if file.get("name") == file_name:
-                            file["preferredAudioTrack"] = track_index
-                            series["auto_added"] = False
-                            updated = True
-                            break
-
-        if updated:
-            save_metadata(metadata)
-            return jsonify({"status": "success", "message": "Audio track preference saved"}), 200
-        
-        return error_response("File not found in metadata", 404)
+            import traceback
+            print("Error:", traceback.format_exc())
+            return jsonify({"status": "error", "message": str(e)}), 500
