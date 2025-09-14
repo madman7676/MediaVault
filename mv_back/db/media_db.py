@@ -21,18 +21,12 @@ def insert_to_Media_table(cursor, path):
 def select_media_by_id(cursor, media_id):
     cursor.execute('SELECT * FROM Media WHERE id = ? AND delD IS NULL', (media_id,))
     result = cursor.fetchone()
-    if result:
-        return result
-    else:
-        return None
+    return result or None
 
 def select_all_media(cursor):
-    cursor.execute('SELECT * FROM Media')
+    cursor.execute('SELECT * FROM Media WHERE delD IS NULL ORDER BY title;')
     results = cursor.fetchall()
-    if results:
-        return results
-    else:
-        return []
+    return results or []
 
 def select_all_media_with_tags(cursor):
     query = '''
@@ -50,10 +44,7 @@ def select_all_media_with_tags(cursor):
     '''
     cursor.execute(query)
     results = cursor.fetchall()
-    if results:
-        return results
-    else:
-        return []
+    return results or []
 
 
 # --------------------------------------------------------------

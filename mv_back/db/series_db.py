@@ -83,3 +83,23 @@ def select_all_series(cursor):
     cursor.execute(query)
     results = cursor.fetchall()
     return results
+
+def select_all_series_with_tags(cursor):
+    query = '''
+        SELECT m.id, m.title, m.[path], m.auto_added, m.crD, m.modD, m.delD,
+            JSON_QUERY((
+                SELECT tag.[name] AS [value]
+                FROM Xref_Tag2Media ref
+                left join Tag on tag.id = ref.tag_id AND tag.delD IS NULL
+                WHERE ref.media_id = m.id AND ref.delD IS NULL
+                FOR JSON PATH
+            )) AS tags_json
+        FROM Media m
+        INNER JOIN Series s on s.media_id = m.id AND s.delD IS NULL
+        WHERE m.delD IS NULL
+        ORDER BY m.title;
+    '''
+    cursor.execute(query)
+    results = cursor.fetchall()
+    return results
+
