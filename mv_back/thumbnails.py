@@ -3,7 +3,7 @@ import subprocess
 from datetime import datetime
 import win32com.client
 
-THUMBNAILS_DIR = "thumbnails"
+from config import THUMBNAILS_DIR, to_long_path
 
 if not os.path.exists(THUMBNAILS_DIR):
     os.makedirs(THUMBNAILS_DIR)
