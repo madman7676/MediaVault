@@ -38,7 +38,7 @@ const PlayerControls = ({
 
     const handleTrackSelect = (index) => {
         console.log('Changing audio track to:', index);
-        setCurrentAudioTrack(index);
+        // setCurrentAudioTrack(index);
         
         if (playerInstance.current) {
             const tracks = playerInstance.current.audioTracks();
@@ -298,7 +298,7 @@ const PlayerControls = ({
                 const tracks = playerInstance.current.audioTracks();
                 if (tracks) {
                     const currentIndex = Array.from(tracks).findIndex(track => track.enabled);
-                    setCurrentAudioTrack(currentIndex);
+                    // setCurrentAudioTrack(currentIndex);
                 }
             };
     

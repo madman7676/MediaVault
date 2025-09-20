@@ -1,17 +1,18 @@
+import os
 import json
 import uuid
-from flask import jsonify, request, send_file, Response
-import os
-from metadata import load_metadata, save_metadata, auto_add_metadata, find_metadata_item, update_paths_only
-from analyze_video import analyze_video, clear_analysis_cache
-from mv_back.routes.metadata_old_routes import get_metadata_route
-from thumbnails import find_first_video_in_directory, get_or_create_thumbnail
-from config import THUMBNAILS_DIR, MOVIES_PATHS, SERIES_PATHS
-from datetime import datetime
 import mimetypes
 import subprocess
+from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
+from flask import jsonify, request, send_file, Response
+
+from mv_back.config import THUMBNAILS_DIR
 from mv_back.api.video_api import prepare_video_payload
+from mv_back.routes.metadata_old_routes import get_metadata_route
+from mv_back.thumbnails import find_first_video_in_directory, get_or_create_thumbnail
+from mv_back.metadata import load_metadata, save_metadata, find_metadata_item, update_paths_only
+
 
 def convert_to_mp4(input_path, output_path):
     command = [
@@ -324,7 +325,7 @@ def register_routes(app):
     # API endpoint to get metadata
     @app.route('/api/metadata', methods=['GET'])
     def get_metadata():
-        get_metadata_route()
+        return get_metadata_route()
 
     @app.route('/api/thumbnail', methods=['GET'])
     def get_thumbnail():
