@@ -103,3 +103,24 @@ def select_all_series_with_tags(cursor):
     results = cursor.fetchall()
     return results
 
+def select_all_seasons_by_serie_id(cursor, series_id):
+    query = '''
+        SELECT id, primary_series_id, season_number, title, path, crD, modD, delD
+        FROM Season
+        WHERE primary_series_id = ? AND delD IS NULL
+        ORDER BY season_number;
+    '''
+    cursor.execute(query, (series_id,))
+    results = cursor.fetchall()
+    return results
+
+def select_all_episodes_by_season_id(cursor, season_id):
+    query = '''
+        SELECT id, primary_season_id, episode_number, title, file_path, crD, modD, delD
+        FROM Episode
+        WHERE season_id = ? AND delD IS NULL
+        ORDER BY episode_number;
+    '''
+    cursor.execute(query, (season_id,))
+    results = cursor.fetchall()
+    return results

@@ -113,6 +113,26 @@ def get_skipranges_by_episode_id_and_name(cursor, episode_id, name):
     return {"data": all_data, 'status_code': 200}
 
 
+def get_all_default_skipranges_by_episode_id(cursor, episode_id):
+    skipranges = select_all_default_SkipRanges_by_episode_id(cursor, episode_id)
+    if not skipranges:
+        return {"error": "No default SkipRanges found for the given episode_id", 'status_code': 404, 'episode_id': episode_id}
+    all_data = []
+    for sr in skipranges:
+        data = {
+            'id': sr[0],
+            'primary_skipset_id': sr[1],
+            'start_time_ms': sr[2],
+            'end_time_ms': sr[3],
+            'label': sr[4],
+            'crD': sr[5],
+            'modD': sr[6],
+            'delD': sr[7],
+            'primary_media_id': sr[8]
+        }
+        all_data.append(data)
+    return {"data": all_data, 'status_code': 200}
+
 # --------------------------------------------------------------
 # POSTs
 

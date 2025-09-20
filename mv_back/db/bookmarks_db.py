@@ -78,6 +78,19 @@ def select_SkipRange_by_id(cursor, skiprange_id):
     else:
         return None
 
+def select_all_default_SkipRanges_by_episode_id(cursor, episode_id):
+    cursor.execute('''
+        SELECT sr.id, sr.primary_skipset_id, sr.start_time_ms, sr.end_time_ms, sr.label, sr.crD, sr.modD, sr.delD, sr.primary_media_id
+        FROM SkipRange sr
+        JOIN SkipSet ss ON sr.primary_skipset_id = ss.id
+        WHERE ss.primary_episode_id = ? AND ss.name = 'Default' AND sr.delD IS NULL AND ss.delD IS NULL
+    ''', (episode_id,))
+    results = cursor.fetchall()
+    if results:
+        return results
+    else:
+        return []
+
 # --------------------------------------------------------------
 # Updates
 def update_SkipSet_by_id(cursor, skipset_id, new_skipset):

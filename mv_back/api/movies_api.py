@@ -1,4 +1,7 @@
+import json
+
 from mv_back.db.movies_db import *
+from mv_back.thumbnails import get_or_create_thumbnail
 
 
 #--------------------------------------------------------------
@@ -45,6 +48,28 @@ def get_movie_item_by_id(cursor, item_id):
     }
     return {"data": data, 'status_code': 200}
 
+def get_all_movies_with_tags(cursor):
+    all_movies = select_all_movies_with_tags(cursor)
+    if not all_movies:
+        return {"data": [], 'status_code': 200}
+    
+    formatted_movies = []
+    for movie in all_movies:
+        tags = []
+        if movie[7]:
+            tags = [tag['value'] for tag in json.loads(movie[7])]
+        formatted_movies.append({
+            'id': movie[0],
+            'title': movie[1],
+            'path': movie[2],
+            'tags': tags,
+            'img_path': get_or_create_thumbnail(movie[2]),
+            'auto_added': movie[3],
+            'crD': movie[4],
+            'modD': movie[5],
+            'delD': movie[6]
+        })
+    return {"data": formatted_movies, 'status_code': 200}
 
 #--------------------------------------------------------------
 # UPDATEs

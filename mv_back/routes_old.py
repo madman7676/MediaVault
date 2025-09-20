@@ -4,6 +4,7 @@ from flask import jsonify, request, send_file, Response
 import os
 from metadata import load_metadata, save_metadata, auto_add_metadata, find_metadata_item, update_paths_only
 from analyze_video import analyze_video, clear_analysis_cache
+from mv_back.routes.metadata_old_routes import get_metadata_route
 from thumbnails import find_first_video_in_directory, get_or_create_thumbnail
 from config import THUMBNAILS_DIR, MOVIES_PATHS, SERIES_PATHS
 from datetime import datetime
@@ -323,16 +324,7 @@ def register_routes(app):
     # API endpoint to get metadata
     @app.route('/api/metadata', methods=['GET'])
     def get_metadata():
-        metadata = load_metadata()
-        metadata = auto_add_metadata(metadata)
-        # Сортуємо колекції за алфавітом (title)
-        for category in ["series", "movies", "online_series"]:
-            if category in metadata:
-                metadata[category] = sorted(
-                    metadata[category], key=lambda x: x.get("title", "").lower()
-                )
-        save_metadata(metadata)
-        return jsonify(metadata)
+        get_metadata_route()
 
     @app.route('/api/thumbnail', methods=['GET'])
     def get_thumbnail():
