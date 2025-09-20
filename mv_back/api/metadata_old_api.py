@@ -130,4 +130,4 @@ def get_metadata(cursor):
     
     categories['movies'] = movies
     
-    return {"data": categories, 'status_code': 200}
+    return categories
