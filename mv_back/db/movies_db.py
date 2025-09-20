@@ -98,7 +98,7 @@ def select_all_movies_with_tags(cursor):
 #--------------------------------------------------------------
 # UPDATEs
 
-def update_movie_item_by_id(cursor, item_id, new_data):
+def update_movie_item_by_id_db(cursor, item_id, new_data):
     fields = []
     values = []
     for key, value in new_data.items():
@@ -116,7 +116,7 @@ def update_movie_item_by_id(cursor, item_id, new_data):
     cursor.execute(query, tuple(values))
     return cursor.rowcount
 
-def update_movie_collection_by_id(cursor, movie_id, new_data):
+def update_movie_collection_by_id_db(cursor, movie_id, new_data):
     fields = []
     values = []
     for key, value in new_data.items():

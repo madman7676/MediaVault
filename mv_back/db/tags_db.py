@@ -27,12 +27,30 @@ def insert_Xref_Tag2Media_to_db(cursor, media_id, tag_id):
         INSERT INTO Xref_Tag2Media (media_id, tag_id) VALUES (?, ?);
     '''
     cursor.execute(query, (media_id, tag_id))
-    
-    query = '''
-        UPDATE Media SET primary_tag_id = ? WHERE id = ?;
-    '''
-    cursor.execute(query, (tag_id, media_id))
     return True
+
+def insert_Xref_Tag2Media_bulk_to_db(cursor, media_ids, tag_id):
+    if not media_ids:
+        return 0
+    placeholders = ','.join('?' for _ in media_ids)
+    query = f'''
+        INSERT INTO Xref_Tag2Media (media_id, tag_id)
+        SELECT m.id, ?
+        FROM Media m
+        WHERE m.id IN ({placeholders})
+        AND NOT EXISTS (
+            SELECT 1 FROM Xref_Tag2Media
+            WHERE media_id = m.id AND tag_id = ?
+        );
+    '''
+    cursor.execute(query, (tag_id, *media_ids, tag_id))
+    
+    updated_rows = cursor.rowcount
+    
+    if updated_rows == 0:
+        print(f"All media_ids already have the tag_id '{tag_id}' associated. No new associations made.")
+    return updated_rows
+    
 
 # --------------------------------------------------------------
 # Selects
