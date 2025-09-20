@@ -2270,12 +2270,12 @@
                 "Імба ГГ"
             ],
             "auto_added": false,
-            "last_modified": "2025-02-24T01:52:27.697999",
+            "last_modified": "2025-09-20T02:04:42.507283",
             "type": "series",
             "seasons": [
                 {
-                    "title": "Season 1",
-                    "path": "F:\\Serials\\Восьмий син - Та ви знущаєтеся",
+                    "title": "Восьмий син - Та ви знущаєтеся 1",
+                    "path": "F:\\Serials\\Восьмий син - Та ви знущаєтеся\\Восьмий син - Та ви знущаєтеся 1",
                     "files": [
                         {
                             "name": "Восьмий син - Та ви знущаєтеся! - 01.mkv"
@@ -2603,8 +2603,8 @@
             "type": "series",
             "seasons": [
                 {
-                    "title": "Season 1",
-                    "path": "F:\\Serials\\Дайте цій скорботній душі спокій",
+                    "title": "Дайте цій скорботній душі спокій 1",
+                    "path": "F:\\Serials\\Дайте цій скорботній душі спокій\\Дайте цій скорботній душі спокій 1",
                     "files": [
                         {
                             "name": "Nageki no Bourei wa Intai shitai - 01.mkv",
@@ -3135,12 +3135,12 @@
             "path": "F:\\Serials\\Дядечко з іншого світу",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-08-25T03:33:39.935176",
+            "last_modified": "2025-09-20T02:01:07.869810",
             "type": "series",
             "seasons": [
                 {
-                    "title": "Season 1",
-                    "path": "F:\\Serials\\Дядечко з іншого світу",
+                    "title": "Дядечко з іншого світу 1",
+                    "path": "F:\\Serials\\Дядечко з іншого світу\\Дядечко з іншого світу 1",
                     "files": [
                         {
                             "name": "Дядечко з іншого світу 01.mp4"
@@ -4508,12 +4508,12 @@
                 "Романтика"
             ],
             "auto_added": true,
-            "last_modified": "2025-08-25T03:33:39.937176",
+            "last_modified": "2025-09-20T02:01:07.873810",
             "type": "series",
             "seasons": [
                 {
-                    "title": "Season 1",
-                    "path": "F:\\Serials\\Золота Вермейл",
+                    "title": "Золота Вермейл 1",
+                    "path": "F:\\Serials\\Золота Вермейл\\Золота Вермейл 1",
                     "files": [
                         {
                             "name": "Золота Вермейл - 01.mkv"
@@ -5914,12 +5914,12 @@
                 "Імба ГГ"
             ],
             "auto_added": true,
-            "last_modified": "2025-08-25T03:33:39.939176",
+            "last_modified": "2025-09-20T02:01:07.874809",
             "type": "series",
             "seasons": [
                 {
-                    "title": "Season 1",
-                    "path": "F:\\Serials\\Лицар-скелет починає пригоди в іншому світі",
+                    "title": "Лицар-скелет починає пригоди в іншому світі 1",
+                    "path": "F:\\Serials\\Лицар-скелет починає пригоди в іншому світі\\Лицар-скелет починає пригоди в іншому світі 1",
                     "files": [
                         {
                             "name": "01 [VRdub] Лицар-скелет починає пригоди в іншому світі (Stayler).mkv"
@@ -5956,6 +5956,62 @@
                         },
                         {
                             "name": "12 [VRdub] Лицар-скелет починає пригоди в іншому світі (Stayler).mkv"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "62a5aa79-2246-4bba-b738-a1086c4889b5",
+            "title": "Лицарі та Магія",
+            "path": "F:\\Serials\\Лицарі та Магія",
+            "tags": [],
+            "auto_added": true,
+            "last_modified": "2025-09-20T02:01:07.874809",
+            "type": "series",
+            "seasons": [
+                {
+                    "title": "Season 1",
+                    "path": "F:\\Serials\\Лицарі та Магія",
+                    "files": [
+                        {
+                            "name": "Лицарі та Магія 01.mp4"
+                        },
+                        {
+                            "name": "Лицарі та Магія 02.mp4"
+                        },
+                        {
+                            "name": "Лицарі та Магія 03.mp4"
+                        },
+                        {
+                            "name": "Лицарі та Магія 04.mp4"
+                        },
+                        {
+                            "name": "Лицарі та Магія 05.mp4"
+                        },
+                        {
+                            "name": "Лицарі та Магія 06.mp4"
+                        },
+                        {
+                            "name": "Лицарі та Магія 07.mp4"
+                        },
+                        {
+                            "name": "Лицарі та Магія 08.mp4"
+                        },
+                        {
+                            "name": "Лицарі та Магія 09.mp4"
+                        },
+                        {
+                            "name": "Лицарі та Магія 10.mp4"
+                        },
+                        {
+                            "name": "Лицарі та Магія 11.mp4"
+                        },
+                        {
+                            "name": "Лицарі та Магія 12.mp4"
+                        },
+                        {
+                            "name": "Лицарі та Магія 13.mp4"
                         }
                     ]
                 }
@@ -6343,12 +6399,12 @@
                 "Імба ГГ"
             ],
             "auto_added": true,
-            "last_modified": "2025-08-25T03:33:39.941177",
+            "last_modified": "2025-09-20T02:01:07.876810",
             "type": "series",
             "seasons": [
                 {
-                    "title": "Season 1",
-                    "path": "F:\\Serials\\Марш смерті",
+                    "title": "Марш смерті 1",
+                    "path": "F:\\Serials\\Марш смерті\\Марш смерті 1",
                     "files": [
                         {
                             "name": "Марш смерті 1.mp4"
@@ -6396,12 +6452,12 @@
             "path": "F:\\Serials\\Моя здібність миттєвої смерті настільки сильна, що ніхто в іншому світі не має шансу проти мене!",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-08-25T03:33:39.943176",
+            "last_modified": "2025-09-20T02:01:07.876810",
             "type": "series",
             "seasons": [
                 {
-                    "title": "Season 1",
-                    "path": "F:\\Serials\\Моя здібність миттєвої смерті настільки сильна, що ніхто в іншому світі не має шансу проти мене!",
+                    "title": "Моя здібність миттєвої смерті настільки сильна, що ніхто в іншому світі не має шансу проти мене! 1",
+                    "path": "F:\\Serials\\Моя здібність миттєвої смерті настільки сильна, що ніхто в іншому світі не має шансу проти мене!\\Моя здібність миттєвої смерті настільки сильна, що ніхто в іншому світі не має шансу проти мене! 1",
                     "files": [
                         {
                             "name": "Моя здібність миттєвої смерті настільки сильна, що ніхто в іншому світі не має шансу проти мене! 01.mp4"
@@ -6453,12 +6509,12 @@
                 "Імба ГГ"
             ],
             "auto_added": true,
-            "last_modified": "2025-08-25T03:33:39.945176",
+            "last_modified": "2025-09-20T02:01:07.877808",
             "type": "series",
             "seasons": [
                 {
-                    "title": "Season 1",
-                    "path": "F:\\Serials\\Найкращий у світі вбивця перероджується в іншому світі як аристократ",
+                    "title": "Найкращий у світі вбивця перероджується в іншому світі як аристократ 1",
+                    "path": "F:\\Serials\\Найкращий у світі вбивця перероджується в іншому світі як аристократ\\Найкращий у світі вбивця перероджується в іншому світі як аристократ 1",
                     "files": [
                         {
                             "name": "Найкращий у світі вбивця перероджується в іншому світі як аристократ - 01.mkv"
@@ -6690,12 +6746,12 @@
             "path": "F:\\Serials\\Невколупний",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-08-25T03:33:39.947176",
+            "last_modified": "2025-09-20T02:01:07.877808",
             "type": "series",
             "seasons": [
                 {
-                    "title": "Season 1",
-                    "path": "F:\\Serials\\Невколупний",
+                    "title": "Невколупний 1",
+                    "path": "F:\\Serials\\Невколупний\\Невколупний 1",
                     "files": [
                         {
                             "name": "Invincible.2021.S01E01.720p.WEB-DL.H264-Hurtom.mkv"
@@ -6735,12 +6791,12 @@
                 "Імба ГГ"
             ],
             "auto_added": true,
-            "last_modified": "2025-08-25T03:33:39.948176",
+            "last_modified": "2025-09-20T02:01:07.877808",
             "type": "series",
             "seasons": [
                 {
-                    "title": "Season 1",
-                    "path": "F:\\Serials\\Нова брама",
+                    "title": "Нова брама 1",
+                    "path": "F:\\Serials\\Нова брама\\Нова брама 1",
                     "files": [
                         {
                             "name": "Нова брама 01.mkv"
@@ -7196,12 +7252,12 @@
                 "Фентезі"
             ],
             "auto_added": true,
-            "last_modified": "2025-08-25T03:33:39.949177",
+            "last_modified": "2025-09-20T02:01:07.878810",
             "type": "series",
             "seasons": [
                 {
-                    "title": "Season 1",
-                    "path": "F:\\Serials\\Переродження мечем",
+                    "title": "Переродження мечем 1",
+                    "path": "F:\\Serials\\Переродження мечем\\Переродження мечем 1",
                     "files": [
                         {
                             "name": "Переродження мечем - 01.mkv"
@@ -7238,6 +7294,62 @@
                         },
                         {
                             "name": "Переродження мечем - 12.mkv"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "b0bb78b0-0445-47a3-a48c-d4496b3042fd",
+            "title": "Переродження найсильнішого екзорциста в іншому світі",
+            "path": "F:\\Serials\\Переродження найсильнішого екзорциста в іншому світі",
+            "tags": [],
+            "auto_added": true,
+            "last_modified": "2025-09-20T02:01:07.879810",
+            "type": "series",
+            "seasons": [
+                {
+                    "title": "Season 1",
+                    "path": "F:\\Serials\\Переродження найсильнішого екзорциста в іншому світі",
+                    "files": [
+                        {
+                            "name": "Переродження найсильнішого екзорциста в іншому світі 01.mp4"
+                        },
+                        {
+                            "name": "Переродження найсильнішого екзорциста в іншому світі 02.mp4"
+                        },
+                        {
+                            "name": "Переродження найсильнішого екзорциста в іншому світі 03.mp4"
+                        },
+                        {
+                            "name": "Переродження найсильнішого екзорциста в іншому світі 04.mp4"
+                        },
+                        {
+                            "name": "Переродження найсильнішого екзорциста в іншому світі 05.mp4"
+                        },
+                        {
+                            "name": "Переродження найсильнішого екзорциста в іншому світі 06.mp4"
+                        },
+                        {
+                            "name": "Переродження найсильнішого екзорциста в іншому світі 07.mp4"
+                        },
+                        {
+                            "name": "Переродження найсильнішого екзорциста в іншому світі 08.mp4"
+                        },
+                        {
+                            "name": "Переродження найсильнішого екзорциста в іншому світі 09.mp4"
+                        },
+                        {
+                            "name": "Переродження найсильнішого екзорциста в іншому світі 10.mp4"
+                        },
+                        {
+                            "name": "Переродження найсильнішого екзорциста в іншому світі 11.mp4"
+                        },
+                        {
+                            "name": "Переродження найсильнішого екзорциста в іншому світі 12.mp4"
+                        },
+                        {
+                            "name": "Переродження найсильнішого екзорциста в іншому світі 13.mp4"
                         }
                     ]
                 }
@@ -8404,7 +8516,7 @@
                 "Фентезі"
             ],
             "auto_added": true,
-            "last_modified": "2025-08-25T03:33:39.949177",
+            "last_modified": "2025-09-20T02:01:07.879810",
             "type": "series",
             "seasons": [
                 {
@@ -10333,7 +10445,7 @@
                 "Фентезі"
             ],
             "auto_added": true,
-            "last_modified": "2025-08-25T03:33:39.950176",
+            "last_modified": "2025-09-20T02:01:07.881809",
             "type": "series",
             "seasons": [
                 {
@@ -10471,12 +10583,12 @@
                 "Фентезі"
             ],
             "auto_added": true,
-            "last_modified": "2025-08-25T03:33:39.951176",
+            "last_modified": "2025-09-20T02:01:07.882809",
             "type": "series",
             "seasons": [
                 {
-                    "title": "Season 1",
-                    "path": "F:\\Serials\\Фермерське життя в іншому світі",
+                    "title": "Фермерське життя в іншому світі 1",
+                    "path": "F:\\Serials\\Фермерське життя в іншому світі\\Фермерське життя в іншому світі 1",
                     "files": [
                         {
                             "name": "Фермерське життя в іншому світі 01.mkv"
@@ -10977,8 +11089,8 @@
             "type": "series",
             "seasons": [
                 {
-                    "title": "Season 1",
-                    "path": "F:\\Serials\\Чи справді я найсильніший",
+                    "title": "Чи справді я найсильніший 1",
+                    "path": "F:\\Serials\\Чи справді я найсильніший\\Чи справді я найсильніший 1",
                     "files": [
                         {
                             "name": "Чи справді я найсильніший 01.mkv",
@@ -11535,32 +11647,92 @@
     ],
     "movies": [
         {
-            "id": "74df7b00-5da6-4eb1-ad60-5d048592f7ea",
-            "title": "2012.mp4",
-            "path": "F:\\Movies\\2012.mp4",
+            "id": "b99013ca-4089-4eb1-ae1f-acf68731f71c",
+            "title": "2012",
+            "path": "F:\\Movies\\2012",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-08-25T03:33:39.955176",
+            "last_modified": "2025-09-20T02:01:07.882809",
             "type": "collection",
             "parts": [
                 {
                     "title": "2012.mp4",
-                    "path": "F:\\Movies\\2012.mp4"
+                    "path": "F:\\Movies\\2012\\2012.mp4"
                 }
             ]
         },
         {
-            "id": "7924a702-b808-4b23-a95f-81cea0acb131",
-            "title": "Absolutely Anything.avi",
-            "path": "F:\\Movies\\Absolutely Anything.avi",
+            "id": "0ca20468-10c1-4c9d-9e3e-4469550f3fd4",
+            "title": "Absolutely Anything",
+            "path": "F:\\Movies\\Absolutely Anything",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-08-25T03:33:39.955176",
+            "last_modified": "2025-09-20T02:01:07.882809",
             "type": "collection",
             "parts": [
                 {
                     "title": "Absolutely Anything.avi",
-                    "path": "F:\\Movies\\Absolutely Anything.avi"
+                    "path": "F:\\Movies\\Absolutely Anything\\Absolutely Anything.avi"
+                }
+            ]
+        },
+        {
+            "id": "7e7dbc31-a8f1-408b-b53a-8d5927bc56c6",
+            "title": "Big Hero 6",
+            "path": "F:\\Movies\\Big Hero 6",
+            "tags": [],
+            "auto_added": true,
+            "last_modified": "2025-09-20T02:01:07.882809",
+            "type": "collection",
+            "parts": [
+                {
+                    "title": "Big Hero 6.mkv",
+                    "path": "F:\\Movies\\Big Hero 6\\Big Hero 6.mkv"
+                }
+            ]
+        },
+        {
+            "id": "226e626c-7ae8-419a-94a0-a61cd594482c",
+            "title": "Bolt",
+            "path": "F:\\Movies\\Bolt",
+            "tags": [],
+            "auto_added": true,
+            "last_modified": "2025-09-20T02:01:07.883810",
+            "type": "collection",
+            "parts": [
+                {
+                    "title": "Bolt.avi",
+                    "path": "F:\\Movies\\Bolt\\Bolt.avi"
+                }
+            ]
+        },
+        {
+            "id": "78c6f5b7-4647-4806-9219-1c5258e44145",
+            "title": "Boss Level",
+            "path": "F:\\Movies\\Boss Level",
+            "tags": [],
+            "auto_added": true,
+            "last_modified": "2025-09-20T02:01:07.883810",
+            "type": "collection",
+            "parts": [
+                {
+                    "title": "Boss Level.mkv",
+                    "path": "F:\\Movies\\Boss Level\\Boss Level.mkv"
+                }
+            ]
+        },
+        {
+            "id": "b712501c-4e02-407d-a4e0-bfd78bbb7838",
+            "title": "Bruce Almighty",
+            "path": "F:\\Movies\\Bruce Almighty",
+            "tags": [],
+            "auto_added": true,
+            "last_modified": "2025-09-20T02:01:07.883810",
+            "type": "collection",
+            "parts": [
+                {
+                    "title": "Bruce Almighty.avi",
+                    "path": "F:\\Movies\\Bruce Almighty\\Bruce Almighty.avi"
                 }
             ]
         },
@@ -11570,7 +11742,7 @@
             "path": "F:\\Movies\\Cloudy with a Chance of Meatballs. Dilogy",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-08-25T03:33:39.953179",
+            "last_modified": "2025-09-20T02:01:07.883810",
             "type": "collection",
             "parts": [
                 {
@@ -11584,62 +11756,122 @@
             ]
         },
         {
-            "id": "eead058f-c25f-4150-8d4b-a19fb264bf00",
-            "title": "Moonfall.avi",
-            "path": "F:\\Movies\\Moonfall.avi",
+            "id": "de2c908e-b6de-4e66-a54b-0544e0edf490",
+            "title": "Edge of Tomorrow",
+            "path": "F:\\Movies\\Edge of Tomorrow",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-08-25T03:33:39.955176",
+            "last_modified": "2025-09-20T02:01:07.883810",
+            "type": "collection",
+            "parts": [
+                {
+                    "title": "Edge of Tomorrow.mkv",
+                    "path": "F:\\Movies\\Edge of Tomorrow\\Edge of Tomorrow.mkv"
+                }
+            ]
+        },
+        {
+            "id": "295d6620-61d8-4e08-ad42-b9e830d7d169",
+            "title": "Knowing",
+            "path": "F:\\Movies\\Knowing",
+            "tags": [],
+            "auto_added": true,
+            "last_modified": "2025-09-20T02:01:07.883810",
+            "type": "collection",
+            "parts": [
+                {
+                    "title": "Knowing.avi",
+                    "path": "F:\\Movies\\Knowing\\Knowing.avi"
+                }
+            ]
+        },
+        {
+            "id": "f9829a93-98eb-4397-b880-62564da1eaae",
+            "title": "Liar Liar",
+            "path": "F:\\Movies\\Liar Liar",
+            "tags": [],
+            "auto_added": true,
+            "last_modified": "2025-09-20T02:01:07.883810",
+            "type": "collection",
+            "parts": [
+                {
+                    "title": "Liar Liar.mkv",
+                    "path": "F:\\Movies\\Liar Liar\\Liar Liar.mkv"
+                }
+            ]
+        },
+        {
+            "id": "82153b27-269a-4b41-9e72-c2a9b9d84e3c",
+            "title": "Megamind",
+            "path": "F:\\Movies\\Megamind",
+            "tags": [],
+            "auto_added": true,
+            "last_modified": "2025-09-20T02:01:07.883810",
+            "type": "collection",
+            "parts": [
+                {
+                    "title": "Megamind.mkv",
+                    "path": "F:\\Movies\\Megamind\\Megamind.mkv"
+                }
+            ]
+        },
+        {
+            "id": "9e3b818d-8107-41cd-affc-0ffebebfbca8",
+            "title": "Moonfall",
+            "path": "F:\\Movies\\Moonfall",
+            "tags": [],
+            "auto_added": true,
+            "last_modified": "2025-09-20T02:01:07.883810",
             "type": "collection",
             "parts": [
                 {
                     "title": "Moonfall.avi",
-                    "path": "F:\\Movies\\Moonfall.avi"
+                    "path": "F:\\Movies\\Moonfall\\Moonfall.avi"
                 }
             ]
         },
         {
-            "id": "6690eb3a-77fd-408d-8971-f6074d133fc8",
-            "title": "Pixels.avi",
-            "path": "F:\\Movies\\Pixels.avi",
+            "id": "d3a6250a-6d08-477e-a81a-9a89bf1ec0c6",
+            "title": "Pixels",
+            "path": "F:\\Movies\\Pixels",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-08-25T03:33:39.955176",
+            "last_modified": "2025-09-20T02:01:07.883810",
             "type": "collection",
             "parts": [
                 {
                     "title": "Pixels.avi",
-                    "path": "F:\\Movies\\Pixels.avi"
+                    "path": "F:\\Movies\\Pixels\\Pixels.avi"
                 }
             ]
         },
         {
-            "id": "ce4c5b11-e96d-4f7b-9939-a58bada339fa",
-            "title": "Ratatouille.mkv",
-            "path": "F:\\Movies\\Ratatouille.mkv",
+            "id": "e0a36376-5646-432d-a377-37e6671b32e1",
+            "title": "Ratatouille",
+            "path": "F:\\Movies\\Ratatouille",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-08-25T03:33:39.955176",
+            "last_modified": "2025-09-20T02:01:07.883810",
             "type": "collection",
             "parts": [
                 {
                     "title": "Ratatouille.mkv",
-                    "path": "F:\\Movies\\Ratatouille.mkv"
+                    "path": "F:\\Movies\\Ratatouille\\Ratatouille.mkv"
                 }
             ]
         },
         {
-            "id": "8268de1c-4279-45b0-a2bc-ae1558b43adf",
-            "title": "Raya and the Last Dragon.avi",
-            "path": "F:\\Movies\\Raya and the Last Dragon.avi",
+            "id": "04e369db-82bf-408c-819b-3af57942d6b4",
+            "title": "Raya and the Last Dragon",
+            "path": "F:\\Movies\\Raya and the Last Dragon",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-08-25T03:33:39.955176",
+            "last_modified": "2025-09-20T02:01:07.883810",
             "type": "collection",
             "parts": [
                 {
                     "title": "Raya and the Last Dragon.avi",
-                    "path": "F:\\Movies\\Raya and the Last Dragon.avi"
+                    "path": "F:\\Movies\\Raya and the Last Dragon\\Raya and the Last Dragon.avi"
                 }
             ]
         },
@@ -11649,7 +11881,7 @@
             "path": "F:\\Movies\\Riddick",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-08-25T03:33:39.953179",
+            "last_modified": "2025-09-20T02:01:07.884809",
             "type": "collection",
             "parts": [
                 {
@@ -11667,62 +11899,77 @@
             ]
         },
         {
-            "id": "ff5c31dc-d416-4207-9ec7-2a3069e98792",
-            "title": "Tangled.mkv",
-            "path": "F:\\Movies\\Tangled.mkv",
+            "id": "1812a9ee-2a56-4ce7-83e7-15af9ea5b5cc",
+            "title": "Tangled",
+            "path": "F:\\Movies\\Tangled",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-08-25T03:33:39.955176",
+            "last_modified": "2025-09-20T02:01:07.884809",
             "type": "collection",
             "parts": [
                 {
                     "title": "Tangled.mkv",
-                    "path": "F:\\Movies\\Tangled.mkv"
+                    "path": "F:\\Movies\\Tangled\\Tangled.mkv"
                 }
             ]
         },
         {
-            "id": "d5dd6bc3-4b64-4a6e-a04b-a98490278dde",
-            "title": "The Core.avi",
-            "path": "F:\\Movies\\The Core.avi",
+            "id": "ae03efa4-ecca-4382-937c-3485e471314a",
+            "title": "The Core",
+            "path": "F:\\Movies\\The Core",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-08-25T03:33:39.956176",
+            "last_modified": "2025-09-20T02:01:07.884809",
             "type": "collection",
             "parts": [
                 {
                     "title": "The Core.avi",
-                    "path": "F:\\Movies\\The Core.avi"
+                    "path": "F:\\Movies\\The Core\\The Core.avi"
                 }
             ]
         },
         {
-            "id": "7ebe0043-be83-41fa-aba7-66de1a5aa444",
-            "title": "The Day After Tomorrow.mkv",
-            "path": "F:\\Movies\\The Day After Tomorrow.mkv",
+            "id": "f3d0779a-8c0a-46f9-8c39-3a23831e0ec2",
+            "title": "The Day After Tomorrow",
+            "path": "F:\\Movies\\The Day After Tomorrow",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-08-25T03:33:39.956176",
+            "last_modified": "2025-09-20T02:01:07.884809",
             "type": "collection",
             "parts": [
                 {
                     "title": "The Day After Tomorrow.mkv",
-                    "path": "F:\\Movies\\The Day After Tomorrow.mkv"
+                    "path": "F:\\Movies\\The Day After Tomorrow\\The Day After Tomorrow.mkv"
                 }
             ]
         },
         {
-            "id": "61f07a44-1652-404c-b0f5-80e1a77e5c77",
-            "title": "Turbo.avi",
-            "path": "F:\\Movies\\Turbo.avi",
+            "id": "9c34f4b3-1268-48c9-aa67-1fc3bb9d0990",
+            "title": "The Mask",
+            "path": "F:\\Movies\\The Mask",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-08-25T03:33:39.956176",
+            "last_modified": "2025-09-20T02:01:07.884809",
+            "type": "collection",
+            "parts": [
+                {
+                    "title": "The Mask.mkv",
+                    "path": "F:\\Movies\\The Mask\\The Mask.mkv"
+                }
+            ]
+        },
+        {
+            "id": "fd6d3865-112d-46c1-a08b-a7f73e988bba",
+            "title": "Turbo",
+            "path": "F:\\Movies\\Turbo",
+            "tags": [],
+            "auto_added": true,
+            "last_modified": "2025-09-20T02:01:07.884809",
             "type": "collection",
             "parts": [
                 {
                     "title": "Turbo.avi",
-                    "path": "F:\\Movies\\Turbo.avi"
+                    "path": "F:\\Movies\\Turbo\\Turbo.avi"
                 }
             ]
         },
@@ -11732,7 +11979,7 @@
             "path": "F:\\Movies\\Ukrainianize Marvel Cinematic Universe",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-08-25T03:33:39.953179",
+            "last_modified": "2025-09-20T02:01:07.884809",
             "type": "collection",
             "parts": [
                 {
@@ -11742,10 +11989,6 @@
                 {
                     "title": "10. Guardians of the Galaxy UKR.avi",
                     "path": "F:\\Movies\\Ukrainianize Marvel Cinematic Universe\\10. Guardians of the Galaxy UKR.avi"
-                },
-                {
-                    "title": "10. Guardians of the Galaxy UKR.mp4",
-                    "path": "F:\\Movies\\Ukrainianize Marvel Cinematic Universe\\10. Guardians of the Galaxy UKR.mp4"
                 },
                 {
                     "title": "11. Guardians of the Galaxy Vol 2 Ukr.mkv",
@@ -11850,17 +12093,32 @@
             ]
         },
         {
-            "id": "181dd903-0888-49cb-a5d1-87086bbde870",
-            "title": "World War Z.mkv",
-            "path": "F:\\Movies\\World War Z.mkv",
+            "id": "9d3fcec4-1d9c-47fe-803d-48597aab12f0",
+            "title": "WALL-E",
+            "path": "F:\\Movies\\WALL-E",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-08-25T03:33:39.956176",
+            "last_modified": "2025-09-20T02:01:07.885809",
+            "type": "collection",
+            "parts": [
+                {
+                    "title": "WALL-E.mkv",
+                    "path": "F:\\Movies\\WALL-E\\WALL-E.mkv"
+                }
+            ]
+        },
+        {
+            "id": "df84393f-a573-4f42-a2c4-c72f69f1b2a3",
+            "title": "World War Z",
+            "path": "F:\\Movies\\World War Z",
+            "tags": [],
+            "auto_added": true,
+            "last_modified": "2025-09-20T02:01:07.885809",
             "type": "collection",
             "parts": [
                 {
                     "title": "World War Z.mkv",
-                    "path": "F:\\Movies\\World War Z.mkv"
+                    "path": "F:\\Movies\\World War Z\\World War Z.mkv"
                 }
             ]
         },
@@ -11870,7 +12128,7 @@
             "path": "F:\\Movies\\X-Men. Collection",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-08-25T03:33:39.954177",
+            "last_modified": "2025-09-20T02:01:07.885809",
             "type": "collection",
             "parts": [
                 {
@@ -11944,17 +12202,17 @@
             ]
         },
         {
-            "id": "bd4da9ba-c54e-4051-8abb-97f43a4b8753",
-            "title": "Смокінг.avi",
-            "path": "F:\\Movies\\Смокінг.avi",
+            "id": "807f545e-9389-4a53-ba8e-df6dd6cbf96c",
+            "title": "Смокінг",
+            "path": "F:\\Movies\\Смокінг",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-08-25T03:33:39.956176",
+            "last_modified": "2025-09-20T02:01:07.885809",
             "type": "collection",
             "parts": [
                 {
                     "title": "Смокінг.avi",
-                    "path": "F:\\Movies\\Смокінг.avi"
+                    "path": "F:\\Movies\\Смокінг\\Смокінг.avi"
                 }
             ]
         },
@@ -11964,7 +12222,7 @@
             "path": "F:\\Movies\\Собаче життя",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-08-25T03:33:39.954177",
+            "last_modified": "2025-09-20T02:01:07.885809",
             "type": "collection",
             "parts": [
                 {
@@ -11983,7 +12241,7 @@
             "path": "F:\\Movies\\Футурама",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-08-25T03:33:39.954177",
+            "last_modified": "2025-09-20T02:01:07.886809",
             "type": "collection",
             "parts": [
                 {
@@ -12010,7 +12268,7 @@
             "path": "F:\\Movies\\Як приборкати дракона",
             "tags": [],
             "auto_added": true,
-            "last_modified": "2025-08-25T03:33:39.955176",
+            "last_modified": "2025-09-20T02:01:07.886809",
             "type": "collection",
             "parts": [
                 {
