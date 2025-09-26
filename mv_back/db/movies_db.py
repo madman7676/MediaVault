@@ -1,8 +1,62 @@
 import os
+import json
 from natsort import natsorted
+from datetime import datetime
 
 from mv_back.db.utils import *
 from mv_back.db.media_db import *
+from mv_back.thumbnails import get_or_create_thumbnail
+
+
+# --------------------------------------------------------------
+# Formatters (допоміжні функції для форматування)
+
+def format_movie_collection(collection):
+    """Форматує movie collection record у словник"""
+    if not collection:
+        return None
+    return {
+        'id': collection[0],
+        'title': collection[1],
+        'path': collection[2],
+        'auto_added': collection[3],
+        'crD': collection[4],
+        'modD': collection[5],
+        'delD': collection[6]
+    }
+
+def format_movie_item(item):
+    """Форматує movie item record у словник"""
+    if not item:
+        return None
+    return {
+        'id': item[0],
+        'primary_collection_id': item[1],
+        'position': item[2],
+        'title': item[3],
+        'path': item[4]
+    }
+
+def format_movie_with_tags(movie):
+    """Форматує movie з тегами у словник"""
+    if not movie:
+        return None
+    
+    tags = []
+    if movie[7]:
+        tags = [tag['value'] for tag in json.loads(movie[7])]
+    
+    return {
+        'id': movie[0],
+        'title': movie[1],
+        'path': movie[2],
+        'tags': tags,
+        'img_path': get_or_create_thumbnail(movie[2]),
+        'auto_added': movie[3],
+        'crD': movie[4],
+        'modD': movie[5],
+        'delD': movie[6]
+    }
 
 
 #--------------------------------------------------------------
@@ -42,7 +96,7 @@ def insert_movie_collection_to_db(cursor, path):
     return media_id
 
 #--------------------------------------------------------------
-# SELECTs
+# SELECTs (тепер повертають відформатовані дані)
 
 def select_all_movies_collections(cursor):
     query = '''
@@ -53,7 +107,12 @@ def select_all_movies_collections(cursor):
     '''
     cursor.execute(query)
     results = cursor.fetchall()
-    return results if results else []
+    return [format_movie_collection(row) for row in results] if results else []
+
+def select_movie_collection_by_id(cursor, movie_id):
+    """Отримує movie collection за ID"""
+    collections = select_all_movies_collections(cursor)
+    return next((col for col in collections if col['id'] == movie_id), None)
     
 def select_movie_items_by_collection_id(cursor, movie_id):
     query = '''
@@ -64,7 +123,7 @@ def select_movie_items_by_collection_id(cursor, movie_id):
     '''
     cursor.execute(query, (movie_id,))
     rows = cursor.fetchall()
-    return rows if rows else []
+    return [format_movie_item(row) for row in rows] if rows else []
 
 def select_movie_item_by_id(cursor, item_id):
     query = '''
@@ -74,7 +133,7 @@ def select_movie_item_by_id(cursor, item_id):
     '''
     cursor.execute(query, (item_id,))
     row = cursor.fetchone()
-    return row if row else None
+    return format_movie_item(row)
 
 def select_all_movies_with_tags(cursor):
     query = '''
@@ -93,7 +152,7 @@ def select_all_movies_with_tags(cursor):
     '''
     cursor.execute(query)
     results = cursor.fetchall()
-    return results if results else []
+    return [format_movie_with_tags(row) for row in results] if results else []
 
 #--------------------------------------------------------------
 # UPDATEs

@@ -21,8 +21,8 @@
     "vlc.js": "^5.0.0-alpha"
   },
   "scripts": {
-    "start": "concurrently -n backend,frontend -c blue,green \"npm run backend\" \"npm run frontend\"",
-    "back": "cd ../mv_back && .\\env\\Scripts\\activate && python app.py",
+    "start": "concurrently -n backend,frontend -c blue,green \"npm run back\" \"npm run front\"",
+    "back": "cd .. && .\\mv_back\\env\\Scripts\\activate && python -m mv_back.app",
     "front": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

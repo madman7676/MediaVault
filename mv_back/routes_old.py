@@ -1,13 +1,6 @@
 import os
-import json
-import uuid
-import mimetypes
-import subprocess
-from datetime import datetime
-from concurrent.futures import ThreadPoolExecutor
 from flask import jsonify, request, send_file, Response
 
-from mv_back.app import app
 from mv_back.config import THUMBNAILS_DIR
 from mv_back.api.video_api import prepare_video_payload
 from mv_back.routes.metadata_old_routes import get_metadata_route
@@ -15,23 +8,6 @@ from mv_back.routes.tags_routes import add_tag_to_list_of_media_route, get_all_t
 from mv_back.thumbnails import find_first_video_in_directory, get_or_create_thumbnail
 from mv_back.metadata import load_metadata, save_metadata, find_metadata_item, update_paths_only
 
-
-def convert_to_mp4(input_path, output_path):
-    command = [
-        "ffmpeg",
-        "-i", input_path,
-        "-c:v", "libx264",
-        "-crf", "23",
-        "-preset", "fast",
-        "-c:a", "aac",
-        "-b:a", "192k",
-        output_path
-    ]
-    result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    if result.returncode != 0:
-        print(f"Error converting file: {result.stderr.decode('utf-8')}")
-        return False
-    return True
 
 if not os.path.exists(THUMBNAILS_DIR):
     os.makedirs(THUMBNAILS_DIR)
