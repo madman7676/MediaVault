@@ -11,7 +11,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
-import palette from '../styles/theme/palette';
+import palette from '../../styles/theme/palette';
 
 const OnlineSeriesDialog = ({
   open,

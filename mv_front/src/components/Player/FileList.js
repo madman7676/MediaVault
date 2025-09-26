@@ -4,7 +4,7 @@ import { List, ListItem, ListItemText, Collapse, Typography, Box } from '@mui/ma
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { updateFilesPath } from '../api/metadataAPI';
+import { updateFilesPath } from '../../api/metadataAPI';
 
 const FileList = ({
     itemId,
