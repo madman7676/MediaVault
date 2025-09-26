@@ -2,7 +2,7 @@
 import 'videojs-hotkeys';
 import config from '../config.json';
 import palette from '../styles/theme/palette';
-import FileList from '../components/FileList';
+import FileList from '../components/Player/FileList';
 import PlayerControls from '../components/Player/PlayerControls';
 import { Settings, CheckBox, CheckBoxOutlineBlank } from '@mui/icons-material';
 import React, { useState, useEffect, useRef } from 'react';

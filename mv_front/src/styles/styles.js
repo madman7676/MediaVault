@@ -7,6 +7,7 @@ const useStyles = makeStyles((theme) => ({
         position: 'relative',
         backgroundImage: `url(${background})`,
         backgroundRepeat: 'repeat',
+        minHeight: '100vh',
     },
     logo: {
         display: 'inline-block',
