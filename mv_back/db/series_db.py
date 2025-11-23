@@ -1,8 +1,96 @@
 import os
+import json
 from natsort import natsorted
 
 from mv_back.db.utils import *
 from mv_back.db.media_db import *
+from mv_back.thumbnails import get_or_create_thumbnail
+
+
+# --------------------------------------------------------------
+# Formatters (допоміжні функції для форматування)
+
+def format_series(serie):
+    """Форматує series record у словник"""
+    if not serie:
+        return None
+    return {
+        'id': serie[0],
+        'title': serie[1],
+        'path': serie[2],
+        'auto_added': serie[3],
+        'crD': serie[4],
+        'modD': serie[5],
+        'delD': serie[6]
+    }
+
+def format_series_with_thumbnail(serie):
+    """Форматує series з thumbnail"""
+    if not serie:
+        return None
+    return {
+        'id': serie[0],
+        'title': serie[1],
+        'img_path': get_or_create_thumbnail(serie[2]),
+        'path': serie[2],
+        'auto_added': serie[3],
+        'crD': serie[4],
+        'modD': serie[5],
+        'delD': serie[6]
+    }
+
+def format_series_with_tags(serie, tags=None):
+    """Форматує series з тегами та thumbnail"""
+    if not serie:
+        return None
+    
+    # Якщо це результат з select_all_series_with_tags (з JSON тегами)
+    if len(serie) == 8 and serie[7] is not None:
+        tags = []
+        if serie[7]:
+            tags = [tag['value'] for tag in json.loads(serie[7])]
+    
+    return {
+        'id': serie[0],
+        'title': serie[1],
+        'tags': tags if tags is not None else [],
+        'img_path': get_or_create_thumbnail(serie[2]),
+        'path': serie[2],
+        'auto_added': serie[3],
+        'crD': serie[4],
+        'modD': serie[5],
+        'delD': serie[6]
+    }
+
+def format_season(season):
+    """Форматує season record у словник"""
+    if not season:
+        return None
+    return {
+        'id': season[0],
+        'serie_id': season[1],
+        'season_number': season[2],
+        'title': season[3],
+        'path': season[4],
+        'crD': season[5],
+        'modD': season[6],
+        'delD': season[7]
+    }
+
+def format_episode(episode):
+    """Форматує episode record у словник"""
+    if not episode:
+        return None
+    return {
+        'id': episode[0],
+        'season_id': episode[1],
+        'episode_number': episode[2],
+        'title': episode[3],
+        'file_path': episode[4],
+        'crD': episode[5],
+        'modD': episode[6],
+        'delD': episode[7]
+    }
 
 
 # --------------------------------------------------------------
@@ -28,7 +116,7 @@ def insert_to_Episode_table(cursor, season_id, episode_number, path):
     title = os.path.splitext(os.path.basename(path))[0]
     episode_id = season_id + "_e" + str(episode_number)
     query = '''
-        INSERT INTO Episode (id, season_id, episode_number, title, file_path) VALUES (?, ?, ?, ?, ?);
+        INSERT INTO Episode (id, primary_season_id, episode_number, title, file_path) VALUES (?, ?, ?, ?, ?);
     '''
     cursor.execute(query, (episode_id, season_id, episode_number, title, path))
     return episode_id
@@ -56,7 +144,7 @@ def insert_serie_to_db(cursor, path):
     return media_id
 
 # --------------------------------------------------------------
-# Selects
+# Selects (тепер повертають відформатовані дані)
 
 def select_serie_by_id(cursor, series_id):
     query = '''
@@ -67,10 +155,7 @@ def select_serie_by_id(cursor, series_id):
     '''
     cursor.execute(query, (series_id,))
     result = cursor.fetchone()
-    if result:
-        return result
-    else:
-        return None
+    return format_series(result)
 
 def select_all_series(cursor):
     query = '''
@@ -82,7 +167,7 @@ def select_all_series(cursor):
     '''
     cursor.execute(query)
     results = cursor.fetchall()
-    return results
+    return [format_series_with_thumbnail(row) for row in results] if results else []
 
 def select_all_series_with_tags(cursor):
     query = '''
@@ -101,7 +186,22 @@ def select_all_series_with_tags(cursor):
     '''
     cursor.execute(query)
     results = cursor.fetchall()
-    return results
+    return [format_series_with_tags(row) for row in results] if results else []
+
+# Нова функція для отримання серіалу з тегами за ID
+def select_serie_with_tags_by_id(cursor, series_id):
+    """Повертає series з тегами за ID"""
+    from mv_back.db.tags_db import select_tags_by_media_id
+    
+    serie = select_serie_by_id(cursor, series_id)
+    if not serie:
+        return None
+    
+    tags = select_tags_by_media_id(cursor, series_id)
+    return format_series_with_tags([
+        serie['id'], serie['title'], serie['path'],
+        serie['auto_added'], serie['crD'], serie['modD'], serie['delD']
+    ], tags)
 
 def select_all_seasons_by_serie_id(cursor, series_id):
     query = '''
@@ -112,15 +212,15 @@ def select_all_seasons_by_serie_id(cursor, series_id):
     '''
     cursor.execute(query, (series_id,))
     results = cursor.fetchall()
-    return results
+    return [format_season(row) for row in results] if results else []
 
 def select_all_episodes_by_season_id(cursor, season_id):
     query = '''
         SELECT id, primary_season_id, episode_number, title, file_path, crD, modD, delD
         FROM Episode
-        WHERE season_id = ? AND delD IS NULL
+        WHERE primary_season_id = ? AND delD IS NULL
         ORDER BY episode_number;
     '''
     cursor.execute(query, (season_id,))
     results = cursor.fetchall()
-    return results
+    return [format_episode(row) for row in results] if results else []

@@ -28,7 +28,7 @@ def format_media_with_tags(media, tags=None):
         return None
     
     # Якщо це результат з select_all_media_with_tags (з JSON тегами)
-    if len(media) == 8 and media[7] is not None:
+    if media[7] is not None:
         tags = []
         if media[7]:
             tags = [tag['value'] for tag in json.loads(media[7])]
@@ -37,8 +37,10 @@ def format_media_with_tags(media, tags=None):
         'id': media[0],
         'title': media[1],
         'tags': tags if tags is not None else [],
-        'img_path': get_or_create_thumbnail(media[2]) if media[2] else None,
+        'thumbnailUrl': get_or_create_thumbnail(media[2]) if media[2] else None,
         'path': media[2],
+        'count': media[8],
+        'type': media[9],
         'auto_added': media[3],
         'crD': media[4],
         'modD': media[5],
@@ -74,14 +76,50 @@ def select_all_media(cursor):
 
 def select_all_media_with_tags(cursor):
     query = '''
-        SELECT m.id, m.title, m.[path], m.auto_added, m.crD, m.modD, m.delD,
+        SELECT 
+            m.id, 
+            m.title, 
+            m.[path], 
+            m.auto_added, 
+            m.crD, 
+            m.modD, 
+            m.delD,
             JSON_QUERY((
                 SELECT tag.[name] AS [value]
                 FROM Xref_Tag2Media ref
-                left join Tag on tag.id = ref.tag_id AND tag.delD IS NULL
-                WHERE ref.media_id = m.id AND ref.delD IS NULL
+                LEFT JOIN Tag 
+                    ON tag.id = ref.tag_id 
+                AND tag.delD IS NULL
+                WHERE ref.media_id = m.id 
+                AND ref.delD IS NULL
                 FOR JSON PATH
-            )) AS tags_json
+            )) AS tags_json,
+            COALESCE(
+                (SELECT MAX(position) 
+                FROM MovieItem mi 
+                WHERE mi.primary_collection_id = m.id 
+                AND mi.delD IS NULL),
+                (SELECT MAX(season_number) 
+                FROM Season s 
+                WHERE s.primary_series_id = m.id 
+                AND s.delD IS NULL),
+                0
+            ) AS [count],
+            CASE 
+                WHEN EXISTS (
+                    SELECT 1 
+                    FROM MovieItem mi
+                    WHERE mi.primary_collection_id = m.id 
+                    AND mi.delD IS NULL
+                ) THEN 'movie'
+                WHEN EXISTS (
+                    SELECT 1 
+                    FROM Season s
+                    WHERE s.primary_series_id = m.id 
+                    AND s.delD IS NULL
+                ) THEN 'series'
+                ELSE 'unknown'
+            END AS type
         FROM Media m
         WHERE m.delD IS NULL
         ORDER BY m.title;

@@ -8,7 +8,7 @@ tags = Blueprint("tags", __name__, url_prefix="/api/tags")
 # --------------------------------------------------------------
 # GETs
 
-@tags.route(f'/all', methods=['GET'])
+@tags.route(f'/', methods=['GET'])
 def get_all_tags_route():
     return get_all_tags_route_handler()
 
@@ -20,7 +20,7 @@ def get_tags_by_media_id_route(media_id):
 # --------------------------------------------------------------
 # POSTs
 
-@tags.route(f'/add', methods=['POST'])
+@tags.route(f'/', methods=['POST'])
 def add_tag_to_list_route():
     data = request.get_json()
     return add_tag_to_list_route_handler(data)

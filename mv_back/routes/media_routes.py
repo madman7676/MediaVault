@@ -7,7 +7,7 @@ media = Blueprint("media", __name__, url_prefix="/api/media")
 #--------------------------------------------------------------
 # GETs
 
-@media.route(f'/all', methods=['GET'])
+@media.route(f'/', methods=['GET'])
 def get_all_media_with_tags_route():
     return get_all_media_with_tags()
 

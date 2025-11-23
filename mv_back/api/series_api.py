@@ -1,9 +1,5 @@
-import json
-
 from mv_back.db.utils import db_connection
 from mv_back.db.series_db import *
-from mv_back.db.tags_db import select_tags_by_media_id
-from mv_back.thumbnails import get_or_create_thumbnail
 
 
 # --------------------------------------------------------------
@@ -12,23 +8,11 @@ from mv_back.thumbnails import get_or_create_thumbnail
 def get_serie_by_media_id(media_id):
     try:
         with db_connection() as cursor:
-            serie = select_serie_by_id(cursor, media_id)
+            serie = select_serie_with_tags_by_id(cursor, media_id)
             if not serie:
                 return {"error": "Series not found", 'id': media_id}, 404
             
-            tags = select_tags_by_media_id(cursor, media_id)
-            data = {
-                'id': serie[0],
-                'title': serie[1],
-                'tags': tags,
-                'img_path': get_or_create_thumbnail(serie[2]),
-                'path': serie[2],
-                'auto_added': serie[3],
-                'crD': serie[4],
-                'modD': serie[5],
-                'delD': serie[6]
-            }
-            return {"data": data}, 200
+            return {"data": serie}, 200
     except Exception as e:
         return {"error": str(e)}, 500
 
@@ -36,19 +20,7 @@ def get_all_series():
     try:
         with db_connection() as cursor:
             series = select_all_series(cursor)
-            data = []
-            for serie in series:
-                data.append({
-                    'id': serie[0],
-                    'title': serie[1],
-                    'img_path': get_or_create_thumbnail(serie[2]),
-                    'path': serie[2],
-                    'auto_added': serie[3],
-                    'crD': serie[4],
-                    'modD': serie[5],
-                    'delD': serie[6]
-                })
-            return {"data": data}, 200
+            return {"data": series}, 200
     except Exception as e:
         return {"error": str(e)}, 500
 
@@ -56,26 +28,7 @@ def get_all_series_with_tags():
     try:
         with db_connection() as cursor:
             series = select_all_series_with_tags(cursor)
-            if series is None:
-                return {"error": "No series found"}, 404
-            
-            data = []
-            for serie in series:
-                tags = []
-                if serie[7]:
-                    tags = [tag['value'] for tag in json.loads(serie[7])]
-                data.append({
-                    'id': serie[0],
-                    'title': serie[1],
-                    'tags': tags,
-                    'img_path': get_or_create_thumbnail(serie[2]),
-                    'path': serie[2],
-                    'auto_added': serie[3],
-                    'crD': serie[4],
-                    'modD': serie[5],
-                    'delD': serie[6]
-                })
-            return {"data": data}, 200
+            return {"data": series}, 200
     except Exception as e:
         return {"error": str(e)}, 500
 
@@ -86,19 +39,7 @@ def get_all_seasons_by_serie_id(serie_id):
             if not seasons:
                 return {"error": "No seasons found for this series", 'serie_id': serie_id}, 404
             
-            data = []
-            for season in seasons:
-                data.append({
-                    'id': season[0],
-                    'serie_id': season[1],
-                    'season_number': season[2],
-                    'title': season[3],
-                    'path': season[4],
-                    'crD': season[5],
-                    'modD': season[6],
-                    'delD': season[7]
-                })
-            return {"data": data}, 200
+            return {"data": seasons}, 200
     except Exception as e:
         return {"error": str(e)}, 500
 
@@ -109,18 +50,6 @@ def get_all_episodes_by_season_id(season_id):
             if not episodes:
                 return {"error": "No episodes found for this season", 'season_id': season_id}, 404
             
-            data = []
-            for episode in episodes:
-                data.append({
-                    'id': episode[0],
-                    'season_id': episode[1],
-                    'episode_number': episode[2],
-                    'title': episode[3],
-                    'file_path': episode[4],
-                    'crD': episode[5],
-                    'modD': episode[6],
-                    'delD': episode[7]
-                })
-            return {"data": data}, 200
+            return {"data": episodes}, 200
     except Exception as e:
         return {"error": str(e)}, 500

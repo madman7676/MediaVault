@@ -17,14 +17,25 @@
 
         // ---- МОЯ НОВА КОНФІГУРАЦІЯ ----
         {
-            "name": "MediaVault (env)",
+            "name": "MediaVault Backend",
             "type": "debugpy",
             "request": "launch",
-            "program": "app.py",
-            "cwd": "D:/Else/Code/MediaVault/mv_back",
+            "module": "mv_back.app",
+            "cwd": "D:/Else/Code/MediaVault",
+            "python": "D:/Else/Code/MediaVault/mv_back/env/Scripts/python.exe",
+            "console": "integratedTerminal"
+        },
+        
+        {
+            "name": "Transfer_DB Module",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "mv_back.db.transfer_db",
+            "cwd": "D:/Else/Code/MediaVault",
             "python": "D:/Else/Code/MediaVault/mv_back/env/Scripts/python.exe",
             "console": "integratedTerminal"
         }
+
         // --------------------------------
     ]
 }

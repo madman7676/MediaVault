@@ -2,13 +2,30 @@ from .utils import formate_id
 
 
 # --------------------------------------------------------------
+# Formatters (допоміжні функції для форматування)
+
+def format_tag(tag):
+    """Форматує tag record у словник"""
+    if not tag:
+        return None
+    return {
+        'id': tag[0],
+        'name': tag[1],
+        'crD': tag[2],
+        'modD': tag[3],
+        'delD': tag[4]
+    }
+
+
+# --------------------------------------------------------------
 # Inserts
 
 def insert_Tag_to_db(cursor, name):
     cursor.execute('SELECT id FROM Tag WHERE name = ?', (name,))
-    if cursor.fetchone() is not None:
+    existing = cursor.fetchone()
+    if existing is not None:
         print(f"Tag '{name}' already exists in DB. Skipping...")
-        return cursor.fetchone()[0]
+        return existing[0]
     
     id = formate_id(cursor, name, "Tag")
     query = '''
@@ -53,9 +70,10 @@ def insert_Xref_Tag2Media_bulk_to_db(cursor, media_ids, tag_id):
     
 
 # --------------------------------------------------------------
-# Selects
+# Selects (тепер повертають відформатовані дані)
 
 def select_tag_list(cursor):
+    """Повертає список імен тегів"""
     query = '''
         SELECT name FROM Tag WHERE delD IS NULL ORDER BY name;
     '''
@@ -64,14 +82,16 @@ def select_tag_list(cursor):
     return tags
 
 def select_tag_by_id(cursor, tag_id):
+    """Повертає відформатований tag за ID"""
     query = '''
         SELECT * FROM Tag WHERE id = ? and delD IS NULL;
     '''
     cursor.execute(query, (tag_id,))
     tag = cursor.fetchone()
-    return tag
+    return format_tag(tag)
 
 def select_tags_by_media_id(cursor, media_id):
+    """Повертає список імен тегів для конкретного media"""
     query = '''
         SELECT tag.[name]
         FROM Media as md
@@ -84,12 +104,13 @@ def select_tags_by_media_id(cursor, media_id):
     return tags
 
 def select_tag_by_name(cursor, tag_name):
+    """Повертає відформатований tag за іменем"""
     query = '''
         SELECT * FROM Tag WHERE name = ? and delD IS NULL;
     '''
     cursor.execute(query, (tag_name,))
     tag = cursor.fetchone()
-    return tag
+    return format_tag(tag)
 
 # --------------------------------------------------------------
 # Deletes

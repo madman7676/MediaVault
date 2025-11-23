@@ -20,7 +20,7 @@ def get_all_media_with_tags():
     try:
         with db_connection() as cursor:
             all_media = select_all_media_with_tags(cursor)
-            return {"data": all_media}, 200
+            return  all_media, 200
     except Exception as e:
         return {"error": str(e)}, 500
 

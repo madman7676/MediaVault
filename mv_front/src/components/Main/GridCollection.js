@@ -31,7 +31,7 @@ const GridCollection = ({openTagSettings, filteredCollections, letterRefs, selec
                     <CatalogCard
                     title={collection.title}
                     type={collection.type}
-                    partsCount={collection.partsCount}
+                    partsCount={collection.count}
                     thumbnailUrl={collection.thumbnailUrl}
                     link={'/player/' + collection.id}
                     showCheckbox={selectionMode}

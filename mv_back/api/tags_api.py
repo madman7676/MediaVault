@@ -1,6 +1,4 @@
-import json
-
-from mv_back.db.utils import get_db, db_connection
+from mv_back.db.utils import db_connection
 from mv_back.db.tags_db import *
 
 
@@ -42,8 +40,8 @@ def add_tag_to_list_route_handler(data):
                 return {"error": "Tag already exists", 'tag': tag_value}, 400
             
             # Додаємо новий тег
-            rows_inserted = insert_Tag_to_db(cursor, tag_value)
-            if rows_inserted == 0:
+            tag_id = insert_Tag_to_db(cursor, tag_value)
+            if not tag_id:
                 return {"error": "Failed to add tag", 'tag': tag_value}, 500
             
             return {"message": "Tag added successfully", 'tag': tag_value}, 200
