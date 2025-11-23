@@ -5,94 +5,106 @@ from datetime import datetime
 from mv_back.config import *
 # from flask import Flask, request, send_file
 
+def _update_files_by_index(season, season_path):
+    """
+    Оновлює список файлів сезону, зберігаючи метадані по індексу.
+    Порядок файлів береться як в Explorer – через sorted(os.listdir()).
+    """
+    old_files = season.get("files", [])
+    # імітуємо порядок, схожий на Провідник (за замовчуванням – алфавітний)
+    filenames = sorted(
+        f for f in os.listdir(season_path)
+        if os.path.isfile(os.path.join(season_path, f))
+    )
+
+    new_files = []
+    for i, fname in enumerate(filenames):
+        if i < len(old_files):
+            # копіюємо старий запис, але оновлюємо name
+            f = dict(old_files[i])
+            f["name"] = fname
+        else:
+            # новий файл без метаданих
+            f = {"name": fname}
+        new_files.append(f)
+
+    season["files"] = new_files
+
+
 def update_paths_only(metadata, item_id):
     """
     Оновлює тільки шляхи до файлів для вказаного елемента метаданих.
-    Зберігає всі інші метадані (теги, налаштування тощо).
-
-    Parameters:
-        metadata (dict): Поточні метадані
-        item_id (str): ID елемента для оновлення
-
-    Returns:
-        tuple: (bool, str) - (успіх оновлення, повідомлення)
+    Зберігає всі інші метадані (теги, timeToSkip тощо), поки зберігається порядок.
     """
     item, category = find_metadata_item(metadata, item_id=item_id)
     
     if not item or not os.path.exists(item["path"]):
         return False, "Item not found or path doesn't exist"
+
     try:
         if item["type"] == "series":
             print(f"Processing series: {item['title']}")
-            # Отримуємо список реальних папок сезонів
-            real_seasons = [d for d in os.listdir(item["path"]) 
-                          if os.path.isdir(os.path.join(item["path"], d))]
+            series_path = item["path"]
+
+            # реальні папки сезонів
+            real_seasons = sorted(
+                d for d in os.listdir(series_path)
+                if os.path.isdir(os.path.join(series_path, d))
+            )
             print(f"Found seasons directories: {real_seasons}")
 
-            # --- SPECIAL CASE: Було лише один сезон, і його просто перемістили у підпапку ---
-            if (
-                len(item["seasons"]) == 1 and
-                item["seasons"][0].get("title") == "Season 1" and
-                len(real_seasons) > 1
-            ):
-                # Просто оновлюємо title і path першого сезону, не чіпаючи files
-                item["seasons"][0]["title"] = real_seasons[0]
-                item["seasons"][0]["path"] = os.path.join(item["path"], real_seasons[0])
-                # Якщо з'явилися ще сезони — додаємо їх як нові
-                for season_name in real_seasons[1:]:
-                    season_path = os.path.join(item["path"], season_name)
-                    files = [{"name": f} for f in os.listdir(season_path) if os.path.isfile(os.path.join(season_path, f))]
-                    item["seasons"].append({
-                        "title": season_name,
-                        "path": season_path,
-                        "files": files
-                    })
-                item["last_modified"] = datetime.now().isoformat()
-                save_metadata(metadata)
-                return True, "Season path updated without losing metadata"
+            old_seasons = item.get("seasons", [])
+            new_seasons = []
 
-            # Словник існуючих сезонів для збереження метаданих
-            existing_seasons = {s["title"]: s for s in item["seasons"]}
-            item["seasons"] = []
-            
-            # Для кожної реальної папки сезону
-            for season_name in real_seasons:
-                season_path = os.path.join(item["path"], season_name)
-                # Беремо існуючий сезон або створюємо новий
-                season = existing_seasons.get(season_name, {"title": season_name})
-                season["path"] = season_path
-                
-                # Зберігаємо існуючі метадані файлів
-                existing_files = {f["name"]: f for f in season.get("files", [])}
-                season["files"] = []
-                
-                # Оновлюємо файли
-                for file in os.listdir(season_path):
-                    if os.path.isfile(os.path.join(season_path, file)):
-                        # Зберігаємо існуючі метадані файлу або створюємо нові
-                        file_data = existing_files.get(file, {})
-                        file_data["name"] = file
-                        season["files"].append(file_data)
-                
-                item["seasons"].append(season)
-                print(f"Updated season {season_name} with {len(season['files'])} files")
+            if real_seasons:
+                prev_count = len(old_seasons)
+                new_count = len(real_seasons)
+                min_common = min(prev_count, new_count)
 
-            # Додаємо "Season 1", якщо підпапок немає (усі файли у корені)
-            if not real_seasons:
-                season = existing_seasons.get("Season 1", {"title": "Season 1"})
-                season["path"] = item["path"]
-                existing_files = {f["name"]: f for f in season.get("files", [])}
-                season["files"] = []
-                for file in os.listdir(item["path"]):
-                    if os.path.isfile(os.path.join(item["path"], file)):
-                        file_data = existing_files.get(file, {})
-                        file_data["name"] = file
-                        season["files"].append(file_data)
-                item["seasons"].append(season)
-                print(f"Added Season 1 with {len(season['files'])} files")
-    
+                # 1) оновлюємо існуючі сезони по індексу
+                for i in range(min_common):
+                    season_name = real_seasons[i]
+                    season_path = os.path.join(series_path, season_name)
+
+                    season = old_seasons[i]
+                    season["title"] = season_name
+                    season["path"] = season_path
+
+                    _update_files_by_index(season, season_path)
+                    new_seasons.append(season)
+                    print(f"Updated season {season_name} with {len(season['files'])} files")
+
+                # 2) додаємо нові сезони, якщо їх стало більше
+                if new_count > prev_count:
+                    for i in range(prev_count, new_count):
+                        season_name = real_seasons[i]
+                        season_path = os.path.join(series_path, season_name)
+
+                        season = {
+                            "title": season_name,
+                            "path": season_path,
+                        }
+                        _update_files_by_index(season, season_path)
+                        new_seasons.append(season)
+                        print(f"Added new season {season_name} with {len(season['files'])} files")
+
+                # якщо сезонів стало менше – старі «зайві» просто відкидаємо
+
+            else:
+                # немає підпапок – усе в корені, один сезон
+                if old_seasons:
+                    season = old_seasons[0]
+                else:
+                    season = {"title": "Season 1"}
+
+                season["path"] = series_path
+                _update_files_by_index(season, series_path)
+                new_seasons.append(season)
+                print(f"Added/updated single season with {len(season['files'])} files")
+
+            item["seasons"] = new_seasons
+
         elif item["type"] == "collection":
-            # Оновлюємо шляхи для фільму/колекції
             item["parts"] = [
                 {
                     "title": file,
@@ -101,11 +113,11 @@ def update_paths_only(metadata, item_id):
                 for file in os.listdir(item["path"])
                 if os.path.isfile(os.path.join(item["path"], file))
             ]
-        
+
         item["last_modified"] = datetime.now().isoformat()
         save_metadata(metadata)
         return True, "Paths updated successfully"
-        
+
     except Exception as e:
         return False, f"Error updating paths: {str(e)}"
 
