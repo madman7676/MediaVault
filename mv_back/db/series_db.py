@@ -4,7 +4,6 @@ from natsort import natsorted
 
 from mv_back.db.utils import *
 from mv_back.db.media_db import *
-from mv_back.thumbnails import get_or_create_thumbnail
 
 
 # --------------------------------------------------------------
@@ -31,7 +30,6 @@ def format_series_with_thumbnail(serie):
     return {
         'id': serie[0],
         'title': serie[1],
-        'img_path': get_or_create_thumbnail(serie[2]),
         'path': serie[2],
         'auto_added': serie[3],
         'crD': serie[4],
@@ -45,16 +43,16 @@ def format_series_with_tags(serie, tags=None):
         return None
     
     # Якщо це результат з select_all_series_with_tags (з JSON тегами)
-    if len(serie) == 8 and serie[7] is not None:
-        tags = []
-        if serie[7]:
-            tags = [tag['value'] for tag in json.loads(serie[7])]
+    tags = []
+    if serie[7]:
+        tags = [tag['value'] for tag in json.loads(serie[7])]
     
     return {
         'id': serie[0],
         'title': serie[1],
-        'tags': tags if tags is not None else [],
-        'img_path': get_or_create_thumbnail(serie[2]),
+        'tags': tags,
+        'count': serie[8],
+        'type': serie[9],
         'path': serie[2],
         'auto_added': serie[3],
         'crD': serie[4],
@@ -169,8 +167,12 @@ def select_all_series(cursor):
     results = cursor.fetchall()
     return [format_series_with_thumbnail(row) for row in results] if results else []
 
-def select_all_series_with_tags(cursor):
-    query = '''
+def select_all_series_with_tags(cursor, tags=None, filter_mode='include'):
+    """Повертає всі series з тегами, з можливістю фільтрації за тегами"""
+    
+    tags_condition = build_tag_filter(tags, filter_mode)
+    
+    query = f'''
         SELECT m.id, m.title, m.[path], m.auto_added, m.crD, m.modD, m.delD,
             JSON_QUERY((
                 SELECT tag.[name] AS [value]
@@ -178,13 +180,39 @@ def select_all_series_with_tags(cursor):
                 left join Tag on tag.id = ref.tag_id AND tag.delD IS NULL
                 WHERE ref.media_id = m.id AND ref.delD IS NULL
                 FOR JSON PATH
-            )) AS tags_json
+            )) AS tags_json,
+			COALESCE(
+                (SELECT MAX(position) 
+                FROM MovieItem mi 
+                WHERE mi.primary_collection_id = m.id 
+                AND mi.delD IS NULL),
+                (SELECT MAX(season_number) 
+                FROM Season s 
+                WHERE s.primary_series_id = m.id 
+                AND s.delD IS NULL),
+                0
+            ) AS [count],
+            CASE 
+                WHEN EXISTS (
+                    SELECT 1 
+                    FROM MovieItem mi
+                    WHERE mi.primary_collection_id = m.id 
+                    AND mi.delD IS NULL
+                ) THEN 'movie'
+                WHEN EXISTS (
+                    SELECT 1 
+                    FROM Season s
+                    WHERE s.primary_series_id = m.id 
+                    AND s.delD IS NULL
+                ) THEN 'series'
+                ELSE 'unknown'
+            END AS type
         FROM Media m
         INNER JOIN Series s on s.media_id = m.id AND s.delD IS NULL
-        WHERE m.delD IS NULL
+        WHERE m.delD IS NULL {tags_condition['query']}
         ORDER BY m.title;
     '''
-    cursor.execute(query)
+    cursor.execute(query, tags_condition['params'])
     results = cursor.fetchall()
     return [format_series_with_tags(row) for row in results] if results else []
 
@@ -224,3 +252,45 @@ def select_all_episodes_by_season_id(cursor, season_id):
     cursor.execute(query, (season_id,))
     results = cursor.fetchall()
     return [format_episode(row) for row in results] if results else []
+
+def select_all_seasons_and_episodes_by_serie_id(cursor, series_id):
+    seasons_query = '''
+        SELECT id, primary_series_id, season_number, title, path, crD, modD, delD
+        FROM Season
+        WHERE primary_series_id = ? AND delD IS NULL
+        ORDER BY season_number;
+    '''
+    cursor.execute(seasons_query, (series_id,))
+    seasons_results = cursor.fetchall()
+    
+    if not seasons_results:
+        return []
+    
+    seasons = [format_season(row) for row in seasons_results ]
+    
+    query = '''
+        SELECT e.id, e.primary_season_id, e.episode_number, e.title, e.file_path, e.crD, e.delD, e.modD
+        FROM Episode e
+        INNER JOIN Season s on e.primary_season_id = s.id
+        WHERE s.primary_series_id = ? AND e.delD IS NULL
+        ORDER BY s.season_number, e.episode_number;
+    '''
+    cursor.execute(query, (series_id,))
+    
+    episodes_results = cursor.fetchall()
+    
+    episodes = [format_episode(row) for row in episodes_results] if episodes_results else []
+    
+    seasons_map = {season['id']: season for season in seasons}
+    
+    # Додаємо порожній список епізодів до всіх сезонів
+    for season in seasons_map.values():
+        if 'files' not in season: # Обережна ініціалізація
+            season['files'] = []
+    
+    for episode in episodes:
+        season_id = episode.get('season_id')
+        if season_id in seasons_map:
+            seasons_map[season_id]['files'].append(episode)
+    
+    return seasons

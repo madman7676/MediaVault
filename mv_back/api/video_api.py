@@ -2,6 +2,8 @@ import os
 import mimetypes
 import subprocess
 
+from flask import Response, jsonify
+
 def convert_to_mp4(input_path, output_path):
     command = [
         "ffmpeg",
@@ -78,3 +80,50 @@ def prepare_video_payload(video_path, range_header=None):
         }
     except Exception as e:
         return {"error": str(e), "status_code": 500}
+    
+def serve_video_with_range(video_path, range_header=None):
+
+    result = prepare_video_payload(video_path, range_header)
+    status = result.get('status_code', 500)
+
+    if 'error' in result:
+        return jsonify({"status": "error", "message": result['error']}), status
+
+    payload = result['data']
+    vpath = payload['video_path']
+    mime = payload['mime_type']
+    file_size = payload['file_size']
+    r = payload['range']
+
+    try:
+        if r:
+            start = r['start']
+            end = r['end']
+            length = r['length']
+            with open(vpath, 'rb') as f:
+                f.seek(start)
+                data = f.read(length)
+
+            headers = {
+                'Content-Range': f'bytes {start}-{end}/{file_size}',
+                'Accept-Ranges': 'bytes',
+                'Content-Length': str(length),
+                'Content-Type': mime
+            }
+            return Response(data, status=206, headers=headers)
+
+        # stream whole file
+        def generate():
+            with open(vpath, 'rb') as f:
+                while chunk := f.read(8192):
+                    yield chunk
+
+        headers = {
+            'Content-Length': str(file_size),
+            'Content-Type': mime
+        }
+        return Response(generate(), headers=headers)
+    except Exception as e:
+        import traceback
+        print("Error:", traceback.format_exc())
+        return jsonify({"status": "error", "message": str(e)}), 500

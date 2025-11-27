@@ -7,11 +7,10 @@ import 'videojs-hotkeys';
 import SettingsMenu from './SettingsMenu';
 import TimeToSkipSettingsMenu from './TimeToSkipSettingsMenu';
 import { fetchTimeToSkip } from '../../api/metadataAPI';
+import { fetchDefaultBookmarks } from '../../api/bookmarksAPI';
 
 const PlayerControls = ({
     currentFile,
-    currentPath,
-    currentName,
     onPlayerReady,
     handleVideoEnd,
     skipTimeEnabled
@@ -211,8 +210,8 @@ const PlayerControls = ({
     }, []);
 
     useEffect(() => {
-        if (playerInstance.current && currentFile) {
-            playerInstance.current.src({ src: currentFile, type: 'video/mp4' });
+        if (playerInstance.current && currentFile?.url) {
+            playerInstance.current.src({ src: currentFile.url, type: 'video/mp4' });
             playerInstance.current.load();
 
             playerInstance.current.play().catch(console.error);
@@ -220,23 +219,32 @@ const PlayerControls = ({
     }, [currentFile]);
 
     useEffect(() => {
-        const loadTimeToSkip = async () => {
+        const episodeId = currentFile?.id;
+        const loadTimeToSkip = async (id) => {
+            if (!id) {
+                currentTimeToSkip.current = [];
+                renderTimeSkips([]); // Очистити пропуски
+                return;
+            }
+
             try {
-                const timeToSkip = await fetchTimeToSkip(currentPath, currentName);
-                console.log('Fetched timeToSkip:', timeToSkip);
+                const rawTimeToSkip = await fetchDefaultBookmarks(id);
+                const timeToSkip = rawTimeToSkip.map(({ start_time_ms, end_time_ms, id }) => ({
+                    start: start_time_ms,
+                    end: end_time_ms,
+                    id: id
+                }));
                 currentTimeToSkip.current = timeToSkip;
-                currentPathRef.current = currentPath;
-                currentNameRef.current = currentName;
-                renderTimeSkips(timeToSkip); // Рендерити пропуски
+                renderTimeSkips(currentTimeToSkip.current); // Рендерити пропуски
             } catch (error) {
                 console.error(`Error fetching timeToSkip: ${error.message}`);
+                currentTimeToSkip.current = [];
+                renderTimeSkips([]); // Очистити пропуски
             }
         };
-
-        if (currentPath && currentName) {
-            loadTimeToSkip();
-        }
-    }, [currentPath, currentName]);
+        
+        loadTimeToSkip(episodeId);
+    }, [currentFile]);
 
     useEffect(() => {
         if (playerInstance.current) {
@@ -247,7 +255,6 @@ const PlayerControls = ({
                 const skipInterval = currentTimeToSkip.current.find(
                     interval => currentTime >= interval.start && currentTime < interval.end
                 );
-
                 if (skipInterval) {
                     console.log(`Skipping to ${skipInterval.end}`);
                     playerInstance.current.currentTime(skipInterval.end);

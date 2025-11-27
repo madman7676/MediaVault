@@ -1,9 +1,8 @@
 import os
 import json
-from mv_back.db.utils import *
-from mv_back.thumbnails import get_or_create_thumbnail
 from datetime import datetime
 
+from mv_back.db.utils import *
 
 # --------------------------------------------------------------
 # Formatters (допоміжні функції для форматування)
@@ -28,19 +27,17 @@ def format_media_with_tags(media, tags=None):
         return None
     
     # Якщо це результат з select_all_media_with_tags (з JSON тегами)
-    if media[7] is not None:
-        tags = []
-        if media[7]:
+    if tags is None and len(media) > 7:
+        if media[7] and media[7] != None:
             tags = [tag['value'] for tag in json.loads(media[7])]
     
     return {
         'id': media[0],
         'title': media[1],
-        'tags': tags if tags is not None else [],
-        'thumbnailUrl': get_or_create_thumbnail(media[2]) if media[2] else None,
+        'tags': tags,
         'path': media[2],
-        'count': media[8],
-        'type': media[9],
+        'count': media[8] if len(media) > 8 else None,
+        'type': media[9] if len(media) > 9 else None,
         'auto_added': media[3],
         'crD': media[4],
         'modD': media[5],
@@ -60,30 +57,61 @@ def insert_to_Media_table(cursor, path):
     cursor.execute(query, (id, title, path, datetime.now()))
     return id
 
-
 # --------------------------------------------------------------
 # Selects (тепер повертають відформатовані дані)
 
 def select_media_by_id(cursor, media_id):
-    cursor.execute('SELECT * FROM Media WHERE id = ? AND delD IS NULL', (media_id,))
+    
+    query = '''
+        SELECT 
+            m.*,
+            NULL as tags_json,
+            COALESCE(
+                (SELECT MAX(position) 
+                FROM MovieItem mi 
+                WHERE mi.primary_collection_id = m.id 
+                AND mi.delD IS NULL),
+                (SELECT MAX(season_number) 
+                FROM Season s 
+                WHERE s.primary_series_id = m.id 
+                AND s.delD IS NULL),
+                0
+            ) AS [count],
+            CASE 
+                WHEN EXISTS (
+                    SELECT 1 
+                    FROM MovieItem mi
+                    WHERE mi.primary_collection_id = m.id 
+                    AND mi.delD IS NULL
+                ) THEN 'movie'
+                WHEN EXISTS (
+                    SELECT 1 
+                    FROM Season s
+                    WHERE s.primary_series_id = m.id 
+                    AND s.delD IS NULL
+                ) THEN 'series'
+                ELSE 'unknown'
+            END AS type
+        FROM Media m
+        WHERE m.id = ? AND m.delD IS NULL;
+    '''
+    
+    cursor.execute(query, (media_id,))
     result = cursor.fetchone()
-    return format_media(result)
+    return format_media_with_tags(result)
 
 def select_all_media(cursor):
     cursor.execute('SELECT * FROM Media WHERE delD IS NULL ORDER BY title;')
     results = cursor.fetchall()
     return [format_media(row) for row in results] if results else []
 
-def select_all_media_with_tags(cursor):
-    query = '''
+def select_all_media_with_tags(cursor, tags=None, filter_mode='include'):
+    """Повертає всі media з тегами, з можливістю фільтрації за тегами"""
+    
+    tags_condition = build_tag_filter(tags, filter_mode)
+    query = f'''
         SELECT 
-            m.id, 
-            m.title, 
-            m.[path], 
-            m.auto_added, 
-            m.crD, 
-            m.modD, 
-            m.delD,
+            m.*,
             JSON_QUERY((
                 SELECT tag.[name] AS [value]
                 FROM Xref_Tag2Media ref
@@ -121,10 +149,10 @@ def select_all_media_with_tags(cursor):
                 ELSE 'unknown'
             END AS type
         FROM Media m
-        WHERE m.delD IS NULL
+        WHERE m.delD IS NULL {tags_condition['query']}
         ORDER BY m.title;
     '''
-    cursor.execute(query)
+    cursor.execute(query, tags_condition['params'])
     results = cursor.fetchall()
     return [format_media_with_tags(row) for row in results] if results else []
 

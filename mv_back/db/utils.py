@@ -23,6 +23,59 @@ def get_db():
         g.db = pyodbc.connect(DB_CONNECTION_STRING)
     return g.db
 
+def build_tag_filter(tags, mode):
+        """mode: 'include' або 'exclude'."""
+        
+        # 3 і 4 — коли тегів немає
+        if not tags:
+            if mode == "include":
+                return {
+                    'query': "",
+                    'params': []
+                }
+            else:  # exclude і тегів немає
+                return {
+                    'query': """
+                        AND m.id NOT IN (
+                            SELECT media_id
+                            FROM Xref_Tag2Media xt
+                            WHERE xt.delD IS NULL
+                        )
+                    """,
+                    'params': []
+                }
+
+        # 1 і 2 — коли теги є
+        placeholders = ", ".join("?" for _ in tags)
+
+        if mode == "include":
+            return {
+                'query': f"""
+                    AND m.id IN (
+                        SELECT xt.media_id
+                        FROM Xref_Tag2Media xt
+                        JOIN Tag tg ON tg.id = xt.tag_id AND tg.delD IS NULL
+                        WHERE xt.delD IS NULL
+                        AND tg.[name] IN ({placeholders})
+                    )
+                """,
+                'params': tags
+            }
+
+        else:  # mode == exclude
+            return {
+                'query': f"""
+                    AND m.id NOT IN (
+                        SELECT xt.media_id
+                        FROM Xref_Tag2Media xt
+                        JOIN Tag tg ON tg.id = xt.tag_id AND tg.delD IS NULL
+                        WHERE xt.delD IS NULL
+                        AND tg.[name] IN ({placeholders})
+                    )
+                """,
+                'params': tags
+            }
+
 # --------------------------------------------------------------
 # Context manager для роботи з БД
 

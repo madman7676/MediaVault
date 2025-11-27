@@ -10,7 +10,7 @@ def error_response(message, status=400):
 # --------------------------------------------------------------
 # GETs
 
-@thumbnails.route('/api/thumbnail', methods=['GET'])
+@thumbnails.route('/', methods=['GET'])
 def get_thumbnail():
     folder_or_file_path = request.args.get('folder_name')
     if not folder_or_file_path:

@@ -25,18 +25,16 @@ const TypeFilterButtons = ({ filter, handleFilterChange }) => {
                     Movies
                 </Button>
                 <Button 
-                    onClick={() => handleFilterChange('series_combined')}
+                    onClick={() => handleFilterChange('series')}
                     color={
-                        filter === 'series_combined' || 
-                        filter === 'series' || 
-                        filter === 'online_series' ? 'primary' : 'default'
+                        filter === 'series' ? 'primary' : 'default'
                     }
                 >
                     Series
                 </Button>
             </ButtonGroup>
 
-            {filter === 'series_combined' && (
+            {/* {filter === 'series' && (
                 <div className="series-submenu" style={{ 
                     position: 'absolute', 
                     top: '3.39rem', 
@@ -46,7 +44,7 @@ const TypeFilterButtons = ({ filter, handleFilterChange }) => {
                     <MenuItem onClick={() => handleFilterChange('series')}>Local</MenuItem>
                     <MenuItem onClick={() => handleFilterChange('online_series')}>Online</MenuItem>
                 </div>
-            )}
+            )} */}
         </>
     );
 };

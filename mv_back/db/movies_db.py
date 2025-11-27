@@ -5,7 +5,6 @@ from datetime import datetime
 
 from mv_back.db.utils import *
 from mv_back.db.media_db import *
-from mv_back.thumbnails import get_or_create_thumbnail
 
 
 # --------------------------------------------------------------
@@ -50,8 +49,9 @@ def format_movie_with_tags(movie):
         'id': movie[0],
         'title': movie[1],
         'path': movie[2],
+        'count': movie[8],
+        'type': movie[9],
         'tags': tags,
-        'img_path': get_or_create_thumbnail(movie[2]),
         'auto_added': movie[3],
         'crD': movie[4],
         'modD': movie[5],
@@ -116,7 +116,7 @@ def select_movie_collection_by_id(cursor, movie_id):
     
 def select_movie_items_by_collection_id(cursor, movie_id):
     query = '''
-        SELECT id, primary_collection_id, position, title, path 
+        SELECT id, primary_collection_id, position, title, [path]
         FROM MovieItem 
         WHERE primary_collection_id = ? AND delD IS NULL
         ORDER BY position;
@@ -135,8 +135,12 @@ def select_movie_item_by_id(cursor, item_id):
     row = cursor.fetchone()
     return format_movie_item(row)
 
-def select_all_movies_with_tags(cursor):
-    query = '''
+def select_all_movies_with_tags(cursor, tags=None, filter_mode='include'):
+    """Повертає всі movies з тегами, з можливістю фільтрації за тегами"""
+    
+    tags_condition = build_tag_filter(tags, filter_mode)
+    
+    query = f'''
         SELECT m.id, m.title, m.[path], m.auto_added, m.crD, m.modD, m.delD,
             JSON_QUERY((
                 SELECT tag.[name] AS [value]
@@ -144,13 +148,39 @@ def select_all_movies_with_tags(cursor):
                 left join Tag on tag.id = ref.tag_id AND tag.delD IS NULL
                 WHERE ref.media_id = m.id AND ref.delD IS NULL
                 FOR JSON PATH
-            )) AS tags_json
+            )) AS tags_json,
+			COALESCE(
+                (SELECT MAX(position) 
+                FROM MovieItem mi 
+                WHERE mi.primary_collection_id = m.id 
+                AND mi.delD IS NULL),
+                (SELECT MAX(season_number) 
+                FROM Season s 
+                WHERE s.primary_series_id = m.id 
+                AND s.delD IS NULL),
+                0
+            ) AS [count],
+            CASE 
+                WHEN EXISTS (
+                    SELECT 1 
+                    FROM MovieItem mi
+                    WHERE mi.primary_collection_id = m.id 
+                    AND mi.delD IS NULL
+                ) THEN 'movie'
+                WHEN EXISTS (
+                    SELECT 1 
+                    FROM Season s
+                    WHERE s.primary_series_id = m.id 
+                    AND s.delD IS NULL
+                ) THEN 'series'
+                ELSE 'unknown'
+            END AS type
         FROM Media m
         INNER JOIN Movie mv on mv.media_id = m.id AND mv.delD IS NULL
-        WHERE m.delD IS NULL
+        WHERE m.delD IS NULL {tags_condition['query']}
         ORDER BY m.title;
     '''
-    cursor.execute(query)
+    cursor.execute(query, tags_condition['params'])
     results = cursor.fetchall()
     return [format_movie_with_tags(row) for row in results] if results else []
 

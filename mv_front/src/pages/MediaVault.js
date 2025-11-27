@@ -17,13 +17,13 @@ import { initialState, ACTIONS } from '../constants/mediaConstants';
 import Bookmarks from '../components/Main/Bookmarks';
 import GridCollection from '../components/Main/GridCollection';
 import SettingsFloatButton from '../components/Main/SettingsFloatButton';
+import LoadingSpinnerOverlay from '../components/Main/LoadingSpinnerOverlay';
 
 import mediaReducer from '../hooks/useMediaReducer';
 import useOnlineSeriesForm from '../hooks/useOnlineSeriesForm';
 import useCollectionsLoader from '../hooks/useCollectionsLoader';
 import useTagsManager from '../hooks/useTagsManager';
 import { useMediaVaultHandlers } from '../hooks/useMediaVaultHandlers';
-import { useCollectionFiltering } from '../hooks/useCollectionFilltering';
 import { useLetterNavigation } from '../hooks/useLetterNavigation';
 import useLocalStorage from '../hooks/useLocalStorage';
 
@@ -71,7 +71,7 @@ const MediaVault = () => {
   } = useOnlineSeriesForm();
 
   // Завантажуємо колекції
-  useCollectionsLoader(dispatch);
+  useCollectionsLoader(dispatch, filter, selectedTags, filterMode);
 
   // Управління тегами
   const {
@@ -85,9 +85,7 @@ const MediaVault = () => {
   const handleClearTags = useCallback(() => {
     dispatch({ type: ACTIONS.SET_SELECTED_TAGS, payload: [] });
   }, []);
-
-  useCollectionFiltering(collections, filter, selectedTags, filterMode, dispatch);
-
+  
   // Обробники подій з useCallback
   const handleCloseOnlineSeriesDialog = useCallback(() => {
     dispatch({ type: ACTIONS.TOGGLE_ONLINE_SERIES_DIALOG });
@@ -107,9 +105,6 @@ const MediaVault = () => {
   }, [formData, handleCloseOnlineSeriesDialog]);
 
   const { letters, letterRefs, scrollToLetter } = useLetterNavigation(filteredCollections);
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
 
   return (
     <ThemeProvider theme={darkTheme}>
@@ -202,6 +197,7 @@ const MediaVault = () => {
           </div>
         </Box>
       </Box>
+      <LoadingSpinnerOverlay loading={loading} error={error} />
     </ThemeProvider>
   );
 };

@@ -21,6 +21,7 @@ const palette = {
         secondary: '#6c757d',
         lightPrimary: '#ffffff',
         lightSecondary: '#bbbbbb',
+        highlight: '#ffa500',
     },
     movie: {
         background: 'green',

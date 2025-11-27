@@ -1,9 +1,9 @@
 import config from '../config.json';
 import axios from 'axios';
 
-const API_BASE_URL = `${config.API_BASE_URL}/api/media`;
+const API_BASE_URL = `${config.API_BASE_URL}/api/series`;
 
-export const fetchMedia = async (tags = '', filterMode = 'include') => {
+export const fetchSeries = async (tags = '', filterMode = 'include') => {
     try {
         const response = await axios.get(`${API_BASE_URL}/`, {
             params: {
@@ -18,12 +18,12 @@ export const fetchMedia = async (tags = '', filterMode = 'include') => {
     }
 };
 
-export const fetchMediaById = async (mediaId) => {
+export const fetchSeriesSeasonsAndEpisodesById = async (serieId) => {
     try {
-        const response = await axios.get(`${API_BASE_URL}/${mediaId}`);
+        const response = await axios.get(`${API_BASE_URL}/${serieId}/episodes`);
         return response.data;
     } catch (error) {
-        console.error(`Failed to fetch media with ID ${mediaId}: ${error.message}`);
+        console.error(`Failed to fetch media by ID: ${error.message}`);
         throw error;
     }
 };

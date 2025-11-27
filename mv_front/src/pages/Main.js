@@ -10,7 +10,7 @@ import {
 
 import CatalogCard from '../components/CatalogCard';
 
-import { fetchAllMedia } from '../api/mediaAPI';
+// import { fetchAllMedia } from '../api/mediaAPI';
 
 const darkTheme = createTheme({
   palette: {
@@ -35,40 +35,6 @@ const Main = () => {
   const [selectedItems, setSelectedItems] = useState([]);
 
   const letterRefs = useRef({});
-
-  useEffect(() => {
-    let mounted = true;
-    const load = async () => {
-      setLoading(true);
-      try {
-        const res = await fetchAllMedia();
-        // new API may return shape: { data: [...] } (or legacy plain array)
-        let items = [];
-        // use optional chaining and support multiple shapes robustly
-        if (Array.isArray(res)) {
-          items = res;
-        } else if (Array.isArray(res?.data)) {
-          items = res.data;
-        } else if (Array.isArray(res?.data?.data)) {
-          items = res.data.data;
-        } else if (Array.isArray(res?.data?.media)) {
-          items = res.data.media;
-        } else {
-          items = [];
-        }
-
-        if (!mounted) return;
-        setCollections(items);
-      } catch (e) {
-        if (!mounted) return;
-        setError(e.message || String(e));
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    };
-    load();
-    return () => { mounted = false; };
-  }, []);
 
   const handleItemSelection = useCallback((id) => {
     setSelectedItems(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);

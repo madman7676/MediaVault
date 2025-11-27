@@ -9,12 +9,18 @@ media = Blueprint("media", __name__, url_prefix="/api/media")
 
 @media.route(f'/', methods=['GET'])
 def get_all_media_with_tags_route():
-    return get_all_media_with_tags()
+    tags_list = request.args.get('tags', '')
+    tags = tags_list.split(',') if tags_list else None
+    filter_mode = request.args.get('filter_mode', 'include')  # 'any' або 'all'
+    return get_all_media_with_tags(tags, filter_mode)
+
+# @media.route(f'/<media_id>', methods=['GET'])
+# def get_media_data_by_id_route(media_id):
+#     return get_media_with_tags_by_id(media_id)
 
 @media.route(f'/<media_id>', methods=['GET'])
 def get_media_data_by_id_route(media_id):
-    return get_media_with_tags_by_id(media_id)
-
+    return get_media_by_id(media_id)
 
 #--------------------------------------------------------------
 #POSTs

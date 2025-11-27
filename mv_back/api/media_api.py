@@ -5,6 +5,14 @@ from mv_back.db.media_db import *
 # --------------------------------------------------------------
 # GETs
 
+def get_all_media_with_tags(tags=None, filter_mode='include'):
+    try:
+        with db_connection() as cursor:
+            all_media = select_all_media_with_tags(cursor, tags, filter_mode)
+            return  all_media, 200
+    except Exception as e:
+        return {"error": str(e)}, 500
+
 def get_media_with_tags_by_id(media_id):
     try:
         with db_connection() as cursor:
@@ -12,15 +20,18 @@ def get_media_with_tags_by_id(media_id):
             if not media_data:
                 return {"error": "Media not found", 'id': media_id}, 404
             
-            return {"data": media_data}, 200
+            return media_data, 200
     except Exception as e:
         return {"error": str(e)}, 500
 
-def get_all_media_with_tags():
+def get_media_by_id(media_id):
     try:
         with db_connection() as cursor:
-            all_media = select_all_media_with_tags(cursor)
-            return  all_media, 200
+            media_data = select_media_by_id(cursor, media_id)
+            if not media_data:
+                return {"error": "Media not found", 'id': media_id}, 404
+            
+            return media_data, 200
     except Exception as e:
         return {"error": str(e)}, 500
 

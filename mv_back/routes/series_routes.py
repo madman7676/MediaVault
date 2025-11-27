@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, request
 from mv_back.api.series_api import *
 
 series = Blueprint("series", __name__, url_prefix="/api/series")
@@ -7,13 +7,11 @@ series = Blueprint("series", __name__, url_prefix="/api/series")
 #--------------------------------------------------------------
 # GETs
 
-@series.route("/all", methods=["GET"])
-def get_all_series_route():
-    return get_all_series()
-
-@series.route("/all_with_tags", methods=["GET"])
+@series.route("/", methods=["GET"])
 def get_all_series_with_tags_route():
-    return get_all_series_with_tags()
+    tags = request.args.getlist('tags[]')
+    filter_mode = request.args.get('filter_mode', 'include')  # 'any' або 'all'
+    return get_all_series_with_tags(tags, filter_mode)
 
 @series.route("/<media_id>", methods=["GET"])
 def get_serie_by_media_id_route(media_id):
@@ -26,3 +24,7 @@ def get_all_seasons_by_serie_id_route(serie_id):
 @series.route("/season/<season_id>/episodes", methods=["GET"])
 def get_all_episodes_by_season_id_route(season_id):
     return get_all_episodes_by_season_id(season_id)
+
+@series.route("/<serie_id>/episodes", methods=["GET"])
+def get_all_seasons_and_episodes_by_serie_id_route(serie_id):
+    return get_all_seasons_and_episodes_by_serie_id(serie_id)

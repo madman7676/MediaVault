@@ -1,9 +1,9 @@
 import config from '../config.json';
 import axios from 'axios';
 
-const API_BASE_URL = `${config.API_BASE_URL}/api/media`;
+const API_BASE_URL = `${config.API_BASE_URL}/api/movie`;
 
-export const fetchMedia = async (tags = '', filterMode = 'include') => {
+export const fetchMovies = async (tags = '', filterMode = 'include') => {
     try {
         const response = await axios.get(`${API_BASE_URL}/`, {
             params: {
@@ -18,12 +18,12 @@ export const fetchMedia = async (tags = '', filterMode = 'include') => {
     }
 };
 
-export const fetchMediaById = async (mediaId) => {
+export const fetchMovieItemsById = async (movieId) => {
     try {
-        const response = await axios.get(`${API_BASE_URL}/${mediaId}`);
+        const response = await axios.get(`${API_BASE_URL}/collection/${movieId}/movie_items`);
         return response.data;
     } catch (error) {
-        console.error(`Failed to fetch media with ID ${mediaId}: ${error.message}`);
+        console.error(`Failed to fetch media by ID: ${error.message}`);
         throw error;
     }
 };

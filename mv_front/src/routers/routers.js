@@ -12,8 +12,8 @@ const AppRouter = () => {
                 {/* Головна сторінка */}
                 <Route path="/" element={<MediaVault />} />
 
-                {/* Сторінка плеєра з параметром itemId */}
-                <Route path="/player/:itemId" element={<Player />} />
+                {/* Сторінка плеєра з параметром mediaId */}
+                <Route path="/player/:mediaId" element={<Player />} />
 
                 <Route path='/test' element={<Main />}/>
             </Routes>
