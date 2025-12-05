@@ -1,73 +1,26 @@
 // TimeToSkipSettingsMenu.js: Component for managing timeToSkip intervals
 import React, { useState, useEffect, useRef } from 'react';
-import { Box, TextField, Typography, List, ListItem, IconButton, Tooltip } from '@mui/material';
-import { Check, Delete, Edit, Add, Close, Save, KeyboardTab, Pause, Cancel, SaveAlt, ArrowUpward, ArrowDownward } from '@mui/icons-material';
-import { updateTimeToSkip, bulkUpdateTimeToSkip } from '../../api/metadataAPI';
+import { Box, Typography, List, ListItem, IconButton } from '@mui/material';
+import { Add, Close, Save, SaveAlt, } from '@mui/icons-material';
 
-const containerStyles = {
-    position: 'absolute',
-    padding: 2,
-    backgroundColor: 'white',
-    color: 'black',
-    borderRadius: 1,
-    width: 400,
-    maxHeight: '80%',
-    overflowY: 'auto',
-    zIndex: 1000,
-    boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)',
-};
+import { processBookmarksChangeLog, processBulkUpdateforBookmarksChangeLog } from '../../api/bookmarksAPI';
 
-const closeButtonStyles = {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    backgroundColor: 'red',
-    color: 'white',
-    '&:hover': {
-        backgroundColor: 'darkred',
-    },
-};
+import IntervalsForm from './components2TimeToSkipSettingMenu/IntervalsForm';
+import IntervalItem from './components2TimeToSkipSettingMenu/IntervalItem';
+import { containerStyles, closeButtonStyles } from '../../styles/TimeToSkipSettingsMenu.styles';
 
-const saveButtonStyles = {
-    backgroundColor: 'lightblue',
-    '&:hover': {
-        backgroundColor: 'transparent',
-        border: '1px solid lightblue',
-    },
-};
+import { formatTime, parseTimeInput, sortIntervals } from '../../utils/timeUtils';
+import { useBookmarksChangeLog } from '../../hooks/playerHooks/useBookmarksChangeLog';
 
-const buttonSizeStyles = {
-    minWidth: '18px',
-    minHeight: '18px',
-    padding: '0', // Видаляє додаткові внутрішні відступи
-    margin: '0', // Видаляє зовнішні відступи
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    maxHeight: '18px',
-    maxWidth: '18px'
-};
 
-const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-};
-
-const parseTimeInput = (input) => {
-    const parts = input.split(':').map((part) => parseInt(part, 10));
-    if (parts.length === 2) {
-        return parts[0] * 60 + parts[1];
-    }
-    return parseInt(input, 10);
-};
-
-const TimeToSkipSettingsMenu = ({ intervals: initialIntervals, onIntervalsChange, onClose, currentPath, currentName }) => {
+const TimeToSkipSettingsMenu = ({ intervals: initialIntervals, onIntervalsChange, onClose, currentEpisodeId }) => {
     const [intervals, setIntervals] = useState(initialIntervals);
     const [editingIndex, setEditingIndex] = useState(null);
     const [editInterval, setEditInterval] = useState({ start: '', end: '' });
     const [isAdding, setIsAdding] = useState(false);
     const containerRef = useRef(null);
+    const { bookmarksChangeLog, setBookmarksChangeLog, manageBookmarksChangeLog } = useBookmarksChangeLog();
+
 
     useEffect(() => {
         setIntervals(initialIntervals);
@@ -83,31 +36,25 @@ const TimeToSkipSettingsMenu = ({ intervals: initialIntervals, onIntervalsChange
         }
     }, []);
 
-    const sortIntervals = (intervalsToSort) => {
-        return intervalsToSort.slice().sort((a, b) => a.start - b.start);
-    };
+    const handleAddInterval = (currentInterval) => {
+        if (currentInterval.start && currentInterval.end) {
+            const id = manageBookmarksChangeLog('CREATE', parseTimeInput(currentInterval.start), parseTimeInput(currentInterval.end));
 
-    const handleAddInterval = () => {
-        if (editInterval.start && editInterval.end) {
-            const updatedIntervals = sortIntervals([...intervals, { start: parseTimeInput(editInterval.start), end: parseTimeInput(editInterval.end) }]);
+            const updatedIntervals = sortIntervals([...intervals, { start: parseTimeInput(currentInterval.start), end: parseTimeInput(currentInterval.end), id }]);
             setIntervals(updatedIntervals);
             setEditInterval({ start: '', end: '' });
             setIsAdding(false);
+            setEditingIndex(null);
         }
     };
 
-    const handleCancel = () => {
-        setEditingIndex(null);
-        setEditInterval({ start: '', end: '' });
-        setIsAdding(false);
-    };
-
-    const handleSaveEdit = () => {
-        if (editingIndex !== null && editInterval.start && editInterval.end) {
+    const handleSaveEdit = (currentInterval) => {
+        if (editingIndex !== null && currentInterval.start && currentInterval.end) {
             const updatedIntervals = sortIntervals(intervals.map((interval, index) =>
-                index === editingIndex ? { start: parseTimeInput(editInterval.start), end: parseTimeInput(editInterval.end) } : interval
+                index === editingIndex ? { start: parseTimeInput(currentInterval.start), end: parseTimeInput(currentInterval.end), id: interval.id } : interval
             ));
             setIntervals(updatedIntervals);
+            manageBookmarksChangeLog('UPDATE', parseTimeInput(currentInterval.start), parseTimeInput(currentInterval.end), intervals[editingIndex].id);
             setEditingIndex(null);
             setEditInterval({ start: '', end: '' });
         }
@@ -116,7 +63,44 @@ const TimeToSkipSettingsMenu = ({ intervals: initialIntervals, onIntervalsChange
     const handleDeleteInterval = (index) => {
         const updatedIntervals = sortIntervals(intervals.filter((_, i) => i !== index));
         setIntervals(updatedIntervals);
-        onIntervalsChange(updatedIntervals);
+        // onIntervalsChange(updatedIntervals);
+        manageBookmarksChangeLog('DELETE', null, null, intervals[index].id);
+    };
+
+    const handleSaveToServer = async () => {
+        try {
+            const resp = await processBookmarksChangeLog(currentEpisodeId, bookmarksChangeLog);
+            console.log('Intervals saved to server successfully.');
+            // Оновлення локальних інтервалів з новими ID для створених інтервалів
+            let tempIdToNewIdMap = {};
+            resp.forEach(result => {
+                if (result.status === 'success' && result.action === 'CREATE') {
+                    tempIdToNewIdMap[result.id] = result.result.id;
+                }
+            });
+            const updatedIntervals = intervals.map(interval => {
+                if (interval.id.startsWith('Temp-') && tempIdToNewIdMap[interval.id]) {
+                    return { ...interval, id: tempIdToNewIdMap[interval.id] };
+                }
+                return interval;
+            });
+            setIntervals(updatedIntervals);
+            onIntervalsChange(updatedIntervals); // Збереження локально після успішного збереження на сервері
+            setBookmarksChangeLog({});
+        } catch (error) {
+            console.error('Failed to save intervals to server:', error);
+        }
+    };
+
+    const handleBulkUpdate = async () => { // Нотатка: Оновити функцію під нову архітектуру
+        try {
+            await processBulkUpdateforBookmarksChangeLog(currentEpisodeId, bookmarksChangeLog);
+            console.log('Intervals updated successfully.');
+            onIntervalsChange(intervals);
+            setBookmarksChangeLog({});
+        } catch (error) {
+            console.error('Failed to update intervals:', error);
+        }
     };
 
     const handleEditInterval = (index) => {
@@ -124,91 +108,6 @@ const TimeToSkipSettingsMenu = ({ intervals: initialIntervals, onIntervalsChange
         setEditInterval({ start: formatTime(interval.start), end: formatTime(interval.end) });
         setEditingIndex(index);
     };
-
-    const handleSaveToServer = async () => {
-        try {
-            await updateTimeToSkip(currentPath, currentName, intervals);
-            console.log('Intervals saved to server successfully.');
-            onIntervalsChange(intervals); // Збереження локально після успішного збереження на сервері
-        } catch (error) {
-            console.error('Failed to save intervals to server:', error);
-        }
-    };
-
-    const handleBulkUpdate = async () => {
-        try {
-            await bulkUpdateTimeToSkip(currentPath, currentName, intervals);
-            console.log('Intervals updated successfully.');
-            onIntervalsChange(intervals); // Збереження локально після успішного збереження на сервері
-        } catch (error) {
-            console.error('Failed to update intervals:', error);
-        }
-    };
-
-    const handleSetToStart = (field) => {
-        setEditInterval((prev) => ({ ...prev, [field]: '0:00' }));
-    };
-
-    const handleSetToCurrentTime = (field) => {
-        const videoElement = document.querySelector('.video-js video');
-        if (videoElement) {
-            const currentTime = Math.floor(videoElement.currentTime);
-            setEditInterval((prev) => ({ ...prev, [field]: formatTime(currentTime) }));
-        }
-    };
-
-    const handleSetToEnd = (field) => {
-        const videoElement = document.querySelector('.video-js video');
-        if (videoElement) {
-            const duration = Math.floor(videoElement.duration);
-            setEditInterval((prev) => ({ ...prev, [field]: formatTime(duration) }));
-        }
-    };
-
-    const handleIncrementTime = (field, increment) => {
-        const videoElement = document.querySelector('.video-js video');
-        const duration = videoElement ? Math.floor(videoElement.duration) : 0;
-        setEditInterval((prev) => {
-            let currentTime = parseTimeInput(prev[field]);
-            if (isNaN(currentTime)) currentTime = 0; // Обробка порожнього поля
-            let newTime = currentTime + increment;
-            if (newTime < 0) newTime = 0;
-            if (newTime > duration) newTime = duration;
-            return { ...prev, [field]: formatTime(newTime) };
-        });
-    };
-
-    // Додаємо функцію для обробки кнопки "+1:30"
-    const handleAddOneThirty = () => {
-        const startSeconds = parseTimeInput(editInterval.start);
-        if (!isNaN(startSeconds)) {
-            const newEnd = startSeconds + 90;
-            setEditInterval((prev) => ({
-                ...prev,
-                end: formatTime(newEnd)
-            }));
-        }
-    };
-
-    const renderQuickButtons = (field) => (
-        <Box display="inline-flex" gap={1} justifyContent="center" alignItems="center">
-            <Tooltip title="To Start">
-                <IconButton onClick={() => handleSetToStart(field)} sx={buttonSizeStyles}>
-                    <KeyboardTab sx={{ transform: 'rotate(180deg)' }} />
-                </IconButton>
-            </Tooltip>
-            <Tooltip title="Current Time">
-                <IconButton onClick={() => handleSetToCurrentTime(field)} sx={buttonSizeStyles}>
-                    <Pause />
-                </IconButton>
-            </Tooltip>
-            <Tooltip title="To End">
-                <IconButton onClick={() => handleSetToEnd(field)} sx={buttonSizeStyles}>
-                    <KeyboardTab />
-                </IconButton>
-            </Tooltip>
-        </Box>
-    );
 
     return (
         <Box ref={containerRef} sx={containerStyles}>
@@ -222,165 +121,36 @@ const TimeToSkipSettingsMenu = ({ intervals: initialIntervals, onIntervalsChange
                 {intervals.map((interval, index) => (
                     <ListItem key={index} divider>
                         {editingIndex === index ? (
-                            <Box display="flex" gap={0} alignItems="flex-start" width="100%" flexDirection="column">
-                                {/* Start column */}
-                                <Box display="flex" flexDirection="row" alignItems="center" gap={2}>
-                                    <Box display="flex" alignItems="center">
-                                        <TextField
-                                            label="Start"
-                                            variant="outlined"
-                                            size="small"
-                                            value={editInterval.start}
-                                            onChange={(e) => setEditInterval({ ...editInterval, start: e.target.value })}
-                                        />
-                                        <Box display="flex" flexDirection="column">
-                                            <Tooltip title="Increment Time">
-                                                <IconButton onClick={() => handleIncrementTime("start", 1)} sx={buttonSizeStyles}>
-                                                    <ArrowUpward />
-                                                </IconButton>
-                                            </Tooltip>
-                                            <Tooltip title="Decrement Time">
-                                                <IconButton onClick={() => handleIncrementTime("start", -1)} sx={buttonSizeStyles}>
-                                                    <ArrowDownward />
-                                                </IconButton>
-                                            </Tooltip>
-                                        </Box>
-                                        <Box display="flex" alignItems="center" ml={2}>
-                                            <TextField
-                                                label="End"
-                                                variant="outlined"
-                                                size="small"
-                                                value={editInterval.end}
-                                                onChange={(e) => setEditInterval({ ...editInterval, end: e.target.value })}
-                                            />
-                                            <Box display="flex" flexDirection="column">
-                                                <Tooltip title="Increment Time">
-                                                    <IconButton onClick={() => handleIncrementTime("end", 1)} sx={buttonSizeStyles}>
-                                                        <ArrowUpward />
-                                                    </IconButton>
-                                                </Tooltip>
-                                                <Tooltip title="Decrement Time">
-                                                    <IconButton onClick={() => handleIncrementTime("end", -1)} sx={buttonSizeStyles}>
-                                                        <ArrowDownward />
-                                                    </IconButton>
-                                                </Tooltip>
-                                            </Box>
-                                        </Box>
-                                    </Box>
-                                </Box>
-                                {/* Горизонтальний flex-контейнер для кнопок */}
-                                <Box display="flex" flexDirection="row" alignItems="center" gap={3}>
-                                    <Box ml={3} display="flex" flexDirection="column">{renderQuickButtons('start')}</Box>
-                                    <Box display="flex" flexDirection="column" alignItems="center" mt={1} ml={1.5}>
-                                        <Tooltip title="Set End to Start + 1:30">
-                                            <IconButton onClick={handleAddOneThirty} sx={{ ...buttonSizeStyles, fontSize: '0.8rem', border: '1px solid #aaa', minHeight: 32, minWidth: 40 }}>
-                                                +1:30
-                                            </IconButton>
-                                        </Tooltip>
-                                    </Box>
-                                    <Box ml={2} display="flex" flexDirection="column">{renderQuickButtons('end')}</Box>
-                                </Box>
-                                {/* Save/Cancel column */}
-                                <Box display="flex" justifyContent="flex-end" flexDirection="row" gap={1} mt={1} width="100%">
-                                    <IconButton onClick={handleCancel} color="error" sx={saveButtonStyles}>
-                                        <Cancel />
-                                    </IconButton>
-                                    <IconButton onClick={handleSaveEdit} color="primary" sx={saveButtonStyles}>
-                                        <Check />
-                                    </IconButton>
-                                </Box>
-                            </Box>
+                            <IntervalsForm
+                                isAdding={false}
+                                editInterval={{ start: formatTime(interval.start), end: formatTime(interval.end) }}
+                                setEditInterval={setEditInterval}
+                                handleAddInterval={handleAddInterval}
+                                handleSaveEdit={handleSaveEdit}
+                                setEditingIndex={setEditingIndex}
+                                setIsAdding={setIsAdding}
+                            />
                         ) : (
-                            <>
-                                <Typography>
-                                    {formatTime(interval.start)} - {formatTime(interval.end)}
-                                </Typography>
-                                <IconButton
-                                    onClick={() => handleEditInterval(index)}
-                                    sx={{ marginLeft: 'auto' }}
-                                >
-                                    <Edit />
-                                </IconButton>
-                                <IconButton
-                                    onClick={() => handleDeleteInterval(index)}
-                                    color="error"
-                                >
-                                    <Delete />
-                                </IconButton>
-                            </>
+                            <IntervalItem 
+                                interval={interval} 
+                                index={index} 
+                                handleEditInterval={handleEditInterval} 
+                                handleDeleteInterval={handleDeleteInterval} 
+                            />
                         )}
                     </ListItem>
                 ))}
                 {isAdding && (
                     <ListItem>
-                        <Box display="flex" gap={0} alignItems="flex-start" width="100%" flexDirection="column">
-                            {/* Start column */}
-                            <Box display="flex" flexDirection="row" alignItems="center" gap={2}>
-                                <Box display="flex" alignItems="center">
-                                    <TextField
-                                        label="Start"
-                                        variant="outlined"
-                                        size="small"
-                                        value={editInterval.start}
-                                        onChange={(e) => setEditInterval({ ...editInterval, start: e.target.value })}
-                                    />
-                                    <Box display="flex" flexDirection="column" ml={1}>
-                                        <Tooltip title="Increment Time">
-                                            <IconButton onClick={() => handleIncrementTime("start", 1)} sx={buttonSizeStyles}>
-                                                <ArrowUpward />
-                                            </IconButton>
-                                        </Tooltip>
-                                        <Tooltip title="Decrement Time">
-                                            <IconButton onClick={() => handleIncrementTime("start", -1)} sx={buttonSizeStyles}>
-                                                <ArrowDownward />
-                                            </IconButton>
-                                        </Tooltip>
-                                    </Box>
-                                </Box>
-                                <Box display="flex" alignItems="center">
-                                    <TextField
-                                        label="End"
-                                        variant="outlined"
-                                        size="small"
-                                        value={editInterval.end}
-                                        onChange={(e) => setEditInterval({ ...editInterval, end: e.target.value })}
-                                    />
-                                    <Box display="flex" flexDirection="column" ml={1}>
-                                        <Tooltip title="Increment Time">
-                                            <IconButton onClick={() => handleIncrementTime("end", 1)} sx={buttonSizeStyles}>
-                                                <ArrowUpward />
-                                            </IconButton>
-                                        </Tooltip>
-                                        <Tooltip title="Decrement Time">
-                                            <IconButton onClick={() => handleIncrementTime("end", -1)} sx={buttonSizeStyles}>
-                                                <ArrowDownward />
-                                            </IconButton>
-                                        </Tooltip>
-                                    </Box>
-                                </Box>
-                            </Box>
-                            {/* +1:30 button column */}
-                            <Box display="flex" flexDirection="row" alignItems="center" gap={3}>
-                                <Box ml={3} display="flex" flexDirection="column">{renderQuickButtons('start')}</Box>
-                                <Box display="flex" flexDirection="column" alignItems="center" mt={1} ml={1.5}>
-                                    <Tooltip title="Set End to Start + 1:30">
-                                        <IconButton onClick={handleAddOneThirty} sx={{ ...buttonSizeStyles, fontSize: '0.8rem', border: '1px solid #aaa', minHeight: 32, minWidth: 40 }}>
-                                            +1:30
-                                        </IconButton>
-                                    </Tooltip>
-                                </Box>
-                                <Box ml={2} display="flex" flexDirection="column">{renderQuickButtons('end')}</Box>
-                            </Box>
-                            {/* Save/Cancel column */}
-                            <Box display="flex" justifyContent="flex-end" flexDirection="row" gap={1} mt={1} width="100%">
-                                <IconButton onClick={handleCancel} color="error" sx={saveButtonStyles}>
-                                    <Cancel />
-                                </IconButton>
-                                <IconButton onClick={handleAddInterval} color="primary" sx={saveButtonStyles}>
-                                    <Check />
-                                </IconButton>
-                            </Box>
-                        </Box>
+                        <IntervalsForm
+                            isAdding={true}
+                            editInterval={editInterval}
+                            setEditInterval={setEditInterval}
+                            handleAddInterval={handleAddInterval}
+                            handleSaveEdit={handleSaveEdit}
+                            setEditingIndex={setEditingIndex}
+                            setIsAdding={setIsAdding}
+                        />
                     </ListItem>
                 )}
                 {!isAdding && editingIndex === null && (
@@ -388,7 +158,6 @@ const TimeToSkipSettingsMenu = ({ intervals: initialIntervals, onIntervalsChange
                         <IconButton onClick={() => setIsAdding(true)}>
                             <Add />
                         </IconButton>
-
                         <IconButton onClick={handleBulkUpdate} sx={{ marginLeft: 'auto' }}>
                             <SaveAlt />
                         </IconButton>

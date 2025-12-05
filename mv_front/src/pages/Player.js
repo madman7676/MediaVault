@@ -8,7 +8,7 @@ import { Settings, CheckBox, CheckBoxOutlineBlank } from '@mui/icons-material';
 import React, { useState, useEffect, useRef } from 'react';
 import { Box, Typography, Menu, MenuItem, Checkbox, IconButton } from '@mui/material';
 import { useParams } from 'react-router-dom';
-import { fetchMetadataById, fetchTimeToSkip, updateTimeToSkip } from '../api/metadataAPI';
+// import { fetchMetadataById, fetchTimeToSkip, updateTimeToSkip } from '../api/metadataAPI';
 import { fetchMediaById } from '../api/mediaAPI';
 import { fetchSeriesSeasonsAndEpisodesById } from '../api/seriesAPI';
 import { fetchMovieItemsById } from '../api/movieAPI';
@@ -114,7 +114,7 @@ const Player = () => {
 
     const handleUpdateTimeToSkip = async (updatedTimeToSkip) => {
         try {
-            await updateTimeToSkip(currentFile.url, mediaId, updatedTimeToSkip);
+            // await updateTimeToSkip(currentFile.url, mediaId, updatedTimeToSkip);
             currentTimeToSkipRef.current = updatedTimeToSkip;
             console.log('timeToSkip updated successfully');
         } catch (error) {

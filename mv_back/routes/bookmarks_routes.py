@@ -38,9 +38,9 @@ def insert_skiprange_route():
     data = request.json
     return insert_skiprange_direct(
         data['skipset_id'],
-        data['start_time_ms'],
-        data['end_time_ms'],
-        data.get('label', 'NULL')
+        data['start'],
+        data['end'],
+        data.get('label', '')
     )
 
 @bookmarks.route(f'/skipset', methods=['POST'])
@@ -61,18 +61,40 @@ def create_skiprange_route():
         data['skipset_id'],
         data['start_time_ms'],
         data['end_time_ms'],
-        data.get('label', 'NULL')
+        data.get('label', '')
+    )
+    
+@bookmarks.route(f'/episode/<episode_id>/default_skiprange', methods=['POST'])
+def create_default_skiprange_for_episode_route(episode_id):
+    data = request.json
+    return create_default_skiprange_for_episode(
+        episode_id,
+        data['start'],
+        data['end'],
+        data.get('label', '')
     )
 
 # --------------------------------------------------------------
 # UPDATEs
 
-@bookmarks.route(f'/skipset/<skipset_id>', methods=['POST'])
+@bookmarks.route(f'/skipset/<skipset_id>', methods=['PUT'])
 def update_skipset_route(skipset_id):
     data = request.json
     return update_skipset(skipset_id, data)
 
-@bookmarks.route(f'/skiprange/<skiprange_id>', methods=['POST'])
+@bookmarks.route(f'/skiprange/<skiprange_id>', methods=['PUT'])
 def update_skiprange_route(skiprange_id):
     data = request.json
-    return update_skiprange(skiprange_id, data)
+    parsed_data = {
+        'start_time_ms': data.get('start'),
+        'end_time_ms': data.get('end'),
+        'label': data.get('label')
+    }
+    return update_skiprange(skiprange_id, parsed_data)
+
+# --------------------------------------------------------------
+# DELETEs
+
+@bookmarks.route(f'/skiprange/<skiprange_id>', methods=['DELETE'])
+def delete_skiprange_route(skiprange_id):
+    return delete_skiprange(skiprange_id)

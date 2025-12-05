@@ -9,6 +9,7 @@ import TimeToSkipSettingsMenu from './TimeToSkipSettingsMenu';
 import { fetchTimeToSkip } from '../../api/metadataAPI';
 import { fetchDefaultBookmarks } from '../../api/bookmarksAPI';
 
+
 const PlayerControls = ({
     currentFile,
     onPlayerReady,
@@ -21,9 +22,8 @@ const PlayerControls = ({
     const settingsMenuRef = useRef(null);
     const timeToSkipMenuRef = useRef(null);
     const currentTimeToSkip = useRef([]);
-    const currentPathRef = useRef(null);
-    const currentNameRef = useRef(null);
     const [showTimeToSkipMenu, setShowTimeToSkipMenu] = useState(false);
+
 
     const handleOptionSelect = (option, menu) => {
         if (option === 'audioTracks') {
@@ -350,8 +350,7 @@ const PlayerControls = ({
                         renderTimeSkips(updatedIntervals); // Рендерити пропуски
                     }}
                     onClose={handleCloseTimeToSkipMenu}
-                    currentPath={currentPathRef.current}
-                    currentName={currentNameRef.current}
+                    currentEpisodeId={currentFile?.id}
                 />
             )}
         </div>

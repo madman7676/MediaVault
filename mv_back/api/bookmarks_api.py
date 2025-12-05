@@ -113,6 +113,22 @@ def insert_skiprange_direct(skipset_id, start_time_ms, end_time_ms, label='NULL'
     except Exception as e:
         return {"error": str(e)}, 500
 
+def create_default_skiprange_for_episode(episode_id, start, end, label='NULL'):
+    try:
+        with db_connection(commit=True) as cursor:
+            skipset = select_SkipSet_by_episode_id_and_name(cursor, episode_id, 'Default')
+            if not skipset:
+                skipset_id = insert_SkipSet_to_db(cursor, episode_id, 'SYSTEM', 'Default', 0, 1)
+            else:
+                skipset_id = skipset['id']
+            
+            skiprange_id = insert_SkipRange_to_db(cursor, skipset_id, start, end, label)
+            skiprange_data = select_SkipRange_by_id(cursor, skiprange_id)
+            
+            return skiprange_data, 201
+    except Exception as e:
+        return {"error": str(e)}, 500
+
 # --------------------------------------------------------------
 # UPDATEs
 
@@ -145,5 +161,24 @@ def update_skiprange(skiprange_id, new_skiprange):
             
             updated_skiprange = select_SkipRange_by_id(cursor, skiprange_id)
             return updated_skiprange, 200
+    except Exception as e:
+        return {"error": str(e)}, 500
+    
+
+# --------------------------------------------------------------
+# DELETEs
+
+def delete_skiprange(skiprange_id):
+    try:
+        with db_connection(commit=True) as cursor:
+            existing_skiprange = select_SkipRange_by_id(cursor, skiprange_id)
+            if not existing_skiprange:
+                return {"error": "SkipRange not found", 'id': skiprange_id}, 404
+            
+            rows_deleted = delete_SkipRange_by_id(cursor, skiprange_id)
+            if rows_deleted == 0:
+                return {"error": "No SkipRange deleted", 'id': skiprange_id}, 400
+            
+            return {"message": "SkipRange deleted successfully", 'id': skiprange_id}, 200
     except Exception as e:
         return {"error": str(e)}, 500

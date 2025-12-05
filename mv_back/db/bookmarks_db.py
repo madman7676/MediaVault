@@ -155,6 +155,15 @@ def update_SkipRange_by_id(cursor, skiprange_id, new_skiprange):
     values.append(skiprange_id)
     set_clause = ", ".join(fields)
     current_date = datetime.now()
-    query = f"UPDATE SkipRange SET {set_clause}, modD = {current_date} WHERE id = ? AND delD IS NULL"
+    query = f"UPDATE SkipRange SET {set_clause}, modD = '{current_date}' WHERE id = ? AND delD IS NULL"
     cursor.execute(query, tuple(values))
+    return cursor.rowcount
+
+# --------------------------------------------------------------
+# DELETEs
+
+def delete_SkipRange_by_id(cursor, skiprange_id):
+    current_date = datetime.now()
+    query = "UPDATE SkipRange SET delD = ? WHERE id = ? AND delD IS NULL"
+    cursor.execute(query, (current_date, skiprange_id))
     return cursor.rowcount

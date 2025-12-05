@@ -16,25 +16,25 @@ export const fetchTimeToSkip = async (path, name) => {
     }
 };
 
-export const updateTimeToSkip = async (path, name, timeToSkip) => {
-    try {
-        await axios.post(`${API_BASE_URL}/time_to_skip`, { path, name, timeToSkip });
-        return true;
-    } catch (error) {
-        console.error(`Failed to update timeToSkip: ${error.message}`);
-        throw error;
-    }
-};
+// export const updateTimeToSkip = async (path, name, timeToSkip) => {
+//     try {
+//         await axios.post(`${API_BASE_URL}/time_to_skip`, { path, name, timeToSkip });
+//         return true;
+//     } catch (error) {
+//         console.error(`Failed to update timeToSkip: ${error.message}`);
+//         throw error;
+//     }
+// };
 
-export const bulkUpdateTimeToSkip = async (path, name, timeToSkip) => {
-    try {
-        await axios.post(`${API_BASE_URL}/time_to_skip/bulk`, { path, name, timeToSkip });
-        return true;
-    } catch (error) {
-        console.error(`Failed to update timeToSkip: ${error.message}`);
-        throw error;
-    }
-};
+// export const bulkUpdateTimeToSkip = async (path, name, timeToSkip) => {
+//     try {
+//         await axios.post(`${API_BASE_URL}/time_to_skip/bulk`, { path, name, timeToSkip });
+//         return true;
+//     } catch (error) {
+//         console.error(`Failed to update timeToSkip: ${error.message}`);
+//         throw error;
+//     }
+// };
 
 export const fetchMetadataById = async (itemId) => {
     try {
