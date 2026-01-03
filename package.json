@@ -1,0 +1,21 @@
+{
+  "name": "mediavault",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "back": ".\\mv_back\\env\\Scripts\\activate && python -m mv_back.app",
+    "front": "npm --prefix mv_front run front"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/madman7676/MediaVault.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/madman7676/MediaVault/issues"
+  },
+  "homepage": "https://github.com/madman7676/MediaVault#readme",
+  "description": ""
+}

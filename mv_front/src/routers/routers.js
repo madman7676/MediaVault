@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import MediaVault from '../pages/MediaVault';
 import Player from '../pages/Player';
 import Main from '../pages/Main';
+import Test from '../pages/test';
 
 const AppRouter = () => {
     return (
@@ -15,7 +16,7 @@ const AppRouter = () => {
                 {/* Сторінка плеєра з параметром mediaId */}
                 <Route path="/player/:mediaId" element={<Player />} />
 
-                <Route path='/test' element={<Main />}/>
+                <Route path='/test' element={<Test />}/>
             </Routes>
         </Router>
     );

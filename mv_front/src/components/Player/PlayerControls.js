@@ -6,7 +6,6 @@ import 'video.js/dist/video-js.css';
 import 'videojs-hotkeys';
 import SettingsMenu from './SettingsMenu';
 import TimeToSkipSettingsMenu from './TimeToSkipSettingsMenu';
-import { fetchTimeToSkip } from '../../api/metadataAPI';
 import { fetchDefaultBookmarks } from '../../api/bookmarksAPI';
 
 
@@ -85,6 +84,10 @@ const PlayerControls = ({
             }
         });
     };
+
+    // ============================================================
+    // Нотатка: Зарефакторити наступний метод в окремий хук
+    // ============================================================
 
     const initializePlayer = () => {
         if (playerInstance.current) return; // Prevent re-initialization

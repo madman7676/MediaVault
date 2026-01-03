@@ -56,6 +56,7 @@ const MediaVault = () => {
     toggleFilterMode,
     handleTagSettings,
     handleOpenOnlineSeriesDialog,
+    handleAddMediaDialog,
     handleItemSelection
   } = useMediaVaultHandlers(dispatch);
 
@@ -194,6 +195,21 @@ const MediaVault = () => {
               onRemoveSeason={removeSeason}
               onSave={handleSaveOnlineSeries}
             />
+
+            {/* <AddMediaDialog
+              open={openAddMediaDialog}
+              onClose={handleCloseAddMediaDialog}
+              title={formData.title}
+              onTitleChange={updateTitle}
+              imageUrl={formData.imageUrl}
+              onImageUrlChange={updateImageUrl}
+              seasons={formData.seasons}
+              onUpdateSeasonName={updateSeasonName}
+              onUpdateSeasonEpisodes={updateSeasonEpisodes}
+              onAddSeason={addSeason}
+              onRemoveSeason={removeSeason}
+              onSave={handleSaveOnlineSeries}
+            /> */}
           </div>
         </Box>
       </Box>

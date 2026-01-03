@@ -25,7 +25,11 @@ def get_media_data_by_id_route(media_id):
 #--------------------------------------------------------------
 #POSTs
 
-
+@media.route(f'/media_structure_perview', methods=['POST'])
+def get_media_structure_perview_route():
+    data = request.get_json(force=True)
+    media_path = data.get('path', '')
+    return get_media_structure_perview(media_path)
 
 #--------------------------------------------------------------
 # UPDATEs

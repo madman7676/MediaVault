@@ -23,6 +23,11 @@ export const useMediaVaultHandlers = (dispatch) => {
     dispatch({ type: ACTIONS.TOGGLE_SETTINGS_MENU });
     }, [dispatch]);
 
+    const handleAddMediaDialog = useCallback(() => {
+    dispatch({ type: ACTIONS.TOGGLE_ADD_MEDIA_DIALOG });
+    dispatch({ type: ACTIONS.TOGGLE_SETTINGS_MENU });
+    }, [dispatch]);
+
     const handleItemSelection = useCallback((id) => {
     dispatch({
         type: ACTIONS.TOGGLE_SELECTED_ITEM,
@@ -35,6 +40,7 @@ export const useMediaVaultHandlers = (dispatch) => {
         toggleFilterMode,
         handleTagSettings,
         handleOpenOnlineSeriesDialog,
+        handleAddMediaDialog,
         handleItemSelection
     };
 };

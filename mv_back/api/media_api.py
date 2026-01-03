@@ -35,6 +35,31 @@ def get_media_by_id(media_id):
     except Exception as e:
         return {"error": str(e)}, 500
 
+def get_media_structure_perview(path):
+    import os
+    import json
+    
+    def build_tree(path):
+        structure = {}
+        files = []
+
+        for entry in os.scandir(path):
+            if entry.is_dir():
+                # вкладена папка -> рекурсивно будуємо об’єкт
+                structure[entry.name] = build_tree(entry.path)
+            else:
+                # файл -> додаємо в масив _files
+                name, ext = os.path.splitext(entry.name)
+                ext = ext.lstrip(".")
+                files.append(f"{name}.{ext}" if ext else name)
+
+        if files:
+            structure["_files"] = sorted(files)
+
+        return structure
+    
+    root_name = os.path.basename(path)
+    return json.dumps({root_name: build_tree(path)}, indent=2, ensure_ascii=False), 200
 
 # --------------------------------------------------------------
 # UPDATEs

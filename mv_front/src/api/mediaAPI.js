@@ -27,3 +27,15 @@ export const fetchMediaById = async (mediaId) => {
         throw error;
     }
 };
+
+export const fetchMediaStructurePerview = async (path) => {
+    try {
+        const response = await axios.post(`${API_BASE_URL}/media_structure_perview`, {
+            path: path
+        });
+        return response.data;
+    } catch (error) {
+        console.error(`Failed to fetch select folder: ${error.message}`);
+        throw error;
+    }
+};

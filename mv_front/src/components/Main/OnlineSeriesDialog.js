@@ -71,7 +71,7 @@ const OnlineSeriesDialog = ({
               {index > 0 && (
                 <IconButton
                   onClick={() => onRemoveSeason(index)}
-                  style={{ marginLeft: '0.5rem' }}
+                  sx={{ marginLeft: '0.5rem' }}
                 >
                   <DeleteIcon />
                 </IconButton>

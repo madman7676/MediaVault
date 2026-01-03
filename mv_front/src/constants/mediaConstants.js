@@ -14,7 +14,8 @@ export const ACTIONS = {
   SET_SELECTED_ITEMS: 'set_selected_items',
   SET_SELECTED_TAG: 'set_selected_tag',
   TOGGLE_SETTINGS_MENU: 'toggle_settings_menu',
-  TOGGLE_ONLINE_SERIES_DIALOG: 'toggle_online_series_dialog'
+  TOGGLE_ONLINE_SERIES_DIALOG: 'toggle_online_series_dialog',
+  TOGGLE_ADD_MEDIA_DIALOG: 'toggle_add_media_dialog',
 };
 
 export const mediaTypeFilters = {
