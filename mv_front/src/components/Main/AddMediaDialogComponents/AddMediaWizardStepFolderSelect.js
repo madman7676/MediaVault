@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { fetchSelectFolder } from "../../../api/selectFolderAPI";
 import {
   Box,
   FormControl,
+  FormControlLabel,
   IconButton,
   InputLabel,
   MenuItem,
@@ -40,7 +41,8 @@ const styles = {
   flexRow: { display: "flex", flexDirection: "row" },
   titleField: { width: "60%", flexGrow: 1, m: 1 },
   fullWidth: { width: "100%" },
-  toggle: { alignContent: "center", display: "flex", alignItems: "center", m: 1 },
+  toggle: { alignContent: "center", display: "flex", alignItems: "center", m: 1},
+  switchBox: { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' },
   mediaSection: { m: 1 },
   pathField: { width: "85%", flexGrow: 1, m: 1 },
   pathButton: { alignContent: "center" },
@@ -88,6 +90,7 @@ const AddMediaWizardStepFolderSelect = ({ onProceed, listOfMedia }) => {
     title: "",
     selectedFolderPath: "",
     isNewMedia: true,
+    isSeries: true,
     selectedMedia: "",
   });
 
@@ -99,7 +102,16 @@ const AddMediaWizardStepFolderSelect = ({ onProceed, listOfMedia }) => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const { title, selectedFolderPath, isNewMedia, selectedMedia } = formState;
+  const { title, selectedFolderPath, isNewMedia, isSeries, selectedMedia } = formState;
+
+  const [currentListOfMedia, setCurrentListOfMedia] = useState(listOfMedia);
+
+  useEffect(() => {
+    const filteredMedia = listOfMedia.filter((media) =>
+      isSeries ? media.type === "series" : media.type === "movie"
+    );
+    setCurrentListOfMedia(filteredMedia);
+  }, [isSeries, listOfMedia]);
 
   const handleUpdateForm = (key, value) => {
     setFormState((prev) => ({ ...prev, [key]: value }));
@@ -123,7 +135,8 @@ const AddMediaWizardStepFolderSelect = ({ onProceed, listOfMedia }) => {
     setIsValid(validation);
 
     if (isFormValid(validation)) {
-      onProceed(selectedFolderPath);
+      // console.log("Форма валідна, дані:", formState);
+      onProceed(formState);
     }
   };
 
@@ -142,19 +155,35 @@ const AddMediaWizardStepFolderSelect = ({ onProceed, listOfMedia }) => {
           />
         </Box>
 
-        <Box sx={styles.toggle}>
-          <Switch
-            checked={isNewMedia}
-            onChange={(e) => handleUpdateForm("isNewMedia", e.target.checked)}
-          />
-          <Typography>Новий тайтл</Typography>
-        </Box>
+          <Box sx={styles.toggle}>
+            <Box sx={{ mr: 1, ...styles.switchBox }}>
+              <Typography sx={{ whiteSpace: 'nowrap' }}>Новий тайтл</Typography>
+              <FormControlLabel
+                sx={{m:0}}
+                control={
+                  <Switch
+                    checked={isNewMedia}
+                    onChange={(e) => handleUpdateForm("isNewMedia", e.target.checked)}
+                  />
+                }
+                label=""
+              />
+            </Box>
+            <Box sx={{ ml: 2, ...styles.switchBox }}>
+              <Typography sx={{ whiteSpace: 'nowrap' }}>Фільм/Серіал</Typography>
+              <FormControlLabel
+                sx={{m:0}}
+                control={<Switch checked={isSeries} onChange={(e) => handleUpdateForm("isSeries", e.target.checked)} />}
+                label=""
+              />
+            </Box>
+          </Box>
       </Box>
 
       {/* Вибір медіа (показується тільки якщо не новий тайтл) */}
       {!isNewMedia && (
         <MediaSelect
-          listOfMedia={listOfMedia}
+          listOfMedia={currentListOfMedia}
           selectedMedia={selectedMedia}
           setSelectedMedia={(value) => handleUpdateForm("selectedMedia", value)}
           isValid={isValid.relatedMedia}

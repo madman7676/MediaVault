@@ -80,7 +80,7 @@ def insert_series_to_db(cursor):
     """Вставляє всі серіали з SERIES_PATHS в БД"""
     paths = os_get_all_items_paths(SERIES_PATHS)
     for path in tqdm(paths, desc="Inserting series to DB"):
-        insert_serie_to_db(cursor, path)
+        insert_new_serie_to_db(cursor, path)
     return
 
 def transfer_timeToSkip_from_metadata(cursor):

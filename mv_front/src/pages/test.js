@@ -21,7 +21,7 @@ const Test = () => {
         <AddMediaDialog 
             open={true} 
             onClose={() => console.log('Close clicked')}
-            onSave={() => console.log('Save clicked')}
+            onSave={(data) => console.log('Save clicked', data)}
             listOfMedia={listOfMedia}
         />
     </>

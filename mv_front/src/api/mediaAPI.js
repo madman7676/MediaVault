@@ -18,6 +18,16 @@ export const fetchMedia = async (tags = '', filterMode = 'include') => {
     }
 };
 
+export const fetchMediaParents = async () => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}/all_parents`);
+        return response.data;
+    } catch (error) {
+        console.error(`Failed to fetch all media parents: ${error.message}`);
+        throw error;
+    }
+};
+
 export const fetchMediaById = async (mediaId) => {
     try {
         const response = await axios.get(`${API_BASE_URL}/${mediaId}`);
@@ -36,6 +46,17 @@ export const fetchMediaStructurePerview = async (path) => {
         return response.data;
     } catch (error) {
         console.error(`Failed to fetch select folder: ${error.message}`);
+        throw error;
+    }
+};
+
+export const postNewMedia = async (formData) => {
+    try {
+        const response = await axios.post(`${API_BASE_URL}/add_media`, formData);
+        return response.data;
+    }
+    catch (error) {
+        console.error(`Failed to add media: ${error.message}`);
         throw error;
     }
 };

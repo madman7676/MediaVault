@@ -23,9 +23,23 @@ const styles = {
     }
 }
 
-const AddMediaDialog = ({ open, onClose, onSave, listOfMedia }) => {
+const AddMediaDialog = ({ 
+    open, 
+    onClose, 
+    title,
+    onTitleChange,
+    selectedFolderPath,
+    onSelectedFolderPathChange,
+    isNewMedia,
+    onIsNewMediaChange,
+    isSeries,
+    onIsSeriesChange,
+    selectedMedia,
+    onSelectedMediaChange,
+    onSave, 
+    listOfMedia 
+}) => {
     const [currentStep, setCurrentStep] = useState(0);
-    const [selectedFolderPath, setSelectedFolderPath] = useState('');
     const [currentMediaStructurePreview, setCurrentMediaStructurePreview] = useState({});
     
     const handleMediaStructurePreview = async (path) => {
@@ -39,22 +53,24 @@ const AddMediaDialog = ({ open, onClose, onSave, listOfMedia }) => {
         }
     }
 
-    const setFuncForWizard = [
-        (data) => {
-            setSelectedFolderPath(data)
-            handleMediaStructurePreview(data)
-        }, 
-        () => {}
-    ]
+    const firstStepProceed = (data) => {
+        onTitleChange(data.title);
+        onSelectedFolderPathChange(data.selectedFolderPath);
+        onIsNewMediaChange(data.isNewMedia);
+        onIsSeriesChange(data.isSeries);
+        onSelectedMediaChange(data.selectedMedia);
+        handleMediaStructurePreview(data.selectedFolderPath);
+        setCurrentStep(1);
+    }
 
-    const nextWizardStep = (data) => {
-        setFuncForWizard[currentStep](data)
-        setCurrentStep(currentStep+1)
+    const handleSave = () => {
+        setCurrentStep(0);
+        onSave();
     }
 
     const stepProceed = [
-        <AddMediaWizardStepFolderSelect onProceed={nextWizardStep} listOfMedia={listOfMedia} />,
-        <AddMeidaWizardStepCommit currentMediaStructurePreview={currentMediaStructurePreview} onProceed={nextWizardStep} />,
+        <AddMediaWizardStepFolderSelect onProceed={firstStepProceed} listOfMedia={listOfMedia} />,
+        <AddMeidaWizardStepCommit currentMediaStructurePreview={currentMediaStructurePreview} onProceed={handleSave} />,
     ]
 
     return (

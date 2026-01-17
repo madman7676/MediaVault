@@ -79,3 +79,20 @@ def update_movie_collection_by_id(movie_id, new_data):
             return updated_collection, 200
     except Exception as e:
         return {"error": str(e)}, 500
+
+#--------------------------------------------------------------
+# POSTs
+
+
+
+#--------------------------------------------------------------
+# SERVICEs
+
+def manage_new_movie(movie_data):
+    try:
+        with db_connection(commit=True) as cursor:
+            # Логіка додавання нового фільму
+            new_movie_id = insert_new_movie_collection(cursor, movie_data)
+            return {"message": "New movie collection added", "movie_id": new_movie_id}, 201
+    except Exception as e:
+        return {"error": str(e)}, 500

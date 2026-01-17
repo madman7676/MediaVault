@@ -44,12 +44,23 @@ def format_media_with_tags(media, tags=None):
         'delD': media[6]
     }
 
+def format_parent_media(media):
+    """Форматує media record для списку батьківських медіа"""
+    if not media:
+        return None
+    return {
+        'id': media[0],
+        'title': media[1],
+        'type': media[2]
+    }
+
 
 # --------------------------------------------------------------
 # Inserts
 
-def insert_to_Media_table(cursor, path):
-    title = os.path.basename(path)
+def insert_to_Media_table(cursor, path, title=''):
+    if not title:
+        title = os.path.basename(path.rstrip("/\\"))
     id = formate_id(cursor, title, "Media")
     query = '''
         INSERT INTO Media (id, title, path, crD) VALUES (?, ?, ?, ?);
@@ -155,6 +166,33 @@ def select_all_media_with_tags(cursor, tags=None, filter_mode='include'):
     cursor.execute(query, tags_condition['params'])
     results = cursor.fetchall()
     return [format_media_with_tags(row) for row in results] if results else []
+
+def select_all_media_parents(cursor):
+    """Повертає всі media для списку пов'язаних при створенні нової частини/сезону"""
+    query = '''
+        SELECT m.id, m.title, 
+            CASE 
+                WHEN EXISTS (
+                    SELECT 1 
+                    FROM MovieItem mi
+                    WHERE mi.primary_collection_id = m.id 
+                    AND mi.delD IS NULL
+                ) THEN 'movie'
+                WHEN EXISTS (
+                    SELECT 1 
+                    FROM Season s
+                    WHERE s.primary_series_id = m.id 
+                    AND s.delD IS NULL
+                ) THEN 'series'
+                ELSE 'unknown'
+            END AS type
+        FROM Media m
+        WHERE m.delD IS NULL
+        ORDER BY m.title;
+    '''
+    cursor.execute(query)
+    results = cursor.fetchall()
+    return [format_parent_media(row) for row in results] if results else []
 
 # Нова функція для отримання медіа з тегами за ID
 def select_media_with_tags_by_id(cursor, media_id):

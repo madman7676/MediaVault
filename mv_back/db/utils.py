@@ -3,6 +3,7 @@ import pyodbc
 from flask import g
 from contextlib import contextmanager
 from translitua import translit, UkrainianKMU
+from natsort import natsorted
 
 from mv_back.config import DB_CONNECTION_STRING
 
@@ -75,6 +76,44 @@ def build_tag_filter(tags, mode):
                 """,
                 'params': tags
             }
+
+def get_series_structure(media_path):
+    import os
+
+    series_structure = []
+    
+    for root, dirs, files in os.walk(media_path):
+        relative_root = os.path.relpath(root, media_path)
+        series = {
+            'series_name': os.path.basename(root),
+            'episodes': []
+        }
+        
+        for file in files:
+            if file.lower().endswith(('.mp4', '.mkv', '.avi')):
+                series['episodes'].append(file)
+        
+        if series['episodes']:
+            series['episodes'] = natsorted(series['episodes'])
+            series_structure.append(series)
+        
+    series_structure = natsorted(series_structure, key=lambda x: x['series_name'])
+    
+    return series_structure
+
+def get_movie_structure(media_path):
+    import os
+
+    movie_structure = []
+    
+    for root, dirs, files in os.walk(media_path):
+        for file in files:
+            if file.lower().endswith(('.mp4', '.mkv', '.avi')):
+                movie_structure.append(os.path.relpath(os.path.join(root, file), media_path))
+    
+    movie_structure = natsorted(movie_structure, key=lambda x: os.path.basename(x))
+    
+    return movie_structure
 
 # --------------------------------------------------------------
 # Context manager для роботи з БД

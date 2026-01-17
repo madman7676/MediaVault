@@ -64,3 +64,43 @@ def get_all_seasons_and_episodes_by_serie_id(serie_id):
             return seasons_and_episodes, 200
     except Exception as e:
         return {"error": str(e)}, 500
+    
+# --------------------------------------------------------------
+# POSTs
+
+def add_new_serie(new_serie_path):
+    try:
+        with db_connection(commit=True) as cursor:
+            new_serie = insert_new_serie_to_db(cursor, new_serie_path)
+
+            return {"message": "New series added successfully", "serie": new_serie}, 201
+    except Exception as e:
+        return {"error": str(e)}, 500
+
+def add_new_season_to_serie(serie_id, new_season_path):
+    try:
+        with db_connection(commit=True) as cursor:
+            new_season = insert_new_season_to_db(cursor, serie_id, new_season_path)
+            return {"message": "New season added successfully", "season": new_season}, 201
+    except Exception as e:
+        return {"error": str(e)}, 500
+
+# --------------------------------------------------------------
+# SERVICEs
+
+def manage_add_series(form_data):
+    try:
+        with db_connection(commit=True) as cursor:
+            media_path = form_data.get('selectedFolderPath', '')
+            is_new_media = form_data.get('isNewMedia', True)
+            if is_new_media:
+                res = insert_new_serie_to_db(cursor, media_path)
+            else:
+                serie_id = form_data.get('selectedMedia', None)
+                if not serie_id:
+                    return {"error": "selectedMedia is required for existing media"}, 400
+                res = insert_new_season_to_db(cursor, serie_id, media_path)
+            
+            return {"message": "Series management successful", "result": res}, 200
+    except Exception as e:
+        return {"error": str(e)}, 500

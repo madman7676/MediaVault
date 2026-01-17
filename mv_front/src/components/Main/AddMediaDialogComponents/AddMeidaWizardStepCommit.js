@@ -38,23 +38,25 @@ const styles = {
     }
 }
 
-const AddMeidaWizardStepCommit = ({ currentMediaStructurePreview, onProceed }) => {
+const AddMeidaWizardStepCommit = ({ currentMediaStructurePreview, newMediaData, onProceed }) => {
     
     return (
         <Box sx={styles.mainBox}>
             <Box sx={styles.jsonBox}>
-                <ReactJson
-                    src={currentMediaStructurePreview}
-                    theme='bright:inverted'
-                    collapsed={1}
-                    style={styles.json}
-                />
+                <Box sx={styles.json}>
+                    <ReactJson
+                        src={currentMediaStructurePreview}
+                        theme='bright:inverted'
+                        collapsed={1}
+                        
+                    />
+                </Box>
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
                 <IconButton
                     variant="contained"
                     color="primary"
-                    onClick={() => onProceed(currentMediaStructurePreview)}
+                    onClick={() => onProceed()}
                 >
                     <SaveIcon fontSize="large" />
                 </IconButton>

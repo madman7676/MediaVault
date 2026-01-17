@@ -13,6 +13,14 @@ def get_all_media_with_tags(tags=None, filter_mode='include'):
     except Exception as e:
         return {"error": str(e)}, 500
 
+def get_all_parents():
+    try:
+        with db_connection() as cursor:
+            parents = select_all_media_parents(cursor)
+            return  parents, 200
+    except Exception as e:
+        return {"error": str(e)}, 500
+
 def get_media_with_tags_by_id(media_id):
     try:
         with db_connection() as cursor:

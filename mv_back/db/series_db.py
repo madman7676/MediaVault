@@ -119,9 +119,14 @@ def insert_to_Episode_table(cursor, season_id, episode_number, path):
     cursor.execute(query, (episode_id, season_id, episode_number, title, path))
     return episode_id
 
-def insert_serie_to_db(cursor, path):
+def insert_new_serie_to_db(cursor, path, title=''):
+    res = {
+        'media_id': None,
+        'seasons': []
+    }
     # insert into Media table
-    media_id = insert_to_Media_table(cursor, path)
+    media_id = insert_to_Media_table(cursor, path, title)
+    res['media_id'] = media_id
     
     # insert into Series table
     series_id = insert_to_Series_table(cursor, media_id)
@@ -132,14 +137,49 @@ def insert_serie_to_db(cursor, path):
         season_path = os.path.join(path, season)
         if os.path.isdir(season_path):
             season_id = insert_to_Season_table(cursor, series_id, season_index, season_path)
-            
+            season_info = {
+                'season_id': season_id,
+                'episode_ids': []
+            }
+
             # insert Episodes into Episode table
             for episode_index, episode in enumerate(natsorted(os.listdir(season_path)), start=1):
                 episode_path = os.path.join(season_path, episode)
                 if os.path.isfile(episode_path) and episode.lower().endswith(('.mp4', '.mkv', '.avi')):
                     episode_id = insert_to_Episode_table(cursor, season_id, episode_index, episode_path)
+                    season_info['episode_ids'].append(episode_id)
+
+            res['seasons'].append(season_info)
+
     cursor.commit()
-    return media_id
+    return res
+
+def insert_new_season_to_db(cursor, series_id, path):
+    res = {}
+    res['media_id'] = series_id
+    # Determine the next season number
+    cursor.execute('SELECT MAX(season_number) FROM Season WHERE primary_series_id = ? AND delD IS NULL;', (series_id,))
+    result = cursor.fetchone()
+    next_season_number = (result[0] or 0) + 1
+
+    if not os.path.isdir(path):
+        raise ValueError("Provided path is not a directory")
+    # Insert the new season
+    season_id = insert_to_Season_table(cursor, series_id, next_season_number, path)
+    season_info = {
+        'season_id': season_id,
+        'episode_ids': []
+    }
+    # Insert Episodes into Episode table
+    for episode_index, episode in enumerate(natsorted(os.listdir(path)), start=1):
+        episode_path = os.path.join(path, episode)
+        if os.path.isfile(episode_path) and episode.lower().endswith(('.mp4', '.mkv', '.avi')):
+            episode_id = insert_to_Episode_table(cursor, season_id, episode_index, episode_path)
+            season_info['episode_ids'].append(episode_id)
+            
+    res['new_seasons'] = [season_info]
+    cursor.commit()
+    return res
 
 # --------------------------------------------------------------
 # Selects (тепер повертають відформатовані дані)
@@ -294,3 +334,4 @@ def select_all_seasons_and_episodes_by_serie_id(cursor, series_id):
             seasons_map[season_id]['files'].append(episode)
     
     return seasons
+
