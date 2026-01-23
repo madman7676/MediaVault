@@ -1,6 +1,6 @@
 // PlayerControls.js: Component for managing the video.js player
 import React, { useEffect, useRef, useState } from 'react';
-import ReactDOM from 'react-dom/client';
+import { createRoot } from 'react-dom/client';
 import videojs from 'video.js';
 import 'video.js/dist/video-js.css';
 import 'videojs-hotkeys';
@@ -22,6 +22,9 @@ const PlayerControls = ({
     const timeToSkipMenuRef = useRef(null);
     const currentTimeToSkip = useRef([]);
     const [showTimeToSkipMenu, setShowTimeToSkipMenu] = useState(false);
+    const fetchAbortControllerRef = useRef(null);
+    const globalClickHandlerRef = useRef(null);
+    const stylesRef = useRef(null);
 
 
     const handleOptionSelect = (option, menu) => {
@@ -36,7 +39,6 @@ const PlayerControls = ({
 
     const handleTrackSelect = (index) => {
         console.log('Changing audio track to:', index);
-        // setCurrentAudioTrack(index);
         
         if (playerInstance.current) {
             const tracks = playerInstance.current.audioTracks();
@@ -62,32 +64,29 @@ const PlayerControls = ({
 
     const renderTimeSkips = (intervals) => {
         const progressBar = document.querySelector('.vjs-progress-holder');
-        if (!progressBar || !playerInstance.current || !playerInstance.current.duration()) return;
+        if (!progressBar || !playerInstance.current) return;
+
+        const duration = playerInstance.current.duration();
+        if (!duration || !isFinite(duration)) return;
 
         // Очистити попередні елементи
         const existingSkips = progressBar.querySelectorAll('.time-skip-highlight');
         existingSkips.forEach((element) => element.remove());
 
-        const videoDuration = playerInstance.current.duration();
-
         // Додати нові
         intervals.forEach(({ start, end }) => {
-            if (start >= 0 && end <= videoDuration) {
+            if (start >= 0 && end <= duration) {
                 const skipElement = document.createElement('div');
                 skipElement.className = 'time-skip-highlight';
                 skipElement.style.position = 'absolute';
                 skipElement.style.height = '100%';
                 skipElement.style.backgroundColor = 'rgba(0, 0, 255, 0.5)';
-                skipElement.style.left = `${(start / videoDuration) * 100}%`;
-                skipElement.style.width = `${((end - start) / videoDuration) * 100}%`;
+                skipElement.style.left = `${(start / duration) * 100}%`;
+                skipElement.style.width = `${((end - start) / duration) * 100}%`;
                 progressBar.appendChild(skipElement);
             }
         });
     };
-
-    // ============================================================
-    // Нотатка: Зарефакторити наступний метод в окремий хук
-    // ============================================================
 
     const initializePlayer = () => {
         if (playerInstance.current) return; // Prevent re-initialization
@@ -162,7 +161,7 @@ const PlayerControls = ({
 
             const menu = document.createElement('div');
             menu.id = 'settingsMenu';
-            const root = ReactDOM.createRoot(menu);
+            const root = createRoot(menu);
             root.render(
                 <SettingsMenu
                     ref={settingsMenuRef}
@@ -174,18 +173,24 @@ const PlayerControls = ({
             menu.style.display = 'none';
             menu.style.position = 'absolute';
 
-            settingsButton.addEventListener('click', (event) => {
+            const handleSettingsClick = (event) => {
                 event.stopPropagation();
                 const isMenuOpen = menu.style.display === 'block';
                 menu.style.display = isMenuOpen ? 'none' : 'block';
                 if (settingsMenuRef.current) {
-                    settingsMenuRef.current.calculateMenuPosition(); // Виклик методу
+                    settingsMenuRef.current.calculateMenuPosition?.();
                 }
-            });
+            };
 
-            document.addEventListener('click', () => {
-                menu.style.display = 'none';
-            });
+            const handleGlobalClick = (event) => {
+                if (!settingsContainer.contains(event.target)) {
+                    menu.style.display = 'none';
+                }
+            };
+
+            settingsButton.addEventListener('click', handleSettingsClick);
+            globalClickHandlerRef.current = handleGlobalClick;
+            document.addEventListener('click', handleGlobalClick);
 
             settingsContainer.appendChild(settingsButton);
             settingsContainer.appendChild(menu);
@@ -195,16 +200,39 @@ const PlayerControls = ({
                 controlBar.el().insertBefore(settingsContainer, fullscreenControl);
             }
         }
-
-        playerInstance.current.on('ended', handleVideoEnd);
     };
 
+    // Додати стилі один раз
+    useEffect(() => {
+        const style = document.createElement('style');
+        style.textContent = `
+            .video-js:focus { outline: none !important; }
+            .video-js *:focus { outline: none !important; }
+            .vjs-control:focus { outline: none !important; }
+        `;
+        document.head.appendChild(style);
+        stylesRef.current = style;
+
+        return () => {
+            if (stylesRef.current && document.head.contains(stylesRef.current)) {
+                document.head.removeChild(stylesRef.current);
+            }
+        };
+    }, []);
+
+    // Ініціалізація плеєра
     useEffect(() => {
         if (!playerRef.current) return;
 
         initializePlayer();
 
         return () => {
+            // Видалити глобальний обробник
+            if (globalClickHandlerRef.current) {
+                document.removeEventListener('click', globalClickHandlerRef.current);
+                globalClickHandlerRef.current = null;
+            }
+
             if (playerInstance.current && playerInstance.current.readyState() !== 0) {
                 playerInstance.current.dispose();
                 playerInstance.current = null;
@@ -212,13 +240,12 @@ const PlayerControls = ({
         };
     }, []);
 
+    // Завантажити відео
     useEffect(() => {
         if (!playerInstance.current || !currentFile?.url) return;
 
         const p = playerInstance.current;
-
         p.src({ src: currentFile.url, type: 'video/mp4' });
-        // p.load();
 
         p.play().catch((e) => {
             if (e.name !== 'AbortError') return;
@@ -226,124 +253,125 @@ const PlayerControls = ({
         });
     }, [currentFile?.url]);
 
+    // Завантажити пропуски часу
     useEffect(() => {
         const episodeId = currentFile?.id;
+        
+        // Скасувати попередній запит
+        if (fetchAbortControllerRef.current) {
+            fetchAbortControllerRef.current.abort();
+        }
+        
         const loadTimeToSkip = async (id) => {
             if (!id) {
                 currentTimeToSkip.current = [];
-                renderTimeSkips([]); // Очистити пропуски
+                renderTimeSkips([]);
                 return;
             }
 
             try {
+                fetchAbortControllerRef.current = new AbortController();
                 const rawTimeToSkip = await fetchDefaultBookmarks(id);
+                
                 const timeToSkip = rawTimeToSkip.map(({ start_time_ms, end_time_ms, id }) => ({
                     start: start_time_ms,
                     end: end_time_ms,
                     id: id
                 }));
                 currentTimeToSkip.current = timeToSkip;
-                renderTimeSkips(currentTimeToSkip.current); // Рендерити пропуски
+                renderTimeSkips(currentTimeToSkip.current);
             } catch (error) {
-                console.error(`Error fetching timeToSkip: ${error.message}`);
-                currentTimeToSkip.current = [];
-                renderTimeSkips([]); // Очистити пропуски
+                if (error.name !== 'AbortError') {
+                    console.error(`Error fetching timeToSkip: ${error.message}`);
+                    currentTimeToSkip.current = [];
+                    renderTimeSkips([]);
+                }
             }
         };
         
         loadTimeToSkip(episodeId);
+
+        return () => {
+            if (fetchAbortControllerRef.current) {
+                fetchAbortControllerRef.current.abort();
+            }
+        };
     }, [currentFile?.id]);
 
-    useEffect(() => {
-        if (playerInstance.current) {
-            const handleTimeUpdate = () => {
-                const currentTime = playerInstance.current.currentTime();
-                if (!currentTimeToSkip.current || currentTimeToSkip.current.length === 0 || !skipTimeEnabled) return;
-
-                const skipInterval = currentTimeToSkip.current.find(
-                    interval => currentTime >= interval.start && currentTime < interval.end
-                );
-                if (skipInterval) {
-                    console.log(`Skipping to ${skipInterval.end}`);
-                    playerInstance.current.currentTime(skipInterval.end);
-                }
-            };
-
-            const handleLoadedMetadata = () => {
-                renderTimeSkips(currentTimeToSkip.current);
-            };
-
-            playerInstance.current.on('timeupdate', handleTimeUpdate);
-            playerInstance.current.on('loadedmetadata', handleLoadedMetadata);
-
-            return () => {
-                if (playerInstance.current) {
-                    playerInstance.current.off('timeupdate', handleTimeUpdate);
-                    playerInstance.current.off('loadedmetadata', handleLoadedMetadata);
-                }
-            };
-        }
-    }, [currentTimeToSkip, skipTimeEnabled]);
-
+    // Обробка часу відтворення і пропусків
     useEffect(() => {
         if (!playerInstance.current) return;
-    
+
+        const handleTimeUpdate = () => {
+            const currentTime = playerInstance.current.currentTime();
+            if (!currentTimeToSkip.current || currentTimeToSkip.current.length === 0 || !skipTimeEnabled) return;
+
+            const skipInterval = currentTimeToSkip.current.find(
+                interval => currentTime >= interval.start && currentTime < interval.end
+            );
+            if (skipInterval) {
+                console.log(`Skipping to ${skipInterval.end}`);
+                playerInstance.current.currentTime(skipInterval.end);
+            }
+        };
+
+        const handleLoadedMetadata = () => {
+            renderTimeSkips(currentTimeToSkip.current);
+        };
+
+        playerInstance.current.on('timeupdate', handleTimeUpdate);
+        playerInstance.current.on('loadedmetadata', handleLoadedMetadata);
+
+        return () => {
+            if (playerInstance.current) {
+                playerInstance.current.off('timeupdate', handleTimeUpdate);
+                playerInstance.current.off('loadedmetadata', handleLoadedMetadata);
+            }
+        };
+    }, [skipTimeEnabled]);
+
+    // Обробник завершення відео
+    useEffect(() => {
+        if (!playerInstance.current) return;
+
         const onEnded = () => {
             console.log('Video ended');
             handleVideoEnd();
         };
-    
+
         playerInstance.current.on('ended', onEnded);
-    
+
         return () => {
             if (playerInstance.current) {
-                console.log('Removing ended listener');
                 playerInstance.current.off('ended', onEnded);
             }
         };
-    }, [handleVideoEnd]);    
+    }, [handleVideoEnd]);
 
+    // Обробники аудіотреків
     useEffect(() => {
-        if (playerInstance.current) {
-            const handleError = (error) => {
-                console.error('Audio track error:', error);
-            };
-    
-            const handleTrackChange = () => {
-                const tracks = playerInstance.current.audioTracks();
-                if (tracks) {
-                    const currentIndex = Array.from(tracks).findIndex(track => track.enabled);
-                    // setCurrentAudioTrack(currentIndex);
-                }
-            };
-    
-            playerInstance.current.on('error', handleError);
-            playerInstance.current.on('audiotrackchange', handleTrackChange);
-    
-            return () => {
-                if (playerInstance.current) {
-                    playerInstance.current.off('error', handleError);
-                    playerInstance.current.off('audiotrackchange', handleTrackChange);
-                }
-            };
-        }
-    }, []);
+        if (!playerInstance.current) return;
 
-    useEffect(() => {
-        // Add styles after player initialization
-        if (playerInstance.current) {
-            const style = document.createElement('style');
-            style.textContent = `
-                .video-js:focus { outline: none !important; }
-                .video-js *:focus { outline: none !important; }
-                .vjs-control:focus { outline: none !important; }
-            `;
-            document.head.appendChild(style);
+        const handleError = (error) => {
+            console.error('Audio track error:', error);
+        };
 
-            return () => {
-                document.head.removeChild(style);
-            };
-        }
+        const handleTrackChange = () => {
+            const tracks = playerInstance.current.audioTracks();
+            if (tracks) {
+                Array.from(tracks).findIndex(track => track.enabled);
+            }
+        };
+
+        playerInstance.current.on('error', handleError);
+        playerInstance.current.on('audiotrackchange', handleTrackChange);
+
+        return () => {
+            if (playerInstance.current) {
+                playerInstance.current.off('error', handleError);
+                playerInstance.current.off('audiotrackchange', handleTrackChange);
+            }
+        };
     }, []);
 
     return (
@@ -355,7 +383,7 @@ const PlayerControls = ({
                     onIntervalsChange={(updatedIntervals) => {
                         console.log('Updated intervals:', updatedIntervals);
                         currentTimeToSkip.current = updatedIntervals;
-                        renderTimeSkips(updatedIntervals); // Рендерити пропуски
+                        renderTimeSkips(updatedIntervals);
                     }}
                     onClose={handleCloseTimeToSkipMenu}
                     currentEpisodeId={currentFile?.id}

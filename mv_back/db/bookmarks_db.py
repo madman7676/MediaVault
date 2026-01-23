@@ -116,6 +116,7 @@ def select_all_default_SkipRanges_by_episode_id(cursor, episode_id):
         FROM SkipRange sr
         JOIN SkipSet ss ON sr.primary_skipset_id = ss.id
         WHERE ss.primary_episode_id = ? AND ss.name = 'Default' AND sr.delD IS NULL AND ss.delD IS NULL
+        ORDER BY sr.start_time_ms ASC
     ''', (episode_id,))
     results = cursor.fetchall()
     return [format_default_skiprange(row) for row in results] if results else []
