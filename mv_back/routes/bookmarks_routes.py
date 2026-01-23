@@ -14,7 +14,7 @@ def get_skipset_by_id_route(skipset_id):
 def get_skipsets_by_episode_id_route(episode_id):
     return get_skipsets_by_episode_id(episode_id)
 
-@bookmarks.route(f'/skipset/episode/<episode_id>/name/<name>', methods=['GET'])
+@bookmarks.route(f'/skipset/episode/<episode_id>/<name>', methods=['GET'])
 def get_skipset_by_episode_id_and_name_route(episode_id, name):
     return get_skipset_by_episode_id_and_name(episode_id, name)
 
@@ -22,7 +22,7 @@ def get_skipset_by_episode_id_and_name_route(episode_id, name):
 def get_skipranges_by_skipset_id_route(skipset_id):
     return get_skipranges_by_skipset_id(skipset_id)
 
-@bookmarks.route(f'/skipranges/episode/<episode_id>/name/<name>', methods=['GET'])
+@bookmarks.route(f'/skipranges/episode/<episode_id>/<name>', methods=['GET'])
 def get_skipranges_by_episode_id_and_name_route(episode_id, name):
     return get_skipranges_by_episode_id_and_name(episode_id, name)
 

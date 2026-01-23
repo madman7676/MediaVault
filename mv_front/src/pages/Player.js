@@ -177,9 +177,9 @@ const Player = () => {
                     borderLeft: 'none',
                     padding: 2,
                     backgroundColor: palette.background.card,
-                    '::-webkit-scrollbar': { display: 'none' },
-                    '-ms-overflow-style': 'none',
-                    'scrollbar-width': 'none',
+                    '&::-webkit-scrollbar': { display: 'none' },
+                    msOverflowStyle: 'none',
+                    scrollbarWidth: 'none',
                 }}
             >
                 <FileList

@@ -16,12 +16,11 @@ const GridCollection = ({openTagSettings, filteredCollections, letterRefs, selec
                 const first = collection.title?.[0]?.toUpperCase();
                 let ref = null;
                 if (first && letterRefs.current[first] && !usedLetters.has(first)) {
-                ref = letterRefs.current[first];
-                usedLetters.add(first);
+                    ref = letterRefs.current[first];
+                    usedLetters.add(first);
                 }
                 return (
                 <Grid
-                    item
                     xs={12}
                     sm={6}
                     md={4}

@@ -8,6 +8,9 @@ export const fetchDefaultBookmarks = async (episode_id) => {
         const response = await axios.get(`${API_BASE_URL}/skipranges/episode/${episode_id}/default`);
         return response.data;
     } catch (error) {
+        if (error.response?.status === 404) {
+            return [];
+        }
         console.error(`Failed to fetch all media: ${error.message}`);
         throw error;
     }

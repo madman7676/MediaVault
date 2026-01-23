@@ -213,13 +213,18 @@ const PlayerControls = ({
     }, []);
 
     useEffect(() => {
-        if (playerInstance.current && currentFile?.url) {
-            playerInstance.current.src({ src: currentFile.url, type: 'video/mp4' });
-            playerInstance.current.load();
+        if (!playerInstance.current || !currentFile?.url) return;
 
-            playerInstance.current.play().catch(console.error);
-        }
-    }, [currentFile]);
+        const p = playerInstance.current;
+
+        p.src({ src: currentFile.url, type: 'video/mp4' });
+        // p.load();
+
+        p.play().catch((e) => {
+            if (e.name !== 'AbortError') return;
+            console.error(e);
+        });
+    }, [currentFile?.url]);
 
     useEffect(() => {
         const episodeId = currentFile?.id;
@@ -247,7 +252,7 @@ const PlayerControls = ({
         };
         
         loadTimeToSkip(episodeId);
-    }, [currentFile]);
+    }, [currentFile?.id]);
 
     useEffect(() => {
         if (playerInstance.current) {

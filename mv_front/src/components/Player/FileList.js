@@ -62,7 +62,6 @@ const FileList = ({
                                 {season.files.map((file, fileIndex) => (
                                     <ListItem
                                         key={fileIndex}
-                                        button
                                         onClick={() => handleSelectFile(seasonIndex, fileIndex)}
                                         sx={{
                                             cursor: 'pointer',

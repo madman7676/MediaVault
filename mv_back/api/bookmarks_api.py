@@ -69,7 +69,7 @@ def get_all_default_skipranges_by_episode_id(episode_id):
         with db_connection() as cursor:
             skipranges = select_all_default_SkipRanges_by_episode_id(cursor, episode_id)
             if not skipranges:
-                return {"error": "No default SkipRanges found for the given episode_id", 'episode_id': episode_id}, 404
+                return {"message": "No default SkipRanges found for the given episode_id", 'episode_id': episode_id}, 404
             
             return skipranges, 200
     except Exception as e:
