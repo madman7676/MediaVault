@@ -18,8 +18,11 @@ export const fetchDefaultBookmarks = async (episode_id) => {
 
 export const processBulkUpdateforBookmarksChangeLog = async (episode_id, bookmarksChangeLog) => {
     try {
+        // TODO: Implement bulk processing in the backend
+        // Don't forget to adjust the existing bookmarks (not only from the change log)
+        
         // await axios.post(`${API_BASE_URL}/time_to_skip`, { episode_id, bookmarks });
-        console.log('Updating bookmarks for episode:', episode_id, bookmarksChangeLog);
+        console.log('WIP Updating bookmarks for episode:', episode_id, bookmarksChangeLog);
         return true;
     } catch (error) {
         console.error(`Failed to update timeToSkip: ${error.message}`);

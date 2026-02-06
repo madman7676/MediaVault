@@ -256,6 +256,10 @@ const PlayerControls = ({
     // Завантажити пропуски часу
     useEffect(() => {
         const episodeId = currentFile?.id;
+
+        // Одразу очистити старі пропуски при зміні серії
+        currentTimeToSkip.current = [];
+        renderTimeSkips([]);
         
         // Скасувати попередній запит
         if (fetchAbortControllerRef.current) {

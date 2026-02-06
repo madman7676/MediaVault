@@ -64,25 +64,6 @@ const Player = () => {
         };
     }
 
-    const fetchMetadata = async () => {
-        try {
-            const item = await fetchMediaById(mediaId);
-            setTitle(item.title || 'Files');
-            
-            if (item.type === 'series') {
-                const seasons = await fetchSeriesSeasonsAndEpisodesById(mediaId);
-                setFileList(processSeasonFiles(seasons));
-            } else if (item.type === 'movie' && Array.isArray(item.parts)) {
-                const parts = await fetchMovieItemsById(mediaId);
-                setFileList(processMovieFiles(parts));
-            }
-        } catch (err) {
-            setError(`Error fetching metadata: ${err.message}`);
-        } finally {
-            setLoading(false);
-        }
-    };
-
     const handleSelectFile = (seasonIndex, fileIndex) => {
         const selectedFile = fileList[seasonIndex]?.files[fileIndex];
         setCurrentFile(selectedFile);
@@ -123,8 +104,27 @@ const Player = () => {
     };
 
     useEffect(() => {
+        const fetchMediaData = async () => {
+            try {
+                const item = await fetchMediaById(mediaId);
+                setTitle(item.title || 'Files');
+                
+                if (item.type === 'series') {
+                    const seasons = await fetchSeriesSeasonsAndEpisodesById(mediaId);
+                    setFileList(processSeasonFiles(seasons));
+                } else if (item.type === 'movie' && Array.isArray(item.parts)) {
+                    const parts = await fetchMovieItemsById(mediaId);
+                    setFileList(processMovieFiles(parts));
+                }
+            } catch (err) {
+                setError(`Error fetching metadata: ${err.message}`);
+            } finally {
+                setLoading(false);
+            }
+        };
+
         document.body.style.margin = '0';
-        fetchMetadata();
+        fetchMediaData();
     }, [mediaId]);
 
     const handleToggleSeason = (seasonIndex) => {
