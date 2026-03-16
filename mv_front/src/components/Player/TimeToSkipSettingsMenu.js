@@ -13,7 +13,7 @@ import { formatTime, parseTimeInput, sortIntervals } from '../../utils/timeUtils
 import { useBookmarksChangeLog } from '../../hooks/playerHooks/useBookmarksChangeLog';
 
 
-const TimeToSkipSettingsMenu = ({ intervals: initialIntervals, onIntervalsChange, onClose, currentEpisodeId }) => {
+const TimeToSkipSettingsMenu = ({ intervals: initialIntervals, onIntervalsChange, onClose, currentEpisodeId, pendingTemplate }) => {
     const [intervals, setIntervals] = useState(initialIntervals);
     const [editingIndex, setEditingIndex] = useState(null);
     const [editInterval, setEditInterval] = useState({ start: '', end: '' });
@@ -35,6 +35,13 @@ const TimeToSkipSettingsMenu = ({ intervals: initialIntervals, onIntervalsChange
             menu.style.left = `${videoRect.left + videoRect.width / 2 - menu.offsetWidth / 2}px`;
         }
     }, []);
+
+    useEffect(() => {
+        if (pendingTemplate) {
+            const newInterval = { start: formatTime(pendingTemplate.start), end: formatTime(pendingTemplate.end), id: `Temp-${Date.now()}` };
+            handleAddInterval(newInterval);
+        }
+    }, [pendingTemplate?.timeSpamp]);
 
     const handleAddInterval = (currentInterval) => {
         if (currentInterval.start && currentInterval.end) {

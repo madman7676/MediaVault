@@ -7,6 +7,7 @@ import 'videojs-hotkeys';
 import SettingsMenu from './SettingsMenu';
 import TimeToSkipSettingsMenu from './TimeToSkipSettingsMenu';
 import { fetchDefaultBookmarks } from '../../api/bookmarksAPI';
+import { formatTime, parseTimeInput } from '../../utils/timeUtils';
 
 
 const PlayerControls = ({
@@ -26,13 +27,35 @@ const PlayerControls = ({
     const globalClickHandlerRef = useRef(null);
     const stylesRef = useRef(null);
 
+    const [pendingTemplate, setPendingTemplate] = useState(null);
+
 
     const handleOptionSelect = (option, menu) => {
-        if (option === 'audioTracks') {
-            return;
-        }
         if (option === 'openTimeToSkipMenu') {
             setShowTimeToSkipMenu(true);
+        } else if (option.includes('+')) { // ToDo - refactor this to use a custom hook for creating skip sets based on templates
+            // Handle fast skip options
+            const videoElement = document.querySelector('.video-js video');
+            const currentTime = videoElement ? Math.floor(videoElement.currentTime) : 0;
+            const duration = videoElement ? Math.floor(videoElement.duration) : 0;
+            const parsedCurrentTime = parseTimeInput(formatTime(currentTime));
+            const parsedDuration = parseTimeInput(formatTime(duration));
+
+            const optionsMap = {
+                '0+1:30': [0, 90],
+                '0+current': [0, parsedCurrentTime],
+                'current+1:30': [parsedCurrentTime, parsedCurrentTime + 90],
+                'current+end': [parsedCurrentTime, parsedDuration]
+            };
+
+            const [startTime, endTime] = optionsMap[option] || [0, 0];
+
+            if (startTime < endTime) {
+                setPendingTemplate({ start: startTime, end: endTime, timeSpamp: Date.now() });
+                setShowTimeToSkipMenu(true);
+            } else {
+                console.error('Invalid skip times');
+            }
         }
         menu.style.display = 'none';
     };
@@ -172,6 +195,11 @@ const PlayerControls = ({
 
             menu.style.display = 'none';
             menu.style.position = 'absolute';
+            menu.style.top = '0';
+            menu.style.left = '0';
+            menu.style.width = '100%';
+            menu.style.height = '100%';
+            menu.style.pointerEvents = 'none';
 
             const handleSettingsClick = (event) => {
                 event.stopPropagation();
@@ -193,7 +221,7 @@ const PlayerControls = ({
             document.addEventListener('click', handleGlobalClick);
 
             settingsContainer.appendChild(settingsButton);
-            settingsContainer.appendChild(menu);
+            playerInstance.current.el().appendChild(menu);
 
             const fullscreenControl = controlBar.el().querySelector('.vjs-fullscreen-control');
             if (fullscreenControl) {
@@ -391,6 +419,7 @@ const PlayerControls = ({
                     }}
                     onClose={handleCloseTimeToSkipMenu}
                     currentEpisodeId={currentFile?.id}
+                    pendingTemplate={pendingTemplate}
                 />
             )}
         </div>
