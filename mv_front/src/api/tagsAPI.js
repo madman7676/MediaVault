@@ -13,9 +13,9 @@ export const fetchAllTags = async () => {
     }
 };
 
-export const addTagToItems = async (ids, tag) => {
+export const addTagToItems = async (media_ids, tag) => {
     try {
-        const response = await axios.post(`${API_BASE_URL}/`, { ids, tag });
+        const response = await axios.post(`${API_BASE_URL}/add/bulk`, { media_ids, tag });
         return response.data.message;
     } catch (error) {
         console.error(`Failed to add tag to items: ${error.message}`);

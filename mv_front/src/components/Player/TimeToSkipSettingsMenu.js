@@ -13,14 +13,14 @@ import { formatTime, parseTimeInput, sortIntervals } from '../../utils/timeUtils
 import { useBookmarksChangeLog } from '../../hooks/playerHooks/useBookmarksChangeLog';
 
 
-const TimeToSkipSettingsMenu = ({ intervals: initialIntervals, onIntervalsChange, onClose, currentEpisodeId, pendingTemplate }) => {
+const TimeToSkipSettingsMenu = ({ intervals: initialIntervals, onIntervalsChange, onClose, currentEpisodeId, pendingTemplate, onPendingTemplateProcessed }) => {
     const [intervals, setIntervals] = useState(initialIntervals);
     const [editingIndex, setEditingIndex] = useState(null);
     const [editInterval, setEditInterval] = useState({ start: '', end: '' });
     const [isAdding, setIsAdding] = useState(false);
     const containerRef = useRef(null);
+    const processedTimeStamps = useRef(new Set());
     const { bookmarksChangeLog, setBookmarksChangeLog, manageBookmarksChangeLog } = useBookmarksChangeLog();
-
 
     useEffect(() => {
         setIntervals(initialIntervals);
@@ -38,8 +38,20 @@ const TimeToSkipSettingsMenu = ({ intervals: initialIntervals, onIntervalsChange
 
     useEffect(() => {
         if (pendingTemplate) {
-            const newInterval = { start: formatTime(pendingTemplate.start), end: formatTime(pendingTemplate.end), id: `Temp-${Date.now()}` };
-            handleAddInterval(newInterval);
+            // Перевірити, чи вже обробили цей timeSpamp
+            if (!processedTimeStamps.current.has(pendingTemplate.timeSpamp)) {
+                processedTimeStamps.current.add(pendingTemplate.timeSpamp);
+                const newInterval = { 
+                    start: formatTime(pendingTemplate.start), 
+                    end: formatTime(pendingTemplate.end), 
+                    id: `Temp-${Date.now()}` 
+                };
+                handleAddInterval(newInterval);
+                // Очистити pendingTemplate після обробки
+                if (onPendingTemplateProcessed) {
+                    onPendingTemplateProcessed();
+                }
+            }
         }
     }, [pendingTemplate?.timeSpamp]);
 
@@ -49,6 +61,7 @@ const TimeToSkipSettingsMenu = ({ intervals: initialIntervals, onIntervalsChange
 
             const updatedIntervals = sortIntervals([...intervals, { start: parseTimeInput(currentInterval.start), end: parseTimeInput(currentInterval.end), id }]);
             setIntervals(updatedIntervals);
+            onIntervalsChange(updatedIntervals);
             setEditInterval({ start: '', end: '' });
             setIsAdding(false);
             setEditingIndex(null);
@@ -76,6 +89,10 @@ const TimeToSkipSettingsMenu = ({ intervals: initialIntervals, onIntervalsChange
 
     const handleSaveToServer = async () => {
         try {
+            console.log('=== BEFORE SAVE ===');
+            console.log('bookmarksChangeLog:', JSON.stringify(bookmarksChangeLog, null, 2));
+            console.log('intervals:', intervals);
+
             const resp = await processBookmarksChangeLog(currentEpisodeId, bookmarksChangeLog);
             console.log('Intervals saved to server successfully.');
             // Оновлення локальних інтервалів з новими ID для створених інтервалів

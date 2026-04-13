@@ -36,6 +36,10 @@ export const processBulkUpdateforBookmarksChangeLog = async (episode_id, bookmar
 // }
 
 export const processBookmarksChangeLog = async (episode_id, bookmarksChangeLog) => {
+    console.log('=== API processBookmarksChangeLog ===');
+    console.log('episode_id:', episode_id);
+    console.log('bookmarksChangeLog:', JSON.stringify(bookmarksChangeLog, null, 2));
+    
     const handlers = {
         CREATE: processCreateBookmark,
         UPDATE: processUpdateBookmark,

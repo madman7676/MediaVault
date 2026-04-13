@@ -420,6 +420,7 @@ const PlayerControls = ({
                     onClose={handleCloseTimeToSkipMenu}
                     currentEpisodeId={currentFile?.id}
                     pendingTemplate={pendingTemplate}
+                    onPendingTemplateProcessed={() => setPendingTemplate(null)}
                 />
             )}
         </div>
