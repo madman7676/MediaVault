@@ -3,6 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, Typography, Box, Badge, Checkbox } from '@mui/material';
+import { fetchThumbnail } from '../api/thumbnailAPI';
 import palette from '../styles/theme/palette';
 
 const cardStyles = {
@@ -92,7 +93,19 @@ const renderLayers = (isMovie, partsCount) => (
     ))
 );
 
-const CatalogCard = ({ title, type, partsCount, thumbnailUrl, link, showCheckbox, isSelected, onSelect, tags }) => {
+const getThumbnailUrl = async (item) => {
+    try {
+    let thumbnailUrl = '';
+    thumbnailUrl = await fetchThumbnail(item.path);
+    
+    return thumbnailUrl
+    } catch (thumbError) {
+    console.error(`Failed to fetch thumbnail for ${item.path}:`, thumbError);
+    return '' 
+    }
+};
+
+const CatalogCard = ({ title, type, partsCount, path, link, showCheckbox, isSelected, onSelect, tags }) => {
     const isMovie = type === 'movie';
     const colors = isMovie ? palette.movie : palette.series;
 
@@ -106,7 +119,17 @@ const CatalogCard = ({ title, type, partsCount, thumbnailUrl, link, showCheckbox
             navigate(link);
         }
     };
-  
+
+    const [thumbnailUrl, setThumbnailUrl] = React.useState('');
+
+    React.useEffect(() => {
+        const fetchThumbnailUrl = async () => {
+            const url = await getThumbnailUrl({ path });
+            setThumbnailUrl(url);
+        };
+        fetchThumbnailUrl();
+    }, [path]);
+
     return (
         <Card onClick={handleCardClick} variant="outlined" sx={cardStyles}>
             {/* Background Deck Layers */}
@@ -134,6 +157,7 @@ const CatalogCard = ({ title, type, partsCount, thumbnailUrl, link, showCheckbox
                         objectFit: 'cover', 
                         borderRadius: '12px' 
                     }} 
+                    loading='lazy'
                 />
             )}
 

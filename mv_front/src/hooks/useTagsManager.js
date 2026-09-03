@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 
 import { ACTIONS } from '../constants/mediaConstants';
-import { addTagToItems, fetchAllTags } from '../api/metadataAPI';
+import { addTagToItems, fetchAllTags } from '../api/tagsAPI';
 
 // Custom hook для тегів
 function useTagsManager(dispatch, selectedTags, collections) {

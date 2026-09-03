@@ -16,12 +16,11 @@ const GridCollection = ({openTagSettings, filteredCollections, letterRefs, selec
                 const first = collection.title?.[0]?.toUpperCase();
                 let ref = null;
                 if (first && letterRefs.current[first] && !usedLetters.has(first)) {
-                ref = letterRefs.current[first];
-                usedLetters.add(first);
+                    ref = letterRefs.current[first];
+                    usedLetters.add(first);
                 }
                 return (
                 <Grid
-                    item
                     xs={12}
                     sm={6}
                     md={4}
@@ -31,8 +30,9 @@ const GridCollection = ({openTagSettings, filteredCollections, letterRefs, selec
                     <CatalogCard
                     title={collection.title}
                     type={collection.type}
-                    partsCount={collection.partsCount}
-                    thumbnailUrl={collection.thumbnailUrl}
+                    partsCount={collection.count}
+                    // thumbnailUrl={collection.thumbnailUrl}
+                    path={collection.path}
                     link={'/player/' + collection.id}
                     showCheckbox={selectionMode}
                     isSelected={selectedItems.includes(collection.id)}

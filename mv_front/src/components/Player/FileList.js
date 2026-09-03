@@ -14,8 +14,7 @@ const FileList = ({
     openSeasons,
     handleToggleSeason,
     handleSelectFile,
-    palette,
-    lastWatched
+    palette
 }) => {
     
     return (
@@ -56,24 +55,18 @@ const FileList = ({
                     {fileList.map((season, seasonIndex) => (
                         <Fragment key={seasonIndex}>
                             <ListItem disablePadding sx={{ cursor: 'pointer' }} onClick={() => handleToggleSeason(seasonIndex)}>
-                                <ListItemText primary={season.seasonTitle} sx={{ color: palette.text.lightPrimary }} />
+                                <ListItemText primary={season.title} sx={{ color: palette.text.lightPrimary }} />
                                 {openSeasons[seasonIndex] ? <ExpandLess /> : <ExpandMore />}
                             </ListItem>
                             <Collapse in={openSeasons[seasonIndex]} timeout="auto" unmountOnExit>
                                 {season.files.map((file, fileIndex) => (
                                     <ListItem
                                         key={fileIndex}
-                                        button
-                                        onClick={() => handleSelectFile(file.url)}
+                                        onClick={() => handleSelectFile(seasonIndex, fileIndex)}
                                         sx={{
                                             cursor: 'pointer',
-                                            color:
-                                                file.url === currentFile
-                                                    ? palette.primary
-                                                    : file.url === lastWatched
-                                                    ? 'orange'
-                                                    : palette.text.lightPrimary,
-                                            backgroundColor: currentFile === file.url ? palette.background.paper : 'transparent',
+                                            color: file.url === currentFile?.url ? palette.text.highlight : palette.text.lightPrimary,
+                                            backgroundColor: file.url === currentFile?.url ? palette.background.paper : 'transparent',
                                             '&:hover': { backgroundColor: palette.secondary, color: palette.text.lightSecondary },
                                             '&:active': { backgroundColor: palette.primary, opacity: 0.8 },
                                         }}

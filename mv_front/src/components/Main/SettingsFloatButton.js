@@ -4,7 +4,7 @@ import AddIcon from '@mui/icons-material/Add';
 import SettingsIcon from '@mui/icons-material/Settings';
 
 
-const SettingsFloatButton = ({onClickSettingsButton, openSettingsMenu, handleTagSettings, handleOpenOnlineSeriesDialog}) => {
+const SettingsFloatButton = ({onClickSettingsButton, openSettingsMenu, handleTagSettings, handleAddMediaDialog, handleOpenOnlineSeriesDialog}) => {
     return (
         <SpeedDial
             ariaLabel="Settings"
@@ -22,8 +22,8 @@ const SettingsFloatButton = ({onClickSettingsButton, openSettingsMenu, handleTag
             />
             <SpeedDialAction
                 icon={<AddIcon />}
-                tooltipTitle="Add Online Series"
-                onClick={handleOpenOnlineSeriesDialog}
+                tooltipTitle="Add Media"
+                onClick={handleAddMediaDialog}
             />
         </SpeedDial>
     );

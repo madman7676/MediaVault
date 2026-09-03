@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useReducer } from 'react';
+import { useEffect, useCallback, useReducer, useState } from 'react';
 import { 
   CssBaseline, 
   ThemeProvider,
@@ -17,18 +17,25 @@ import { initialState, ACTIONS } from '../constants/mediaConstants';
 import Bookmarks from '../components/Main/Bookmarks';
 import GridCollection from '../components/Main/GridCollection';
 import SettingsFloatButton from '../components/Main/SettingsFloatButton';
+import LoadingSpinnerOverlay from '../components/Main/LoadingSpinnerOverlay';
 
 import mediaReducer from '../hooks/useMediaReducer';
 import useOnlineSeriesForm from '../hooks/useOnlineSeriesForm';
 import useCollectionsLoader from '../hooks/useCollectionsLoader';
 import useTagsManager from '../hooks/useTagsManager';
 import { useMediaVaultHandlers } from '../hooks/useMediaVaultHandlers';
-import { useCollectionFiltering } from '../hooks/useCollectionFilltering';
 import { useLetterNavigation } from '../hooks/useLetterNavigation';
 import useLocalStorage from '../hooks/useLocalStorage';
+import AddMediaDialog from '../components/Main/AddMediaDialog';
+import useAddMediaForm from '../hooks/useAddMediaForm';
+import useMediaParents from '../hooks/useMediaParents';
+
+import { postNewMedia } from '../api/mediaAPI';
 
 
 const MediaVault = () => {
+
+  const [mediaList, setMediaList] = useState();
   
   const { getInitialFilter, getInitialTags, saveToLocalStorage } = useLocalStorage(initialState);
 
@@ -47,7 +54,7 @@ const MediaVault = () => {
   const {
     collections, filteredCollections, filter, loading, error,
     selectedTags, filterMode, openTagSettings, selectionMode,
-    selectedItems, selectedTag, openSettingsMenu, openOnlineSeriesDialog
+    selectedItems, selectedTag, openSettingsMenu, openAddMediaDialog, openOnlineSeriesDialog
   } = state;
 
   // Використовуємо custom hooks
@@ -56,22 +63,35 @@ const MediaVault = () => {
     toggleFilterMode,
     handleTagSettings,
     handleOpenOnlineSeriesDialog,
+    handleAddMediaDialog,
     handleItemSelection
   } = useMediaVaultHandlers(dispatch);
 
   const {
     formData,
     updateTitle,
-    updateImageUrl,
-    updateSeasonName,
-    updateSeasonEpisodes,
-    addSeason,
-    removeSeason,
+    updateSelectedFolderPath,
+    updateIsNewMedia,
+    updateIsSeries,
+    updateSelectedMedia,
     resetForm
-  } = useOnlineSeriesForm();
+  } = useAddMediaForm();
+
+  // const {
+  //   formData,
+  //   updateTitle,
+  //   updateImageUrl,
+  //   updateSeasonName,
+  //   updateSeasonEpisodes,
+  //   addSeason,
+  //   removeSeason,
+  //   resetForm
+  // } = useOnlineSeriesForm();
 
   // Завантажуємо колекції
-  useCollectionsLoader(dispatch);
+  useCollectionsLoader(dispatch, filter, selectedTags, filterMode);
+
+  useMediaParents(setMediaList);
 
   // Управління тегами
   const {
@@ -86,30 +106,44 @@ const MediaVault = () => {
     dispatch({ type: ACTIONS.SET_SELECTED_TAGS, payload: [] });
   }, []);
 
-  useCollectionFiltering(collections, filter, selectedTags, filterMode, dispatch);
-
-  // Обробники подій з useCallback
-  const handleCloseOnlineSeriesDialog = useCallback(() => {
-    dispatch({ type: ACTIONS.TOGGLE_ONLINE_SERIES_DIALOG });
+  const handleCloseAddMediaDialog = useCallback(() => {
+    dispatch({ type: ACTIONS.TOGGLE_ADD_MEDIA_DIALOG });
     resetForm();
   }, [resetForm]);
 
-  const handleSaveOnlineSeries = useCallback(() => {
-    console.log('Saving online series:', {
-      title: formData.title,
-      imageUrl: formData.imageUrl,
-      seasons: formData.seasons.map((season) => ({
-        name: season.name,
-        episodes: season.episodes.split('\n').map((url) => url.trim()).filter(Boolean),
-      })),
-    });
-    handleCloseOnlineSeriesDialog();
-  }, [formData, handleCloseOnlineSeriesDialog]);
+  // Обробники подій з useCallback
+  // const handleCloseOnlineSeriesDialog = useCallback(() => {
+  //   dispatch({ type: ACTIONS.TOGGLE_ONLINE_SERIES_DIALOG });
+  //   resetForm();
+  // }, [resetForm]);
+
+  const handleSaveMedia = useCallback(() => {
+    const submitData = async () => {
+      try {
+        const newMedia = await postNewMedia(formData);
+      } catch (error) {
+        console.error('Error adding new media:', error);
+      }
+    };
+
+    submitData();
+    // console.log('Saving media:', formData);
+    handleCloseAddMediaDialog();
+  }, [formData, handleCloseAddMediaDialog]);
+
+  // const handleSaveOnlineSeries = useCallback(() => {
+  //   console.log('Saving online series:', {
+  //     title: formData.title,
+  //     imageUrl: formData.imageUrl,
+  //     seasons: formData.seasons.map((season) => ({
+  //       name: season.name,
+  //       episodes: season.episodes.split('\n').map((url) => url.trim()).filter(Boolean),
+  //     })),
+  //   });
+  //   handleCloseOnlineSeriesDialog();
+  // }, [formData, handleCloseOnlineSeriesDialog]);
 
   const { letters, letterRefs, scrollToLetter } = useLetterNavigation(filteredCollections);
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
 
   return (
     <ThemeProvider theme={darkTheme}>
@@ -170,6 +204,7 @@ const MediaVault = () => {
               onClickSettingsButton={() => dispatch({ type: ACTIONS.TOGGLE_SETTINGS_MENU })}
               openSettingsMenu={openSettingsMenu}
               handleTagSettings={handleTagSettings}
+              handleAddMediaDialog={handleAddMediaDialog}
               handleOpenOnlineSeriesDialog={handleOpenOnlineSeriesDialog}
             />
 
@@ -185,7 +220,7 @@ const MediaVault = () => {
               />
             )}
 
-            <OnlineSeriesDialog 
+            {/* <OnlineSeriesDialog 
               open={openOnlineSeriesDialog}
               onClose={handleCloseOnlineSeriesDialog}
               title={formData.title}
@@ -198,10 +233,28 @@ const MediaVault = () => {
               onAddSeason={addSeason}
               onRemoveSeason={removeSeason}
               onSave={handleSaveOnlineSeries}
+            /> */}
+
+            <AddMediaDialog
+              open={openAddMediaDialog}
+              onClose={handleCloseAddMediaDialog}
+              title={formData.title}
+              onTitleChange={updateTitle}
+              selectedFolderPath={formData.selectedFolderPath}
+              onSelectedFolderPathChange={updateSelectedFolderPath}
+              isNewMedia={formData.isNewMedia}
+              onIsNewMediaChange={updateIsNewMedia}
+              isSeries={formData.isSeries}
+              onIsSeriesChange={updateIsSeries}
+              selectedMedia={formData.selectedMedia}
+              onSelectedMediaChange={updateSelectedMedia}
+              onSave={handleSaveMedia}
+              listOfMedia={mediaList}
             />
           </div>
         </Box>
       </Box>
+      <LoadingSpinnerOverlay loading={loading} error={error} />
     </ThemeProvider>
   );
 };

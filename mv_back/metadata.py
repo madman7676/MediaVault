@@ -2,7 +2,7 @@ import os
 import uuid
 import json
 from datetime import datetime
-from config import MOVIES_PATHS, SERIES_PATHS, METADATA_FILE, BASE_URL, THUMBNAILS_DIR
+from mv_back.config import *
 # from flask import Flask, request, send_file
 
 def _update_files_by_index(season, season_path):

@@ -8,7 +8,23 @@ import { Settings, CheckBox, CheckBoxOutlineBlank } from '@mui/icons-material';
 import React, { useState, useEffect, useRef } from 'react';
 import { Box, Typography, Menu, MenuItem, Checkbox, IconButton } from '@mui/material';
 import { useParams } from 'react-router-dom';
-import { fetchMetadataById, fetchTimeToSkip, updateTimeToSkip } from '../api/metadataAPI';
+// import { fetchMetadataById, fetchTimeToSkip, updateTimeToSkip } from '../api/metadataAPI';
+import { fetchMediaById } from '../api/mediaAPI';
+import { fetchSeriesSeasonsAndEpisodesById } from '../api/seriesAPI';
+import { fetchMovieItemsById } from '../api/movieAPI';
+import { fetchDefaultBookmarks } from '../api/bookmarksAPI';
+
+
+// Зберігаємо lastWatched в localStorage
+const saveLastWatched = (mediaId, currentFile) => {
+    const lastWatchedAll = JSON.parse(localStorage.getItem('lastWatchedAll')) || {};
+    lastWatchedAll[mediaId] = currentFile;
+    localStorage.setItem('lastWatchedAll', JSON.stringify(lastWatchedAll));
+};
+const getLastWatched = (mediaId) => {
+    const lastWatchedAll = JSON.parse(localStorage.getItem('lastWatchedAll')) || {};
+    return lastWatchedAll[mediaId] || null;
+};
 
 const Player = () => {
     const [fileList, setFileList] = useState([]);
@@ -19,127 +35,67 @@ const Player = () => {
     const [error, setError] = useState(null);
     const [openSeasons, setOpenSeasons] = useState({});
     const [skipTimeEnabled, setSkipTimeEnabled] = useState(true);
-    const { itemId } = useParams();
-    const allPaths = useRef([]);
-    const currentPath = useRef(null);
+    const { mediaId } = useParams();
+
+
+    const processSeasonFiles = (seasons) => {
+        return seasons.map((season) => ({
+            title: season.title,
+            seasonNumber: season.season_number,
+            files: season.files.map(file => ({
+                id: file.id,
+                name: file.title,
+                url: `${config.API_BASE_URL}/api/video?path=${encodeURIComponent(file.file_path)}`,
+                seasonNumber: season.season_number - 1,
+                episodeNumber: file.episode_number - 1,
+            })),
+        }));
+    }
+
+    const processMovieFiles = (collectionName, movieFiles) => {
+        return {
+            title: collectionName,
+            files: movieFiles.parts.map(part => ({
+                id: part.id,
+                name: part.title,
+                position: part.position - 1,
+                url: part.path,
+            })),
+        };
+    }
+
+    const handleSelectFile = (seasonIndex, fileIndex) => {
+        const selectedFile = fileList[seasonIndex]?.files[fileIndex];
+        setCurrentFile(selectedFile);
+        saveLastWatched(mediaId, selectedFile);
+    };
+
+    const handleVideoEnd = () => {
+        if (fileList[currentFile.seasonNumber].files.length > currentFile.episodeNumber + 1) {
+            handleSelectFile(currentFile.seasonNumber, currentFile.episodeNumber + 1);
+        }
+        else if (fileList.length > currentFile.seasonNumber + 1) {
+            handleSelectFile(currentFile.seasonNumber + 1, 0);
+        }
+    };
+
+    useEffect(() => {
+        const lastFile = getLastWatched(mediaId);
+        if (lastFile && fileList.length > 0) {
+            if (lastFile.seasonNumber >= 0) {
+                setOpenSeasons(prev => ({ ...prev, [lastFile.seasonNumber]: true }));
+                setCurrentFile(lastFile);
+            }
+        }
+    }, [fileList, mediaId, setCurrentFile, setOpenSeasons]);
 
     const handleToggleSkipTime = () => {
         setSkipTimeEnabled((prev) => !prev);
     };
 
-    function getLastIntFromString(input) {
-        const parts = input.trim().split(/\s+/); // Розбиваємо рядок на частини
-        const lastPart = parts[parts.length - 1]; // Беремо останню частину
-    
-        const parsedValue = parseInt(lastPart, 10); // Пробуємо перетворити в int
-        return isNaN(parsedValue) ? 1 : parsedValue; // Перевіряємо, чи вдалося
-    }
-
-    const getCurrentPath = (itemList, itemName) => {
-        if (!itemList || !itemList.item || !itemList.item.path || !itemList.item.seasons) {
-            return null; // Перевірка на валідність структури
-        }
-    
-        for (const season of itemList.item.seasons) {
-            for (const file of season.files) {
-                if (file.name === itemName) {
-                    return itemList.item.path; // Повертаємо path, якщо знайдено
-                }
-            }
-        }
-    
-        return null; // Якщо файл не знайдено
-    };
-
-    const findFileName = (url) => {
-        if (!url) return null;
-        for (const season of fileList) {
-            for (const file of season.files) {
-                if (file.url === url) {
-                    return file.name;
-                }
-            }
-        }
-        return null; // Якщо URL не знайдено
-    }
-
-    const processFiles = (item) => {
-        if (item.type === 'series') {
-            return item.seasons.map((season, seasonIndex) => ({
-                seasonTitle: `Сезон ${seasonIndex + 1}`,
-                files: season.files.map(file => ({
-                    url: `${config.API_BASE_URL}/api/video?path=${encodeURIComponent(season.path + '/' + file.name)}`,
-                    name: file.name,
-                    timeToSkip: file.timeToSkip || [],
-                })),
-            }));
-        }
-        return [{
-            seasonTitle: 'Collection',
-            files: item.parts.map(part => ({
-                url: `${config.API_BASE_URL}/api/video?path=${encodeURIComponent(part.path)}`,
-                name: part.title,
-                timeToSkip: part.timeToSkip || [],
-            })),
-        }];
-    };
-
-    const handleVideoEnd = () => {
-        const flatFileList = fileList.flatMap(season => season.files);
-        const currentIndex = flatFileList.findIndex(file => file.url === currentFile);
-
-        if (currentIndex !== -1 && currentIndex < flatFileList.length - 1) {
-            const nextFile = flatFileList[currentIndex + 1];
-            if (nextFile) {
-                const seasonIndex = fileList.findIndex(season =>
-                    season.files.some(file => file.url === nextFile.url)
-                );
-                if (seasonIndex >= 0 && allPaths.current[seasonIndex]) {
-                    currentPath.current = allPaths.current[seasonIndex];
-                }
-                handleFetchTimeToSkip(currentPath.current, nextFile.name);
-                currentTimeToSkipRef.current = nextFile.timeToSkip || [];
-
-                setCurrentFile(nextFile.url);
-                saveLastWatched(itemId, nextFile.url);
-            }
-        }
-    };
-
-    const fetchMetadata = async () => {
-        try {
-            const item = await fetchMetadataById(itemId);
-            setTitle(item.title || 'Files');
-            setFileList(processFiles(item));
-            if (item.type === 'series' && Array.isArray(item.seasons)) {
-                allPaths.current = item.seasons.map(season => season.path);
-            } else if (item.type === 'movie' && Array.isArray(item.parts)) {
-                allPaths.current = item.parts.map(part => part.path);
-            } else {
-                allPaths.current = [];
-            }
-            // allPaths.current=item.seasons.map(season => season.path);
-        } catch (err) {
-            setError(`Error fetching metadata: ${err.message}`);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleFetchTimeToSkip = async (path, name) => {
-        try {
-            console.log('Fetching timeToSkip for:', { path, name }); // Логування
-            const timeToSkip = await fetchTimeToSkip(path, name);
-            console.log('Fetched timeToSkip:', timeToSkip);
-            currentTimeToSkipRef.current = timeToSkip;
-        } catch (error) {
-            console.error(`Error fetching timeToSkip: ${error.message}`);
-        }
-    };
-
     const handleUpdateTimeToSkip = async (updatedTimeToSkip) => {
         try {
-            await updateTimeToSkip(currentFile, itemId, updatedTimeToSkip);
+            // await updateTimeToSkip(currentFile.url, mediaId, updatedTimeToSkip);
             currentTimeToSkipRef.current = updatedTimeToSkip;
             console.log('timeToSkip updated successfully');
         } catch (error) {
@@ -147,54 +103,29 @@ const Player = () => {
         }
     };
 
-    // Зберігаємо lastWatched як об'єкт з itemId як ключем
-    const saveLastWatched = (itemId, fileUrl) => {
-        const lastWatchedAll = JSON.parse(localStorage.getItem('lastWatchedAll')) || {};
-        lastWatchedAll[itemId] = { fileUrl };
-        localStorage.setItem('lastWatchedAll', JSON.stringify(lastWatchedAll));
-    };
-
-    const getLastWatched = (itemId) => {
-        const lastWatchedAll = JSON.parse(localStorage.getItem('lastWatchedAll')) || {};
-        return lastWatchedAll[itemId]?.fileUrl;
-    };
-
-    const handleSelectFile = (url) => {
-        const selectedFileMetadata = fileList
-            .flatMap(season => {
-                if (season.files.some(file=>file.url === url)) currentPath.current=allPaths.current[(getLastIntFromString(season.seasonTitle)-1)];
-                return season.files;
-            })
-            .find(file => file.url === url);
-
-        if (selectedFileMetadata) {
-            handleFetchTimeToSkip(currentPath.current, selectedFileMetadata.name);
-        }
-        setCurrentFile(url);
-        saveLastWatched(itemId, url);
-    };
-
     useEffect(() => {
-        document.body.style.margin = '0';
-        fetchMetadata();
-    }, [itemId]);
-
-    useEffect(() => {
-        const lastFileUrl = getLastWatched(itemId);
-        if (lastFileUrl && fileList.length > 0) {
-            // ...existing code, заміни lastWatched.fileUrl на lastFileUrl...
-            const flatFileList = fileList.flatMap(season => season.files);
-            const lastFile = flatFileList.find(file => file.url === lastFileUrl);
-            if (lastFile) {
-                const seasonIndex = fileList.findIndex(season =>
-                    season.files.some(file => file.url === lastFileUrl)
-                );
-                if (seasonIndex >= 0) {
-                    setOpenSeasons(prev => ({ ...prev, [seasonIndex]: true }));
+        const fetchMediaData = async () => {
+            try {
+                const item = await fetchMediaById(mediaId);
+                setTitle(item.title || 'Files');
+                
+                if (item.type === 'series') {
+                    const seasons = await fetchSeriesSeasonsAndEpisodesById(mediaId);
+                    setFileList(processSeasonFiles(seasons));
+                } else if (item.type === 'movie' && Array.isArray(item.parts)) {
+                    const parts = await fetchMovieItemsById(mediaId);
+                    setFileList(processMovieFiles(parts));
                 }
+            } catch (err) {
+                setError(`Error fetching metadata: ${err.message}`);
+            } finally {
+                setLoading(false);
             }
-        }
-    }, [fileList]);
+        };
+
+        document.body.style.margin = '0';
+        fetchMediaData();
+    }, [mediaId]);
 
     const handleToggleSeason = (seasonIndex) => {
         setOpenSeasons(prev => ({
@@ -234,9 +165,6 @@ const Player = () => {
                     onBlur={focusPlayer}
                     ref={playerBoxRef}
                     currentFile={currentFile}
-                    currentName={findFileName(currentFile)}
-                    currentPath={currentPath.current}
-                    // currentTimeToSkip={currentTimeToSkipRef.current}
                     skipTimeEnabled={skipTimeEnabled}
                     handleVideoEnd={handleVideoEnd}
                 />
@@ -249,13 +177,13 @@ const Player = () => {
                     borderLeft: 'none',
                     padding: 2,
                     backgroundColor: palette.background.card,
-                    '::-webkit-scrollbar': { display: 'none' },
-                    '-ms-overflow-style': 'none',
-                    'scrollbar-width': 'none',
+                    '&::-webkit-scrollbar': { display: 'none' },
+                    msOverflowStyle: 'none',
+                    scrollbarWidth: 'none',
                 }}
             >
                 <FileList
-                    itemId={itemId}
+                    itemId={mediaId}
                     fileList={fileList}
                     currentFile={currentFile}
                     currentTitle={title}
@@ -263,7 +191,6 @@ const Player = () => {
                     handleToggleSeason={handleToggleSeason}
                     handleSelectFile={handleSelectFile}
                     palette={palette}
-                    lastWatched={getLastWatched(itemId)}
                 />
             </Box>
         </Box>

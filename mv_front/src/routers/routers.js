@@ -3,6 +3,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import MediaVault from '../pages/MediaVault';
 import Player from '../pages/Player';
+import Main from '../pages/Main';
+import Test from '../pages/test';
 
 const AppRouter = () => {
     return (
@@ -11,8 +13,10 @@ const AppRouter = () => {
                 {/* Головна сторінка */}
                 <Route path="/" element={<MediaVault />} />
 
-                {/* Сторінка плеєра з параметром itemId */}
-                <Route path="/player/:itemId" element={<Player />} />
+                {/* Сторінка плеєра з параметром mediaId */}
+                <Route path="/player/:mediaId" element={<Player />} />
+
+                <Route path='/test' element={<Test />}/>
             </Routes>
         </Router>
     );

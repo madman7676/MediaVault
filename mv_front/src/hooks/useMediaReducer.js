@@ -39,6 +39,8 @@ function mediaReducer(state, action) {
       return { ...state, selectedTag: action.payload };
     case ACTIONS.TOGGLE_SETTINGS_MENU:
       return { ...state, openSettingsMenu: !state.openSettingsMenu };
+    case ACTIONS.TOGGLE_ADD_MEDIA_DIALOG:
+      return { ...state, openAddMediaDialog: !state.openAddMediaDialog };
     case ACTIONS.TOGGLE_ONLINE_SERIES_DIALOG:
       return { ...state, openOnlineSeriesDialog: !state.openOnlineSeriesDialog };
     default:

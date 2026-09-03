@@ -2,34 +2,19 @@ import React, { useRef, useState, useImperativeHandle, forwardRef } from 'react'
 
 const SettingsMenu = forwardRef(({ onOptionSelect, buttonRef }, ref) => {
     const menuRef = useRef(null);
-    const [menuStyles, setMenuStyles] = useState({
+    const menuStyles = {
         position: 'absolute',
         backgroundColor: '#000',
         color: '#fff',
         padding: '10px 5px',
         borderRadius: '4px',
-        display: 'none',
+        display: 'block',
         width: 'fit-content',
-    });
-
-    const calculateMenuPosition = () => {
-        if (buttonRef.current && menuRef.current) {
-            const buttonRect = buttonRef.current.getBoundingClientRect();
-            const menuWidth = menuRef.current.offsetWidth;
-
-            setMenuStyles((prevStyles) => ({
-                ...prevStyles,
-                bottom: `${window.innerHeight - buttonRect.top}px`,
-                left: `0px`,
-                display: 'block',
-            }));
-        }
+        right: '0px',
+        bottom: '0px',
+        marginBottom: '35px',
+        pointerEvents: 'auto',
     };
-
-    // Expose calculateMenuPosition to the parent via ref
-    useImperativeHandle(ref, () => ({
-        calculateMenuPosition,
-    }));
 
     const listStyles = {
         padding: 0,
@@ -49,6 +34,28 @@ const SettingsMenu = forwardRef(({ onOptionSelect, buttonRef }, ref) => {
         backgroundColor: '#555',
     };
 
+    const SettingListItem = (name, option) => {
+        return (
+            <li
+                className="vjs-menu-item"
+                style={listItemStyles}
+                onMouseEnter={(e) => e.target.style.backgroundColor = listItemHoverStyles.backgroundColor}
+                onMouseLeave={(e) => e.target.style.backgroundColor = ''}
+                onClick={() => onOptionSelect(option)}
+            >
+                {name}
+            </li>
+        );
+    }
+
+    const settingsList = [
+        { name: 'Time to skip', option: 'openTimeToSkipMenu' },
+        { name: 'Fast skipset 0+1:30', option: '0+1:30' },
+        { name: 'Fast skipset 0+current', option: '0+current' },
+        { name: 'Fast skipset current+1:30', option: 'current+1:30' },
+        { name: 'Fast skipset current+end', option: 'current+end' },
+    ];
+
     return (
         <div
             className="vjs-settings-menu"
@@ -56,42 +63,7 @@ const SettingsMenu = forwardRef(({ onOptionSelect, buttonRef }, ref) => {
             style={menuStyles}
         >
             <ul className="vjs-menu-content" style={listStyles}>
-                <li
-                    className="vjs-menu-item"
-                    style={listItemStyles}
-                    onMouseEnter={(e) => e.target.style.backgroundColor = listItemHoverStyles.backgroundColor}
-                    onMouseLeave={(e) => e.target.style.backgroundColor = ''}
-                    onClick={() => onOptionSelect('openTimeToSkipMenu')}
-                >
-                    Time to skip
-                </li>
-                <li
-                    className="vjs-menu-item"
-                    style={{
-                        ...listItemStyles,
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center'
-                    }}
-                    onMouseEnter={(e) => e.target.style.backgroundColor = listItemHoverStyles.backgroundColor}
-                    onMouseLeave={(e) => e.target.style.backgroundColor = ''}
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        onOptionSelect('audioTracks');
-                    }}
-                >
-                    <span style={{ marginRight: '10px' }}>◀</span>
-                    <span>Audio Track</span>
-                </li>
-                <li
-                    className="vjs-menu-item"
-                    style={listItemStyles}
-                    onMouseEnter={(e) => e.target.style.backgroundColor = listItemHoverStyles.backgroundColor}
-                    onMouseLeave={(e) => e.target.style.backgroundColor = ''}
-                    onClick={() => onOptionSelect('Option 3')}
-                >
-                    Option 3
-                </li>
+                {settingsList.map((setting) => SettingListItem(setting.name, setting.option))}
             </ul>
         </div>
     );
